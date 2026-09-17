@@ -1,0 +1,579 @@
+{
+  "version": 1,
+  "name": "Bug triage fix verify",
+  "entry": "bug-triage",
+  "exits": [
+    "bug-closeout"
+  ],
+  "workflows": [
+    ".github/workflows/orchestration-pipeline.yml",
+    ".github/workflows/orchestration-step.yml",
+    ".github/workflows/orchestration-human.yml",
+    ".github/workflows/orchestration-escalate.yml"
+  ],
+  "defaultLoopLimit": 3,
+  "locks": [],
+  "stages": [
+    {
+      "id": "bug-triage",
+      "name": "Bug Triage",
+      "role": "product_manager",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Confirms the reproduction, sets priority, and defines what fixed means.",
+      "task": "Reproduce the report, write the reproduction steps, set priority and severity, and define the acceptance criteria for the fix.",
+      "acceptance": "The ticket contains reproduction steps, expected versus observed behaviour, a priority, and testable acceptance criteria.",
+      "forbidden": [
+        "Never write application code.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run the test suite — request it from a stage that may.",
+        "Never run shell commands.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues"
+      ],
+      "tools": {
+        "write": false,
+        "shell": false,
+        "denyPaths": [
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": false,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-bug-triage",
+      "consumes": [],
+      "produces": "ticket",
+      "agentFile": ".github/agents/01-bug-triage.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved"
+      ],
+      "decisions": [],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "coder",
+      "name": "Coder",
+      "role": "coder",
+      "executor": "ai",
+      "execution": "coding-agent",
+      "model": "google/gemini-3.6-flash",
+      "description": "Finds the root cause and implements a minimal, tested fix.",
+      "task": "Diagnose the root cause, implement a minimal fix, and add a regression test that covers the reported reproduction.",
+      "acceptance": "The root cause is written down, the fix is minimal, and a regression test fails without the fix and passes with it.",
+      "forbidden": [
+        "Never merge, force-push, or rewrite history.",
+        "Never read, print, or commit secrets, tokens, or .env values.",
+        "Never disable or delete failing tests.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "modify_code",
+        "modify_tests",
+        "modify_docs",
+        "create_branches",
+        "open_pull_requests",
+        "run_tests",
+        "run_commands"
+      ],
+      "tools": {
+        "write": true,
+        "shell": true,
+        "denyPaths": [
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "modify_code",
+          "modify_tests",
+          "modify_docs",
+          "create_branches",
+          "open_pull_requests",
+          "run_tests",
+          "run_commands"
+        ]
+      },
+      "producesCandidate": true,
+      "attestsCandidate": false,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-coder",
+      "consumes": [
+        "ticket"
+      ],
+      "produces": "code_diff",
+      "agentFile": ".github/agents/02-coder.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved"
+      ],
+      "decisions": [],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "code-reviewer",
+      "name": "Code Reviewer",
+      "role": "code_reviewer",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Reviews the fix for correctness, side effects, and coverage.",
+      "task": "Review the fix against the stated root cause and check the regression test actually covers the report.",
+      "acceptance": "The review confirms the fix matches the root cause and every finding is specific and actionable.",
+      "forbidden": [
+        "Never edit the code under review.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run shell commands.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "run_tests"
+      ],
+      "tools": {
+        "write": false,
+        "shell": true,
+        "denyPaths": [
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "run_tests"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": true,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-code-reviewer",
+      "consumes": [
+        "code_diff"
+      ],
+      "produces": "review_notes",
+      "agentFile": ".github/agents/03-code-reviewer.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved",
+        "changes_required"
+      ],
+      "decisions": [
+        "approved",
+        "changes_required"
+      ],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "fix-verification",
+      "name": "Fix Verification",
+      "role": "tester",
+      "executor": "ai",
+      "execution": "coding-agent",
+      "model": "google/gemini-3.6-flash",
+      "description": "Verifies the original reproduction is gone and nothing regressed.",
+      "task": "Re-run the original reproduction and the full suite against the fix, and report the outcome with output attached.",
+      "acceptance": "The original reproduction no longer occurs, the suite is green, and the evidence is attached.",
+      "forbidden": [
+        "Never weaken assertions to get a green run.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "run_tests",
+        "run_commands"
+      ],
+      "tools": {
+        "write": false,
+        "shell": true,
+        "denyPaths": [
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "run_tests",
+          "run_commands"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": true,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-fix-verification",
+      "consumes": [
+        "code_diff"
+      ],
+      "produces": "test_report",
+      "agentFile": ".github/agents/04-fix-verification.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "passed",
+        "failed"
+      ],
+      "decisions": [
+        "passed",
+        "failed"
+      ],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "bug-closeout",
+      "name": "Bug Closeout",
+      "role": "orchestrator",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Records the outcome, links the evidence, and closes the report.",
+      "task": "Summarise the root cause and fix on the ticket, attach the evidence, and close the report.",
+      "acceptance": "The ticket is closed with a root-cause summary and links to the diff, review notes, and test report.",
+      "forbidden": [
+        "Never merge, force-push, or rewrite history.",
+        "Never perform implementation work yourself — delegate it.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run the test suite — request it from a stage that may.",
+        "Never run shell commands.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues"
+      ],
+      "tools": {
+        "write": false,
+        "shell": false,
+        "denyPaths": [
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": false,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-bug-closeout",
+      "consumes": [],
+      "produces": "status_update",
+      "agentFile": ".github/agents/00-bug-closeout.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved"
+      ],
+      "decisions": [],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_5lfiw3pm",
+      "from": "bug-triage",
+      "to": "coder",
+      "kind": "always",
+      "loopLimit": null,
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_5yg0xzio",
+      "from": "coder",
+      "to": "code-reviewer",
+      "kind": "split",
+      "loopLimit": null,
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_qpeuhs17",
+      "from": "coder",
+      "to": "fix-verification",
+      "kind": "split",
+      "loopLimit": null,
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_6jfkmdw4",
+      "from": "code-reviewer",
+      "to": "bug-closeout",
+      "kind": "conditional",
+      "loopLimit": null,
+      "condition": {
+        "type": "outcome",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_8almrczr",
+      "from": "fix-verification",
+      "to": "bug-closeout",
+      "kind": "conditional",
+      "loopLimit": null,
+      "condition": {
+        "type": "outcome",
+        "outcome": "passed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_6pt8fk3t",
+      "from": "code-reviewer",
+      "to": "coder",
+      "kind": "return",
+      "loopLimit": 3,
+      "condition": {
+        "type": "outcome",
+        "outcome": "changes_required",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_eahst8wx",
+      "from": "fix-verification",
+      "to": "coder",
+      "kind": "return",
+      "loopLimit": 3,
+      "condition": {
+        "type": "outcome",
+        "outcome": "failed",
+        "expression": ""
+      }
+    }
+  ]
+}

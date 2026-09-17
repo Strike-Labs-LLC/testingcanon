@@ -1,0 +1,65 @@
+# Lifecycle stages, generated from the SDLC blueprint.
+version: 7
+entry: "bug-triage"
+exits:
+  - "bug-closeout"
+stages:
+  - id: bug-triage
+    order: 1
+    name: "Bug Triage"
+    role: product_manager
+    output: ticket
+    acceptance: "The ticket contains reproduction steps, expected versus observed behaviour, a priority, and testable acceptance criteria."
+  - id: coder
+    order: 2
+    name: "Coder"
+    role: coder
+    output: code_diff
+    acceptance: "The root cause is written down, the fix is minimal, and a regression test fails without the fix and passes with it."
+  - id: code-reviewer
+    order: 3
+    name: "Code Reviewer"
+    role: code_reviewer
+    output: review_notes
+    acceptance: "The review confirms the fix matches the root cause and every finding is specific and actionable."
+  - id: fix-verification
+    order: 4
+    name: "Fix Verification"
+    role: tester
+    output: test_report
+    acceptance: "The original reproduction no longer occurs, the suite is green, and the evidence is attached."
+  - id: bug-closeout
+    order: 5
+    name: "Bug Closeout"
+    role: orchestrator
+    output: status_update
+    acceptance: "The ticket is closed with a root-cause summary and links to the diff, review notes, and test report."
+transitions:
+  - from: bug-triage
+    to: coder
+    kind: always
+    condition: "Always"
+  - from: coder
+    to: code-reviewer
+    kind: split
+    condition: "Always"
+  - from: coder
+    to: fix-verification
+    kind: split
+    condition: "Always"
+  - from: code-reviewer
+    to: bug-closeout
+    kind: conditional
+    condition: "If approved"
+  - from: fix-verification
+    to: bug-closeout
+    kind: conditional
+    condition: "If passed"
+  - from: code-reviewer
+    to: coder
+    kind: return
+    condition: "If changes required"
+  - from: fix-verification
+    to: coder
+    kind: return
+    condition: "If failed"

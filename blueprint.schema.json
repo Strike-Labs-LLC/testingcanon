@@ -1,0 +1,629 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canon.strikelabs.io/schemas/blueprint.schema.json",
+  "title": "Canon orchestration blueprint",
+  "description": "A software-delivery orchestration flow: agents (stages), the connectors between them, optional groups, and entry/exit points. Import this file in Canon via Create a flow → Import blueprint JSON.",
+  "type": "object",
+  "required": [
+    "agents"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "number",
+      "description": "Blueprint format version. Current version is 7.",
+      "default": 7
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable flow name.",
+      "default": "Imported SDLC pipeline"
+    },
+    "entryAgentId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Id of the agent where work enters the flow. Must match an agent id. Null is allowed while drafting, but export requires exactly one entry point.",
+      "default": null
+    },
+    "exitAgentIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Ids of terminal agents where the flow ends. Export requires at least one.",
+      "default": []
+    },
+    "agents": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The stages of the flow. Each agent is one role that produces an artifact.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable unique id, referenced by edges, entryAgentId, exitAgentIds and groups."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Display name of the stage."
+          },
+          "description": {
+            "type": "string",
+            "description": "What this stage does and why it exists.",
+            "default": ""
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "orchestrator",
+              "product_manager",
+              "engineering_manager",
+              "architect",
+              "ux_designer",
+              "ui_designer",
+              "coder",
+              "code_reviewer",
+              "qa",
+              "tester",
+              "security_auditor",
+              "release_reviewer",
+              "release_engineer",
+              "devops_deploy",
+              "human_approver",
+              "human_intervention",
+              "human_reviewer",
+              "human_stakeholder"
+            ],
+            "description": "SDLC role this agent plays. human_* roles are people; the rest are AI agents.",
+            "default": "coder"
+          },
+          "executor": {
+            "type": "string",
+            "enum": [
+              "ai",
+              "human"
+            ],
+            "description": "Who performs the work. Derived from role when omitted."
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "google/gemini-3.6-flash",
+              "google/gemini-3-pro",
+              "openai/gpt-5-mini",
+              "openai/gpt-5",
+              "anthropic/claude-sonnet-4.5"
+            ],
+            "description": "AI model for AI-executed stages.",
+            "default": "google/gemini-3.6-flash"
+          },
+          "systemPrompt": {
+            "type": "string",
+            "description": "Standing instructions for the agent.",
+            "default": ""
+          },
+          "taskDescription": {
+            "type": "string",
+            "description": "The concrete task this stage performs on each run.",
+            "default": ""
+          },
+          "acceptanceCriteria": {
+            "type": "string",
+            "description": "How a reviewer or gate knows the output is acceptable.",
+            "default": ""
+          },
+          "temperature": {
+            "type": "number",
+            "default": 0.2
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tools the agent may call (e.g. repo.read, tests.run).",
+            "default": []
+          },
+          "inputNotes": {
+            "type": "string",
+            "default": ""
+          },
+          "outputNotes": {
+            "type": "string",
+            "default": ""
+          },
+          "outputArtifact": {
+            "type": "string",
+            "enum": [
+              "spec",
+              "design_doc",
+              "code_diff",
+              "review_notes",
+              "test_report",
+              "security_report",
+              "release_notes",
+              "deployment",
+              "ticket",
+              "status_update",
+              "approval",
+              "decision"
+            ],
+            "description": "The artifact this stage hands to the next stage.",
+            "default": "decision"
+          },
+          "consumes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "spec",
+                "design_doc",
+                "code_diff",
+                "review_notes",
+                "test_report",
+                "security_report",
+                "release_notes",
+                "deployment",
+                "ticket",
+                "status_update",
+                "approval",
+                "decision"
+              ]
+            },
+            "description": "Artifacts this stage needs from upstream stages."
+          },
+          "decisionOutcomes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "approved",
+                "changes_required",
+                "blocked",
+                "passed",
+                "failed",
+                "yes",
+                "no",
+                "timeout",
+                "error"
+              ]
+            },
+            "description": "Outcomes this stage can produce; drives conditional connectors."
+          },
+          "forbiddenActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Things this agent must never do."
+          },
+          "joinPolicy": {
+            "$ref": "#/$defs/joinPolicy",
+            "description": "How this stage waits when several branches feed into it."
+          },
+          "position": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "description": "Canvas position. Omit or set null to auto-layout."
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "id"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "template",
+                  "custom"
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "version": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "description": "Provenance: which Canon template or custom agent this stage was copied from. Informational only."
+          },
+          "assignee": {
+            "type": "string",
+            "description": "Human stages only: who is responsible (name or email).",
+            "default": ""
+          },
+          "humanInstructions": {
+            "type": "string",
+            "description": "Human stages only: what the person must do, step by step.",
+            "default": ""
+          },
+          "responseTimeHours": {
+            "type": "number",
+            "description": "Human stages only: expected turnaround time in hours."
+          },
+          "notifyVia": {
+            "type": "string",
+            "enum": [
+              "github_review",
+              "github_issue",
+              "email",
+              "slack",
+              "sms"
+            ],
+            "description": "Human stages only: how the person is notified.",
+            "default": "github_review"
+          },
+          "escalateTo": {
+            "type": "string",
+            "description": "Human stages only: who is notified on timeout.",
+            "default": ""
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "description": "Connectors between agents. `from` and `to` are agent or group ids.",
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": [
+          "from",
+          "to"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique edge id. Generated when omitted."
+          },
+          "from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "default": ""
+          },
+          "condition": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "When this connector fires. Omit for an unconditional (Always) handoff.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "always",
+                  "outcome",
+                  "expression"
+                ],
+                "default": "always"
+              },
+              "outcome": {
+                "type": "string",
+                "enum": [
+                  "approved",
+                  "changes_required",
+                  "blocked",
+                  "passed",
+                  "failed",
+                  "yes",
+                  "no",
+                  "timeout",
+                  "error"
+                ],
+                "description": "Used when type is \"outcome\": the stage result that takes this branch.",
+                "default": "approved"
+              },
+              "expression": {
+                "type": "string",
+                "description": "Used when type is \"expression\": a plain-language or code condition.",
+                "default": ""
+              }
+            }
+          }
+        }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "description": "Named containers that fan work out to member stages and gate the flow on their join policy.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "default": "Group"
+          },
+          "memberIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Agent ids inside this group.",
+            "default": []
+          },
+          "joinPolicy": {
+            "$ref": "#/$defs/joinPolicy"
+          }
+        }
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional project context used to tailor generated agent files.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": ""
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "web-application",
+            "service",
+            "library",
+            "mobile-application",
+            "data-pipeline"
+          ],
+          "default": "web-application"
+        },
+        "description": {
+          "type": "string",
+          "default": ""
+        },
+        "governance": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Target-specific repository governance compiled from the orchestration. Optional.",
+          "properties": {
+            "generateCodeowners": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "repository": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "owner": {
+              "type": "string",
+              "default": ""
+            },
+            "name": {
+              "type": "string",
+              "default": ""
+            },
+            "defaultBranch": {
+              "type": "string",
+              "default": "main"
+            }
+          }
+        },
+        "stack": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "frontend": {
+              "type": "string",
+              "default": ""
+            },
+            "backend": {
+              "type": "string",
+              "default": ""
+            },
+            "database": {
+              "type": "string",
+              "default": ""
+            },
+            "infrastructure": {
+              "type": "string",
+              "default": ""
+            },
+            "desktopRuntime": {
+              "type": "string",
+              "default": ""
+            },
+            "aiIntegration": {
+              "type": "string",
+              "default": ""
+            },
+            "spaBridge": {
+              "type": "string",
+              "default": ""
+            },
+            "styling": {
+              "type": "string",
+              "default": ""
+            },
+            "tooling": {
+              "type": "string",
+              "default": ""
+            },
+            "testing": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        },
+        "environments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "development",
+            "staging",
+            "production"
+          ]
+        },
+        "workflow": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "branchStrategy": {
+              "type": "string",
+              "enum": [
+                "trunk-based",
+                "github-flow",
+                "git-flow"
+              ],
+              "default": "trunk-based"
+            },
+            "pullRequestsRequired": {
+              "type": "boolean",
+              "default": true
+            },
+            "minimumReviewers": {
+              "type": "number",
+              "default": 1
+            },
+            "codeOwners": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [],
+              "description": "Optional GitHub code owners. Only compiled when project.governance.generateCodeowners is true."
+            },
+            "testing": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "required",
+                    "optional",
+                    "none"
+                  ],
+                  "default": "required"
+                },
+                "integration": {
+                  "type": "string",
+                  "enum": [
+                    "required",
+                    "optional",
+                    "none"
+                  ],
+                  "default": "required"
+                },
+                "e2e": {
+                  "type": "string",
+                  "enum": [
+                    "required",
+                    "optional",
+                    "none"
+                  ],
+                  "default": "optional"
+                }
+              }
+            },
+            "deployment": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "stagingAutomatic": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "productionApprovalRequired": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "stagingCommand": {
+                  "type": "string",
+                  "default": "",
+                  "description": "Shell command that deploys to staging. Empty omits deployment automation."
+                },
+                "productionCommand": {
+                  "type": "string",
+                  "default": "",
+                  "description": "Shell command that deploys to production. Empty omits deployment automation."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "description": "ISO timestamp. Set by the builder on export."
+    },
+    "updatedAt": {
+      "type": "string",
+      "description": "ISO timestamp. Set by the builder on export."
+    }
+  },
+  "$defs": {
+    "joinPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "How a stage or group with several inbound branches decides it is ready to run.",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "all",
+            "any",
+            "n_of_m"
+          ],
+          "description": "all = wait for every branch (AND join); any = first finished branch starts it; n_of_m = starts once `threshold` branches finish.",
+          "default": "all"
+        },
+        "threshold": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Branches required when mode is n_of_m. Ignored otherwise.",
+          "default": 1
+        }
+      }
+    }
+  }
+}

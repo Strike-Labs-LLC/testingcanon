@@ -1,0 +1,45 @@
+# Which agent handles which stage, and how work is routed.
+platform: github
+agents:
+  - slug: bug-triage
+    file: .github/agents/01-bug-triage.agent.md
+    role: product_manager
+    model: google/gemini-3.6-flash
+    label: "Product Manager"
+  - slug: coder
+    file: .github/agents/02-coder.agent.md
+    role: coder
+    model: google/gemini-3.6-flash
+    label: "Coder"
+  - slug: code-reviewer
+    file: .github/agents/03-code-reviewer.agent.md
+    role: code_reviewer
+    model: google/gemini-3.6-flash
+    label: "Code Reviewer"
+  - slug: fix-verification
+    file: .github/agents/04-fix-verification.agent.md
+    role: tester
+    model: google/gemini-3.6-flash
+    label: "Tester"
+  - slug: bug-closeout
+    file: .github/agents/00-bug-closeout.agent.md
+    role: orchestrator
+    model: google/gemini-3.6-flash
+    label: "Engineering Orchestrator"
+human_gates:
+  []
+routing:
+  assignment_api: >-
+    Assign an issue to a custom agent with the GitHub REST or GraphQL Copilot assignment
+    endpoint, passing the target repository, base branch, custom agent slug, and model.
+  rules:
+    - when_stage: bug-triage
+      custom_agent: bug-triage
+    - when_stage: coder
+      custom_agent: coder
+    - when_stage: code-reviewer
+      custom_agent: code-reviewer
+    - when_stage: fix-verification
+      custom_agent: fix-verification
+    - when_stage: bug-closeout
+      custom_agent: bug-closeout

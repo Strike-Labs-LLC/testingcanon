@@ -1,0 +1,25 @@
+# Security and audit posture, generated from the SDLC blueprint.
+security:
+  secret_scanning: required
+  dependency_scanning: required
+  static_analysis: none
+audit:
+  log: .sdlc/audit/agent-activity.log
+  events:
+    - session_start
+    - user_prompt_submitted
+    - post_tool_use
+    - agent_stop
+    - error
+change_control:
+  protected_paths:
+    - AGENTS.md
+    - .github/agents/**
+    - .github/hooks/**
+    - .github/workflows/**
+    - .sdlc/**
+  human_approval_required: true
+documentation:
+  architecture: required
+  api: required
+  runbook: optional
