@@ -2,7 +2,8 @@
 // step workflow. Every run is a repository object — no external state store.
 
 import { createRun } from "./engine.mjs";
-import { loadGraph, createRunIssue, dispatchWorkflow, setOutput, comment } from "./state.mjs";
+import { loadGraph, createRunIssue, dispatchWorkflow, setOutput, comment, writeRun, addLabel, runtimeLabel } from "./state.mjs";
+import { runPreflight } from "./preflight.mjs";
 
 function arg(name, fallback = "") {
   const index = process.argv.indexOf(`--${name}`);
@@ -45,8 +46,29 @@ async function main() {
     ].join("\n"),
   );
 
+  const preflight = await runPreflight(graph, issue.number);
+  if (!preflight.ok) {
+    run.status = "failed";
+    await writeRun(issue.number, graph, run);
+    await comment(
+      issue.number,
+      [
+        "## Preflight failed",
+        "",
+        ...preflight.failures.map((failure) => `- ${failure}`),
+        "",
+        "Fix these repository prerequisites, then start a new run.",
+      ].join("\n"),
+    );
+    await addLabel(issue.number, runtimeLabel("run-failed"));
+    throw new Error(`Canon preflight failed: ${preflight.failures.join("; ")}`);
+  }
+  await comment(issue.number, "## Preflight passed\n\nGitHub access, the Canon App, labels, environments, rulesets, and agent configuration are ready.");
+
   setOutput("issue", String(issue.number));
-  await dispatchWorkflow("orchestration-step.yml", { run_issue: String(issue.number) });
+  await dispatchWorkflow(process.env.CANON_STEP_WORKFLOW || "orchestration-step.yml", {
+    run_issue: String(issue.number),
+  });
   console.log(`Run issue #${issue.number} created.`);
 }
 

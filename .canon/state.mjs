@@ -21,6 +21,9 @@ const token = () => process.env.GITHUB_TOKEN || "";
  */
 export const CANON_ROOT = process.env.CANON_ROOT || ".canon";
 export const RUN_LABEL = process.env.CANON_RUN_LABEL || "canon-run";
+export const START_LABEL = process.env.CANON_START_LABEL || "canon:start";
+export const LABEL_SUFFIX = process.env.CANON_LABEL_SUFFIX || "";
+export const runtimeLabel = (name) => `${name}${LABEL_SUFFIX}`;
 export const RESULT_MARKER = "canon:result";
 export const RUN_BLOCK_START = "<!-- canon:run -->";
 export const RUN_BLOCK_END = "<!-- /canon:run -->";
@@ -138,7 +141,7 @@ export async function createRunIssue(graph, run, title) {
   });
 }
 
-export const CONFLICT_LABEL = "resource-conflict";
+export const CONFLICT_LABEL = runtimeLabel("resource-conflict");
 
 /**
  * Open a human-escalation issue, or return the open one that already exists.
@@ -324,8 +327,21 @@ export function resultComment(payload, visible) {
   return `${visible}\n\n<!-- ${RESULT_MARKER} ${JSON.stringify(payload)} -->`;
 }
 
+/**
+ * The agent's real answer, rendered into the run issue.
+ *
+ * A one-line summary reads like a template; the run should show what the agent
+ * actually wrote. Long responses are folded so the thread stays readable.
+ */
+export function responseSection(text, { title = "Response" } = {}) {
+  const body = String(text ?? "").trim();
+  if (!body) return "";
+  if (body.length <= 1200) return `${body}`;
+  return `<details><summary>${title}</summary>\n\n${body}\n\n</details>`;
+}
+
 export async function dispatchWorkflow(workflowFile, inputs) {
-  const ref = process.env.GITHUB_REF_NAME || "main";
+  const ref = process.env.CANON_DEFAULT_BRANCH || "main";
   await gh(`/repos/${REPO}/actions/workflows/${workflowFile}/dispatches`, {
     method: "POST",
     body: JSON.stringify({ ref, inputs }),

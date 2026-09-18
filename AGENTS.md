@@ -6,7 +6,7 @@ regenerate — do not hand-edit this file.
 
 ## Mission
 
-John’s Flow #5 orchestration flow.
+John’s Flow #1 orchestration flow.
 
 ## Repository architecture
 
@@ -19,7 +19,7 @@ John’s Flow #5 orchestration flow.
 - AI integration: None
 - Styling: Tailwind CSS
 - Default branch: `main`
-- Environments: development, staging, production
+- Environments: development, staging, production, momma
 
 ## Canonical tool names
 
@@ -57,7 +57,7 @@ stage is allowed to return.
 - `outcome` decides which connector the run takes next.
 - `summary` is written to the run issue.
 - `route` names the target stages for expression-based branches; leave it empty otherwise.
-- Everything before the block is saved as the stage artifact under `.canon/flows/beta-9de674/artifacts/`.
+- Everything before the block is saved as the stage artifact under `.canon/artifacts/`.
 
 ## Source-of-truth hierarchy
 
@@ -73,24 +73,21 @@ When sources disagree, the higher entry wins:
 
 ## SDLC lifecycle
 
-1. **Bug Triage** — Product Manager
-2. **Coder** — Coder
-3. **Code Reviewer** — Code Reviewer
-4. **Fix Verification** — Tester
-5. **Bug Closeout** — Engineering Orchestrator
+1. **Feature Coder** — Coder
+2. **Code Reviewer** — Code Reviewer
+3. **Test Suite Runner** — Tester
+4. **Deployment Runner** — DevOps Deploy
 
 ### Transitions
 
-- Bug Triage → Coder — Always (always)
-- Coder → Code Reviewer — Always (split (parallel))
-- Coder → Fix Verification — Always (split (parallel))
-- Code Reviewer → Bug Closeout — If approved (conditional)
-- Fix Verification → Bug Closeout — If passed (conditional)
-- Code Reviewer → Coder — If changes required (return (loop back))
-- Fix Verification → Coder — If failed (return (loop back))
+- Feature Coder → Code Reviewer — Always (always)
+- Code Reviewer → Test Suite Runner — If approved (conditional)
+- Code Reviewer → Feature Coder — If changes required (return (loop back))
+- Test Suite Runner → Deployment Runner — If passed (conditional)
+- Test Suite Runner → Feature Coder — If failed (return (loop back))
 
-Pipeline start: **Bug Triage**
-Pipeline end: **Bug Closeout**
+Pipeline start: **Feature Coder**
+Pipeline end: **Deployment Runner**
 
 ## Definition of Ready
 
@@ -120,14 +117,14 @@ A work item may enter implementation only when all of the following are true:
 - Tests: unit (required), integration (required), e2e (optional).
 - Security scanning: secret scanning (required), dependency scanning (required).
 - Documentation: architecture (required), api (required), runbook (optional).
-- Production deployments require explicit human approval.
+- Production deployments are automatic once gates pass.
 - Staging deploys automatically from the default branch.
 
 ## Agent authority boundaries
 
 - Agents may read the repository, propose changes, open pull requests, and comment.
 - Agents may not merge to `main` without the approvals defined above.
-- Agents may not deploy to production without recorded human approval.
+- Agents may not deploy to production.
 - Agents may not modify `AGENTS.md`, `.github/agents/`, `.github/hooks/`, or `.sdlc/` as part of feature work.
 - Agents may not add, rotate, or print secrets.
 - Agents may not disable tests, linters, or security checks to make a build pass.
@@ -152,8 +149,7 @@ or when the same stage fails twice for the same reason.
 
 ## Agent roster
 
-- `.github/agents/01-bug-triage.agent.md` — Bug Triage (Product Manager)
-- `.github/agents/02-coder.agent.md` — Coder (Coder)
-- `.github/agents/03-code-reviewer.agent.md` — Code Reviewer (Code Reviewer)
-- `.github/agents/04-fix-verification.agent.md` — Fix Verification (Tester)
-- `.github/agents/00-bug-closeout.agent.md` — Bug Closeout (Engineering Orchestrator)
+- `.github/agents/01-feature-coder.agent.md` — Feature Coder (Coder)
+- `.github/agents/02-code-reviewer.agent.md` — Code Reviewer (Code Reviewer)
+- `.github/agents/03-test-suite-runner.agent.md` — Test Suite Runner (Tester)
+- `.github/agents/04-deployment-runner.agent.md` — Deployment Runner (DevOps Deploy)

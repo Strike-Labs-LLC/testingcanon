@@ -9,23 +9,20 @@
 - Tests: unit (required), integration (required), e2e (optional).
 - Security scanning: secret scanning (required), dependency scanning (required).
 - Documentation: architecture (required), api (required), runbook (optional).
-- Production deployments require explicit human approval.
+- Production deployments are automatic once gates pass.
 - Staging deploys automatically from the default branch.
 
 ## Stages
 
-1. Bug Triage — Product Manager
-2. Coder — Coder
-3. Code Reviewer — Code Reviewer
-4. Fix Verification — Tester
-5. Bug Closeout — Engineering Orchestrator
+1. Feature Coder — Coder
+2. Code Reviewer — Code Reviewer
+3. Test Suite Runner — Tester
+4. Deployment Runner — DevOps Deploy
 
 ## Transitions
 
-- Bug Triage → Coder: Always
-- Coder → Code Reviewer: Always
-- Coder → Fix Verification: Always
-- Code Reviewer → Bug Closeout: If approved
-- Fix Verification → Bug Closeout: If passed
-- Code Reviewer → Coder: If changes required
-- Fix Verification → Coder: If failed
+- Feature Coder → Code Reviewer: Always
+- Code Reviewer → Test Suite Runner: If approved
+- Code Reviewer → Feature Coder: If changes required
+- Test Suite Runner → Deployment Runner: If passed
+- Test Suite Runner → Feature Coder: If failed

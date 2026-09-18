@@ -125,7 +125,9 @@ async function applyDecision({ issueNumber, actor, decision, note, sha }) {
     `Recorded **${decision.replace(/_/g, " ")}** for ${stage.name} by @${actor} (native PR review). Continuing the run.`,
   );
   if (run.status === "running") {
-    await dispatchWorkflow("orchestration-step.yml", { run_issue: String(issueNumber) });
+    await dispatchWorkflow(process.env.CANON_STEP_WORKFLOW || "orchestration-step.yml", {
+      run_issue: String(issueNumber),
+    });
   }
 }
 

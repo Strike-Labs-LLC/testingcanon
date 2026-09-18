@@ -8,11 +8,10 @@ Closes #
 
 ## Pipeline gates
 
-1. [ ] Bug Triage — Product Manager
-2. [ ] Coder — Coder
-3. [ ] Code Reviewer — Code Reviewer
-4. [ ] Fix Verification — Tester
-5. [ ] Bug Closeout — Engineering Orchestrator
+1. [ ] Feature Coder — Coder
+2. [ ] Code Reviewer — Code Reviewer
+3. [ ] Test Suite Runner — Tester
+4. [ ] Deployment Runner — DevOps Deploy
 
 ## Definition of Done
 
@@ -21,7 +20,7 @@ Closes #
 - [ ] Tests: unit (required), integration (required), e2e (optional).
 - [ ] Security scanning: secret scanning (required), dependency scanning (required).
 - [ ] Documentation: architecture (required), api (required), runbook (optional).
-- [ ] Production deployments require explicit human approval.
+- [ ] Production deployments are automatic once gates pass.
 - [ ] Staging deploys automatically from the default branch.
 - [ ] Documentation affected by this change is updated
 - [ ] Rollback plan recorded for any migration

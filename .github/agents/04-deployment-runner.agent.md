@@ -1,8 +1,8 @@
 ---
 name: deployment-runner
 description: "Deploys the verified change and confirms health."
-model: "Gemini 3.6 Flash"
-tools: [read, search, edit, shell, github/get_pull_request, github/list_pull_requests, github/add_issue_comment]
+model: "gemini-3.6-flash"
+tools: [read, search, edit, shell, github/get_pull_request, github/list_pull_requests]
 disable-model-invocation: true
 ---
 
@@ -33,11 +33,7 @@ The deployment is healthy, smoke tests pass, and the rollback path is confirmed.
 
 ## Outcomes
 
-State exactly one outcome at the end of your response, using this format:
-
-```text
-STATUS: <OUTCOME>
-```
+End your response with the machine-readable `canon-result` block supplied in the run brief. Use exactly one of this stage's allowed outcomes.
 
 - This is a terminal stage. Report completion and stop.
 

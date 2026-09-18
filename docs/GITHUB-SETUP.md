@@ -54,9 +54,10 @@ Without this ruleset the pipeline is advisory only: anything can push directly t
 
 ## 3. Environments and approval authority
 
-- **development (Bug triage fix verify)** — deployments allowed from `main`
-- **staging (Bug triage fix verify)** — deployments allowed from `main`
-- **production (Bug triage fix verify)** — required reviewers: **unresolved — set an approver on the human release gate**; protected branches only; prevent self-review on
+- **development** — deployments allowed from `main`
+- **staging** — deployments allowed from `main`
+- **production** — required reviewers: **unresolved — set an approver on the human release gate**; protected branches only; prevent self-review on
+- **momma** — deployments allowed from `main`
 
 Approval authority per gate (`.sdlc/approval-policy.json`):
 
@@ -81,13 +82,13 @@ the referencing workflow fail at apply time, so all of them are created.
 - `ready-for-development` — Design approved
 - `dependencies` — Dependency updates
 - `ci` — Pipeline changes
-- `canon:start:beta-9de674` — Starts a Canon orchestration run (Bug triage fix verify)
-- `canon-run:beta-9de674` — Canon orchestration run (Bug triage fix verify)
-- `awaiting-human:beta-9de674` — A human gate is open on this run (Bug triage fix verify)
-- `run-completed:beta-9de674` — Canon run finished successfully (Bug triage fix verify)
-- `run-failed:beta-9de674` — Canon run failed (Bug triage fix verify)
-- `resource-conflict:beta-9de674` — Two stages own the same resource in a run (Bug triage fix verify)
-- `sla-breached:beta-9de674` — A human gate passed its response time (Bug triage fix verify)
+- `canon:start` — Starts a Canon orchestration run
+- `canon-run` — Canon orchestration run
+- `awaiting-human` — A human gate is open on this run
+- `run-completed` — Canon run finished successfully
+- `run-failed` — Canon run failed
+- `resource-conflict` — Two stages own the same resource in a run
+- `sla-breached` — A human gate passed its response time
 - `design-approved` — Technical approach accepted
 - `design-changes-required` — Technical approach needs rework
 - `changes-requested` — Review requested changes
@@ -126,7 +127,7 @@ Settings → Code security:
 - Every workflow in `.github/workflows/` is an ordinary deterministic Actions workflow. There is
   no second compiler and no generated lock files to keep in sync.
 - Agent jobs check out read-only with credentials not persisted. All writes go through the
-  trusted publisher job in `.canon/flows/beta-9de674/publish.mjs`, which validates each patch before committing.
+  trusted publisher job in `.canon/publish.mjs`, which validates each patch before committing.
 - Create the `COPILOT_GITHUB_TOKEN` secret (a PAT or GitHub App token with Copilot access).
 - Confirm Copilot coding agent is enabled for `YOUR-ORG/YOUR-REPO` (Settings → Copilot).
 
@@ -145,7 +146,7 @@ assignment options:
 gh api --method POST repos/YOUR-ORG/YOUR-REPO/issues/ISSUE_NUMBER/assignees \
   -f "assignees[]=copilot-swe-agent[bot]" \
   -f "agent_assignment[base_branch]=main" \
-  -f "agent_assignment[custom_agent]=bug-triage"
+  -f "agent_assignment[custom_agent]=feature-coder"
 ```
 
 Stage-to-agent mapping lives in `.sdlc/agent-routing.yml`.

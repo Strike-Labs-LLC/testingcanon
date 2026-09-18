@@ -1,8 +1,9 @@
 ---
 name: feature-coder
 description: "Implements the requested change and opens the pull request."
-model: "Gemini 3.6 Flash"
-tools: [read, search, edit, shell, github/create_pull_request]
+model: "gemini-3.6-flash"
+tools: [read, search, edit, shell]
+disable-model-invocation: true
 ---
 
 
@@ -33,11 +34,7 @@ The branch builds, the suite passes locally, and the pull request describes the 
 
 ## Outcomes
 
-State exactly one outcome at the end of your response, using this format:
-
-```text
-STATUS: <OUTCOME>
-```
+End your response with the machine-readable `canon-result` block supplied in the run brief. Use exactly one of this stage's allowed outcomes.
 
 - Always → hand off to **Code Reviewer** (always)
 

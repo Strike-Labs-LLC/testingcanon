@@ -1,10 +1,10 @@
-# Bug triage fix verify — product overview
+# Autonomous code change — product overview
 
 > Scaffold generated from the SDLC blueprint. Fill in the sections marked TODO.
 
 ## What this is
 
-John’s Flow #5 orchestration flow.
+John’s Flow #1 orchestration flow.
 
 ## Users
 

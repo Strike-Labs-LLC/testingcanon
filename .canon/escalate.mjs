@@ -3,14 +3,14 @@
 // Runs on a schedule. Any human stage that has been waiting longer than its agreed
 // response time is escalated once and the run is labelled so it is visible.
 
-import { loadGraph, readRun, writeRun, comment, addLabel, gh } from "./state.mjs";
+import { loadGraph, readRun, writeRun, comment, addLabel, gh, RUN_LABEL, runtimeLabel } from "./state.mjs";
 import { stageById } from "./engine.mjs";
 
 const REPO = process.env.GITHUB_REPOSITORY || "";
 
 async function main() {
   const graph = loadGraph();
-  const issues = await gh(`/repos/${REPO}/issues?labels=canon-run&state=open&per_page=100`);
+  const issues = await gh(`/repos/${REPO}/issues?labels=${encodeURIComponent(RUN_LABEL)}&state=open&per_page=100`);
 
   for (const issue of issues) {
     let run;
@@ -37,7 +37,7 @@ async function main() {
           stage.escalateTo ? `Escalating to ${stage.escalateTo}.` : "No escalation contact is set.",
         ].join("\n"),
       );
-      await addLabel(issue.number, "sla-breached");
+      await addLabel(issue.number, runtimeLabel("sla-breached"));
     }
 
     if (changed) await writeRun(issue.number, graph, run);

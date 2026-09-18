@@ -5,6 +5,10 @@ name: Orchestration step
 env:
   CANON_ROOT: .canon
   CANON_RUN_LABEL: canon-run
+  CANON_START_LABEL: canon:start
+  CANON_LABEL_SUFFIX: 
+  CANON_STEP_WORKFLOW: orchestration-step.yml
+  CANON_DEFAULT_BRANCH: main
 
 on:
   workflow_dispatch:
@@ -53,6 +57,7 @@ jobs:
     needs: plan
     if: needs.plan.outputs.has_agents == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     # Compiled from stage authority. Unlisted permissions are none, so a stage
     # cannot exercise a capability it was not granted in Canon.
     permissions:
@@ -89,13 +94,13 @@ jobs:
         env:
           CANON_OUTBOX: ${{ env.CANON_ROOT }}/outbox
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_AGENT_PROVIDER: ${{ vars.CANON_AGENT_PROVIDER }}
           CANON_AGENT_COMMAND: ${{ vars.CANON_AGENT_COMMAND }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CANON_CODING_AGENT: ${{ vars.CANON_CODING_AGENT }}
           CANON_CODING_AGENT_COMMAND: ${{ vars.CANON_CODING_AGENT_COMMAND }}
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
           GITHUB_COPILOT_PROMPT_MODE_REPO_HOOKS: "true"
           CANON_RUN_ISSUE: ${{ inputs.run_issue }}
           CANON_STAGE: ${{ matrix.stage }}
@@ -121,6 +126,7 @@ jobs:
     needs: plan
     if: needs.plan.outputs.has_gated == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     environment: ${{ matrix.environment }}
     permissions:
       contents: read
@@ -154,13 +160,13 @@ jobs:
         env:
           CANON_OUTBOX: ${{ env.CANON_ROOT }}/outbox
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_AGENT_PROVIDER: ${{ vars.CANON_AGENT_PROVIDER }}
           CANON_AGENT_COMMAND: ${{ vars.CANON_AGENT_COMMAND }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CANON_CODING_AGENT: ${{ vars.CANON_CODING_AGENT }}
           CANON_CODING_AGENT_COMMAND: ${{ vars.CANON_CODING_AGENT_COMMAND }}
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
           GITHUB_COPILOT_PROMPT_MODE_REPO_HOOKS: "true"
           CANON_RUN_ISSUE: ${{ inputs.run_issue }}
           CANON_STAGE: ${{ matrix.stage }}

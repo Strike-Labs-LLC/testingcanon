@@ -6,7 +6,7 @@
     "name": "Auto Bug Fixer",
     "hash": "canon1:dd5fd58de02f51d1"
   },
-  "packageSha256": "e1175a1f5a937e6a71a1064e8863b8887ca1452f77011bc2681ddd025c43f9d9",
+  "packageSha256": "e24246577917fa202a2763e6e8c2042fc4f83a0523de6f5eb4237b6242b54c6d",
   "signed": false,
   "note": "Unsigned local digest. A Canon-held signature is required before this package is sellable.",
   "files": [
@@ -16,35 +16,35 @@
     },
     {
       "path": ".canon/canon-token.mjs",
-      "sha256": "e986b5c226272a1cf34d5ff41ac7dbaae03b953cda1502bb14ce65a52888bbec"
+      "sha256": "14cbe17336ac784f4ec290ca9b1cc1ae03a9e75ae02d48c7ccac86ea01cc72c5"
     },
     {
       "path": ".canon/coding-agent.mjs",
-      "sha256": "86e50067fa7bb3ca2014451337d5a1a533371234118dfde1d3b001edc8c4e150"
+      "sha256": "6ed92b3e22ceb8d226c4e9a78f87959b9755a0cea30de819b83989ca4cf43904"
     },
     {
       "path": ".canon/engine.mjs",
-      "sha256": "fa07114acc6d630c9094ed5b13dfdf0f7a3587f0fbdc065bff0e64f9e3ddfb72"
+      "sha256": "50619362cb43ec038fb5321f11c00eaa3a1b3a2970e77cbb54bee16a984cff06"
     },
     {
       "path": ".canon/escalate.mjs",
-      "sha256": "2bdee4ab985fa7c880a4ca601772b13f99fdf88d27b70a2e3fb5fd800aa4aa5c"
+      "sha256": "0844e21740c1cd2a4874268dcf7f717aaa04dc4ae01fca1f96a5eb7c29cf78da"
     },
     {
       "path": ".canon/graph.json",
-      "sha256": "c544c50886e2422de58b2749b41a8abb849bb89aef071e0fadfc8c68a493ed91"
+      "sha256": "741493ece87830cc1f2af3b2205dbe359ca58681951f26ed09f8dd3eb2faf23f"
     },
     {
       "path": ".canon/human.mjs",
-      "sha256": "d89a039444993b414d33e12c784f6c9f70a8954e132039abb4ceb3ff2f6940d1"
+      "sha256": "595076cc487617811834f62ab6eb14c83e3a5134d2f38ae8f3b01386691f93f1"
     },
     {
       "path": ".canon/identity.json",
-      "sha256": "ed70ffb522f8f4df0130c22a1dc1e71499fce82013b0c42522457b0eca381cda"
+      "sha256": "3589d4810b23bffeedfde9863693e2b6fd39bd59c86c84460a84f7985d0bcc7c"
     },
     {
       "path": ".canon/install.mjs",
-      "sha256": "3de8d57d53397996a23790a9846775508b40a5370d9ce97b7d27a0decdea448e"
+      "sha256": "300e5ef6d8f6989122d7a7100532fbc801ad3dd2cadb5844c7afa16bcd9de8cb"
     },
     {
       "path": ".canon/invoke-agent.mjs",
@@ -63,12 +63,16 @@
       "sha256": "fe7c119c45840880604bb88015460a93420d48525401d8cdac5c8f1311ffc749"
     },
     {
+      "path": ".canon/preflight.mjs",
+      "sha256": "86f3253724c4bf4c0346df96dc4ab1bd2640eeb2720fd44d2fc3b85d0395fd1a"
+    },
+    {
       "path": ".canon/publish.mjs",
-      "sha256": "6a1260709023010e12a0828d1c2a60e443b9348ae13aad702a840c10f98719d5"
+      "sha256": "9fd57ab7750d13121422cadf8c2047ab75f37ab5c3d2037d37279c1bd410addf"
     },
     {
       "path": ".canon/README.md",
-      "sha256": "0a9a236156b90d4a7827829cd9b4dc7e6e2831495baf12d96649cce0fd0418b9"
+      "sha256": "efb6dde44d0fe08780984dd0698b51894d865b7ccb740161a1a0c3d4425c179d"
     },
     {
       "path": ".canon/release.mjs",
@@ -88,19 +92,19 @@
     },
     {
       "path": ".canon/run-stage.mjs",
-      "sha256": "08b45a8667910d2d4336c1c43a2475f4fb562d39b2d5fc7b6a677181f04cbb4f"
+      "sha256": "61043deb65926b5aaa832badfb5b5c22d54a57b009d243d6dc801c60daa304b2"
     },
     {
       "path": ".canon/start-run.mjs",
-      "sha256": "67002d706a5cfbb610d72cf3a2ed1c6cd96c57d42a2afdfd28ec4049b81e76bc"
+      "sha256": "581f4df7b654df1348d3b7e2039b6f6920ea1e44b313a12682c20c4aea99d196"
     },
     {
       "path": ".canon/state.mjs",
-      "sha256": "2a9793ac7fd51fcbbbfbd3d5ea1dc8ae19e28c7c3d18193bf822c110d86d9ef5"
+      "sha256": "4f6d761d3ca05da95b00164e8bb9c4464318a886da3ed3d212124ec7ba3988ac"
     },
     {
       "path": ".canon/tick.mjs",
-      "sha256": "9ea8e94b0cec7cd19edc9be2acf9dfb5b6d2af6f056e145c398f5c5a690c9979"
+      "sha256": "938116a6ffbd70ffb7a397a3ac11aee7a09120a71e7a1c2454738d294b940865"
     },
     {
       "path": ".canon/uninstall.mjs",
@@ -112,19 +116,19 @@
     },
     {
       "path": ".github/agents/01-feature-coder.agent.md",
-      "sha256": "6837b486595c462e13a8589bfa0e21a1d6de6ba595901c691e83fad99cf4c2e9"
+      "sha256": "f461e920340ee27ca8bac8edda83cf1b443c8d7bfab69fed369e21f3fde1fbac"
     },
     {
       "path": ".github/agents/02-code-reviewer.agent.md",
-      "sha256": "960bc0f16b1790f165dfd67bb35b9f6882ebcd02afc65a2619fcb6877431b11b"
+      "sha256": "6d7134e8a83afbc0f101e6b82da0365ce2ff15e8b6570d551ca4c4bbae6761a1"
     },
     {
       "path": ".github/agents/03-test-suite-runner.agent.md",
-      "sha256": "059b5289cc634c99eb1c7fce1b3d30f502f71af65b7f4f88a0f003b61f9d8061"
+      "sha256": "3127fb8faa6295621ccdee8c7925f6e452585527237c1fb82ea05d3b16ef50c0"
     },
     {
       "path": ".github/agents/04-deployment-runner.agent.md",
-      "sha256": "cdffee9cebe72f0a5ac54cf1fd0bcd844f2caaed7f641ad47c6d9d10d6e2c9eb"
+      "sha256": "6ace1b0d0f1d892131c590bf45aefd1fdbbdb5ab79c20521e405981998124a48"
     },
     {
       "path": ".github/copilot-instructions.md",
@@ -152,19 +156,19 @@
     },
     {
       "path": ".github/hooks/scripts/check-command.sh",
-      "sha256": "062f502906df95b9012d7be4145cb10cc962ba9c7e2ec55705bcc4bfb92e226d"
+      "sha256": "1e963a56963c21c0188370ac50d517324b5b198682cafc1df66b224287ce0941"
     },
     {
       "path": ".github/hooks/scripts/check-protected-paths.sh",
-      "sha256": "6f3103e79fd2a38c4bb0033f1f4367342ffaf126a118c4868b886ef4868e9bcb"
+      "sha256": "a4d322b66193c9772554adfdd55afc350232e210ce5ef52ec7effdc01acc6a2c"
     },
     {
       "path": ".github/hooks/scripts/deny-destructive-data.sh",
-      "sha256": "f1d4e047552c84a046c33ab64a795d10b0a5810433f300ecdd4a4332e51b5ece"
+      "sha256": "1da8746b9f28388f191a0eef560685b0f1419c428c7a7fd9c5828df823ab363b"
     },
     {
       "path": ".github/hooks/scripts/deny-secret-writes.sh",
-      "sha256": "76d8b21b368be2d477c66162d3903e478fa3993c6a834173d677191bf7ecf96a"
+      "sha256": "ec94f5b8b30603f7a730db953e2bbe084954d15793d9200077640b58e074d548"
     },
     {
       "path": ".github/hooks/scripts/require-tests.sh",
@@ -196,7 +200,7 @@
     },
     {
       "path": ".github/instructions/infrastructure.instructions.md",
-      "sha256": "a3a0b38c08ed5d8ec5b108934f9a5f6397de6166dcf11ff82d60c9aaa0191b24"
+      "sha256": "fff5f512fa3961c217e1e4fc0846bca6bfa00a421c0502816a30483352d3f012"
     },
     {
       "path": ".github/instructions/security.instructions.md",
@@ -292,19 +296,19 @@
     },
     {
       "path": ".github/workflows/orchestration-escalate.yml",
-      "sha256": "95b0cad5b15a34a14a10aaf4793b6df806a1f5611d2f0c11dbd7e6550edef7be"
+      "sha256": "b386f19b48a8b5a9c82bc767228de25cf35c5d260f789ba9f41f286a64be9e2f"
     },
     {
       "path": ".github/workflows/orchestration-human.yml",
-      "sha256": "2d841e7b9634a154f0efb2b5a0d3efcd0a55b5a50b70f1e77374c09cdd46505c"
+      "sha256": "5d24becbf02f219dea668f60775a364a521e8ea8b43a173d61a0b9418906aa19"
     },
     {
       "path": ".github/workflows/orchestration-pipeline.yml",
-      "sha256": "d666b763fd807ff6e9cd0d22bf4027218d301793fbdf4dfce1fe4a0ffb27a043"
+      "sha256": "a2b9cb3c7feca3288f037b8a4fe548b7050f64cbeb1463216fefe01b97016fde"
     },
     {
       "path": ".github/workflows/orchestration-step.yml",
-      "sha256": "ad12ffb97286c01caa1d3e47a0acab85ae7cbf18bc6a6487b0d4ee018278f3ad"
+      "sha256": "78d7332b76041839867ea437df19a9809df1d52772a35162984c4bf34bab3be3"
     },
     {
       "path": ".github/workflows/release-guard.yml",
@@ -452,7 +456,7 @@
     },
     {
       "path": "INSTALL-GITHUB.md",
-      "sha256": "28b7db3dc324970b01c7abec8e0e4aff3e9601d8da2f20e85f473edcd8428be8"
+      "sha256": "1accc9d60468fcd0e0f0dc081ed876f9acdf12cd90bf87d1ba76e90db1858257"
     },
     {
       "path": "README.md",

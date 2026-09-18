@@ -503,6 +503,15 @@ export function recordOutcome(graph, run, stageId, result) {
   for (const edge of outbound(graph, stageId)) {
     if (!edgeMatches(edge, { ...result, outcome: state.outcome })) continue;
     if (edge.kind === "return") {
+      // Snapshot the rejecting stage before resetForward clears it. The fresh
+      // handoff must carry the review/test findings that caused the loop.
+      const returnEvidence = {
+        outcome: state.outcome,
+        summary: state.summary,
+        artifact: state.artifact,
+        evaluatedSha: state.evaluatedSha,
+        candidateSha: state.candidateSha,
+      };
       const count = (run.edgeCounts[edge.id] ?? 0) + 1;
       run.edgeCounts[edge.id] = count;
       const limit = edge.loopLimit ?? graph.defaultLoopLimit ?? 3;
@@ -513,6 +522,10 @@ export function recordOutcome(graph, run, stageId, result) {
       }
       resetForward(graph, run, edge.to);
       log(run, "loop-back", { stage: stageId, edge: edge.id, iteration: count });
+      satisfy(run, edge);
+      recordHandoff(run, edge, returnEvidence, stage);
+      taken.push(edge.id);
+      continue;
     }
     satisfy(run, edge);
     recordHandoff(run, edge, state, stage);

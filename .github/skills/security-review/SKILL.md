@@ -5,7 +5,7 @@ description: Assess a change for security and privacy risk.
 
 # Security review
 
-Applies to Bug triage fix verify (web application). Follow `AGENTS.md` first.
+Applies to Autonomous code change (web application). Follow `AGENTS.md` first.
 
 ## Procedure
 

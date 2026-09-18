@@ -1,8 +1,9 @@
 ---
 name: code-reviewer
 description: "Reviews the pull request for correctness, security, and coverage."
-model: "Gemini 3.6 Flash"
-tools: [read, search, github/add_issue_comment]
+model: "gemini-3.6-flash"
+tools: [read, search]
+disable-model-invocation: true
 ---
 
 
@@ -32,11 +33,7 @@ Every finding names a file and line and states the change required, and the revi
 
 ## Outcomes
 
-State exactly one outcome at the end of your response, using this format:
-
-```text
-STATUS: <OUTCOME>
-```
+End your response with the machine-readable `canon-result` block supplied in the run brief. Use exactly one of this stage's allowed outcomes.
 
 - If approved → hand off to **Test Suite Runner** (conditional)
 - If changes required → hand off to **Feature Coder** (return (loop back))

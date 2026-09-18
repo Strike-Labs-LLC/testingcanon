@@ -4,6 +4,10 @@ name: Orchestration escalation
 env:
   CANON_ROOT: .canon
   CANON_RUN_LABEL: canon-run
+  CANON_START_LABEL: canon:start
+  CANON_LABEL_SUFFIX: 
+  CANON_STEP_WORKFLOW: orchestration-step.yml
+  CANON_DEFAULT_BRANCH: main
 
 on:
   schedule:

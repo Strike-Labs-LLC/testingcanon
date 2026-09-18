@@ -9,13 +9,26 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { loadGraph, readRun, comment, resultComment, CANON_ROOT } from "./state.mjs";
+import {
+  loadGraph,
+  readRun,
+  comment,
+  resultComment,
+  responseSection,
+  CANON_ROOT,
+} from "./state.mjs";
 import { invokeCodingAgent } from "./coding-agent.mjs";
 import { stageById, forwardInbound, handoffsFor } from "./engine.mjs";
 import { allowedToWrite, normalizePath } from "./paths.mjs";
 
+const GIT_BUFFER = 8 * 1024 * 1024;
+
+function gitRaw(...args) {
+  return execFileSync("git", args, { encoding: "utf8", maxBuffer: GIT_BUFFER });
+}
+
 function git(...args) {
-  return execFileSync("git", args, { encoding: "utf8" }).trim();
+  return gitRaw(...args).trim();
 }
 
 /**
@@ -48,6 +61,29 @@ function checkoutCandidate(run) {
 }
 
 /**
+ * Restore the policy surface from the trusted default branch after checking out
+ * the candidate. A candidate may not weaken the hooks that govern its own run.
+ */
+function restoreTrustedPolicy() {
+  const branch = String(process.env.CANON_DEFAULT_BRANCH || "main").trim();
+  try {
+    git("fetch", "origin", `${branch}:refs/remotes/origin/${branch}`);
+  } catch {
+    // The checkout may already carry the remote ref.
+  }
+  for (const protectedPath of [".github/hooks", ".github/agents", ".github/copilot-instructions.md", ".github/instructions", "AGENTS.md"]) {
+    try {
+      git("checkout", `origin/${branch}`, "--", protectedPath);
+    } catch {
+      // Optional policy paths may not exist in older installs.
+    }
+  }
+  if (!fs.existsSync(".github/hooks")) {
+    throw new Error(`Trusted hooks are missing from the base branch ${branch}. Merge the Canon installation pull request before starting a run.`);
+  }
+}
+
+/**
  * Capture what the stage changed, as patches — never as pushes.
  *
  * This job holds no credential that can write to the repository. Everything the
@@ -66,7 +102,7 @@ function capturePatches(run, stage, outboxDir) {
     if (!contents.trim()) return null;
     fs.mkdirSync(outboxDir, { recursive: true });
     const target = path.join(outboxDir, file);
-    fs.writeFileSync(target, `${contents}\n`, "utf8");
+    fs.writeFileSync(target, contents, "utf8");
     return target;
   };
 
@@ -76,8 +112,18 @@ function capturePatches(run, stage, outboxDir) {
 
   const sourceFiles = names(sourceSpec);
   const artifactFiles = names(artifactSpec);
-  const sourcePatch = sourceFiles.length ? git("diff", "--cached", ...sourceSpec) : "";
-  const artifactPatch = artifactFiles.length ? git("diff", "--cached", ...artifactSpec) : "";
+  const sourcePatch = sourceFiles.length ? gitRaw("diff", "--cached", ...sourceSpec) : "";
+  let artifactBase = "";
+  try {
+    const branch = artifactBranch(run);
+    git("rev-parse", "--verify", `refs/remotes/origin/${branch}`);
+    artifactBase = `origin/${branch}`;
+  } catch {
+    artifactBase = "";
+  }
+  const artifactPatch = artifactFiles.length
+    ? gitRaw("diff", "--cached", ...(artifactBase ? [artifactBase] : []), ...artifactSpec)
+    : "";
 
   write(`${stage.id}.source.patch`, sourcePatch);
   write(`${stage.id}.artifacts.patch`, artifactPatch);
@@ -233,7 +279,7 @@ function upstreamContext(graph, run, stage) {
       ].join("\n"),
     );
   }
-  for (const edge of forwardInbound(graph, stage.id)) {
+  for (const edge of graph.edges.filter((candidate) => candidate.to === stage.id)) {
     const source = stageById(graph, edge.from);
     const state = run.stages[edge.from];
     if (!source || !state || state.status !== "done") continue;
@@ -250,6 +296,40 @@ function upstreamContext(graph, run, stage) {
     );
   }
   return sections.join("\n\n");
+}
+
+function candidateDiff(run) {
+  const base = String(run.baseSha ?? "").trim();
+  const candidate = String(run.candidateSha ?? "").trim();
+  if (!base || !candidate || base === candidate) return "";
+  try {
+    const diff = gitRaw("diff", "--no-ext-diff", `${base}..${candidate}`, "--", ".");
+    if (!diff) return "";
+    const limit = 80000;
+    return diff.length <= limit
+      ? `### Candidate diff\n\n\`\`\`diff\n${diff}\`\`\``
+      : `### Candidate diff\n\n_Diff truncated to the final ${limit} characters._\n\n\`\`\`diff\n${diff.slice(-limit)}\`\`\``;
+  } catch {
+    return "### Candidate diff\n\nThe candidate diff could not be loaded; do not approve without inspecting the checkout directly.";
+  }
+}
+
+/**
+ * The agent's own words, ready to be read in the run issue.
+ *
+ * The artifact file holds the full response, but nobody reads a file path in a
+ * comment thread. The ledger carries the real answer so a run looks like work
+ * happening, not a template being filled in. Long responses are tailed so one
+ * verbose stage cannot exceed GitHub's comment limit.
+ */
+const RESPONSE_LIMIT = 40000;
+
+function narrative(text) {
+  const body = String(text ?? "")
+    .replace(/```canon-result[\s\S]*?```/i, "")
+    .trim();
+  if (body.length <= RESPONSE_LIMIT) return body;
+  return `_Response truncated — the full text is in the artifact._\n\n${body.slice(-RESPONSE_LIMIT)}`;
 }
 
 function parseResult(text) {
@@ -292,6 +372,7 @@ async function main() {
   let evaluatedSha = "";
   try {
     evaluatedSha = checkoutCandidate(run);
+    restoreTrustedPolicy();
   } catch (error) {
     const reason = `Could not check out candidate commit ${String(run.candidateSha).slice(0, 12)}: ${
       error instanceof Error ? error.message : String(error)
@@ -339,6 +420,7 @@ async function main() {
     stage.produces ? `\nProduce: ${stage.produces.replace(/_/g, " ")}` : "",
     "",
     upstreamContext(graph, run, stage) || "No upstream artifacts — you are the first stage.",
+    stage.attestsCandidate ? candidateDiff(run) : "",
   ].join("\n");
 
   const dir = path.join(CANON_ROOT, "artifacts", run.runId, stage.id);
@@ -392,12 +474,17 @@ async function main() {
       : parsed
         ? `Outcome "${parsed.outcome}" is not one of: ${allowed}.`
         : "The agent did not return a canon-result block.";
+    // Show what the agent actually said, so a failure is diagnosable from the
+    // run issue instead of only from the workflow log.
+    const said = responseSection(narrative(text), { title: "What the agent said" });
     await publish(
       issueNumber,
       stage.id,
       resultComment(
         { ...provenance(run, stage), status: "failed", summary: reason },
-        `### ${stage.name} — failed\n\n${reason}`,
+        [`### ${stage.name} — failed`, "", reason, said ? `\n${said}` : ""]
+          .filter(Boolean)
+          .join("\n"),
       ),
     );
     process.exitCode = 1;
@@ -467,6 +554,9 @@ async function main() {
     sourcePatchHash: captured?.sourceHash ?? null,
     artifactPatchHash: captured?.artifactHash ?? null,
     route: parsed.route ?? [],
+    // The agent's real answer, carried to the publisher so the ledger shows the
+    // work rather than a one-line stub.
+    response: narrative(text),
   };
 
   if (OUTBOX) {
@@ -485,11 +575,13 @@ async function main() {
     issueNumber,
     stage.id,
     resultComment(
-      record,
+      { ...record, response: undefined },
       [
         `### ${stage.name} — ${parsed.outcome}`,
         "",
         parsed.summary ?? "",
+        "",
+        responseSection(record.response),
         "",
         `Artifact: \`${artifact}\``,
         evaluatedSha ? `Commit evaluated: \`${evaluatedSha.slice(0, 12)}\`` : "",

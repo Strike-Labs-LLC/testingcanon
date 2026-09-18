@@ -7,7 +7,7 @@
 // session that operates on the workspace.
 //
 // Configure with the repository variable CANON_CODING_AGENT:
-//   copilot  — GitHub Copilot CLI     (needs COPILOT_GITHUB_TOKEN)
+//   copilot  — GitHub Copilot CLI     (uses the Actions GITHUB_TOKEN)
 //   claude   — Claude Code            (needs ANTHROPIC_API_KEY)
 //   codex    — OpenAI Codex CLI       (needs OPENAI_API_KEY)
 //   command  — any other runner named by CANON_CODING_AGENT_COMMAND
@@ -35,7 +35,14 @@ const RUNNERS = {
     install: "npm i -g @github/copilot@1.0.80",
     secret: "COPILOT_GITHUB_TOKEN",
     build(prompt, policy, model) {
-      const args = ["-p", prompt, "--log-level", "error"];
+      const args = [
+        "-p",
+        "@-",
+        "--log-level",
+        "error",
+        "--secret-env-vars",
+        "GITHUB_TOKEN,COPILOT_GITHUB_TOKEN,ANTHROPIC_API_KEY,OPENAI_API_KEY",
+      ];
       if (model) args.push("--model", cliModel(model));
       if (policy.shell) args.push("--allow-tool", "shell");
       else args.push("--deny-tool", "shell");
@@ -52,7 +59,10 @@ const RUNNERS = {
       const allowed = ["Read", "Glob", "Grep"];
       if (policy.write) allowed.push("Edit", "Write");
       if (policy.shell) allowed.push("Bash");
-      const args = ["-p", prompt, "--permission-mode", policy.write ? "acceptEdits" : "plan"];
+      // `plan` blocks Bash even when the stage is explicitly allowed to run tests.
+      // `dontAsk` keeps the session non-interactive while the allow/deny lists
+      // below remain the authority boundary.
+      const args = ["-p", prompt, "--permission-mode", policy.write ? "acceptEdits" : "dontAsk"];
       if (model) args.push("--model", cliModel(model));
       args.push("--allowedTools", allowed.join(","));
       const denied = [];
@@ -85,14 +95,14 @@ function cliModel(model) {
 }
 
 function dropUnusedProviderSecrets(keep) {
-  for (const name of ["ANTHROPIC_API_KEY", "OPENAI_API_KEY", "COPILOT_GITHUB_TOKEN"]) {
+  for (const name of ["ANTHROPIC_API_KEY", "OPENAI_API_KEY", "COPILOT_GITHUB_TOKEN", "GITHUB_TOKEN"]) {
     if (name !== keep) delete process.env[name];
   }
 }
 
-function run(command, args, { cwd = process.cwd() } = {}) {
+function run(command, args, { cwd = process.cwd(), input = "" } = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { cwd, stdio: ["ignore", "pipe", "pipe"], shell: false });
+    const child = spawn(command, args, { cwd, stdio: ["pipe", "pipe", "pipe"], shell: false });
     let out = "";
     child.stdout.on("data", (chunk) => {
       const text = chunk.toString();
@@ -108,6 +118,7 @@ function run(command, args, { cwd = process.cwd() } = {}) {
     child.on("close", (code) =>
       code === 0 ? resolve(out) : reject(new Error(`${command} exited with code ${code}.`)),
     );
+    child.stdin.end(input);
   });
 }
 
@@ -166,7 +177,7 @@ export async function invokeCodingAgent({ promptFile, policy = {}, model = "" })
       `denied paths=${resolved.denyPaths.length})`,
   );
   try {
-    return await run(runner.bin, args);
+    return await run(runner.bin, args, { input: AGENT === "copilot" ? prompt : "" });
   } catch (error) {
     if (error && error.code === "ENOENT") {
       throw new Error(

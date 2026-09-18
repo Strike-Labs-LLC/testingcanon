@@ -44,12 +44,12 @@ Anything else is ignored and called out on the issue.
 
 | Setting | Where | Purpose |
 | --- | --- | --- |
-| `CANON_AGENT_PROVIDER` | Repository variable | `github-models` (default), `anthropic`, `openai`, or `command`. |
+| `CANON_AGENT_PROVIDER` | Repository variable | `anthropic`, `openai`, or `command`; there is no silent default. |
 | `CANON_AGENT_COMMAND` | Repository variable | CLI to run when the provider is `command`. |
 | `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` | Repository secret | Required only for those providers. |
 | `CANON_CODING_AGENT` | Repository variable | Coding agent for action stages: `copilot` (default), `claude`, `codex`, `command`. |
 | `CANON_CODING_AGENT_COMMAND` | Repository variable | CLI to run when the coding agent is `command`. |
-| `COPILOT_GITHUB_TOKEN` | Repository secret | Required by the default Copilot CLI coding agent. |
+| `COPILOT_GITHUB_TOKEN` | Protected workflow variable | The job's short-lived GitHub token, passed to Copilot CLI without exposing it in the prompt. |
 | `CANON_BROKER_URL` | Repository variable | Defaults to `https://usecanon.app/api/public/runtime/token`. Override only for a private Canon deployment. |
 
 ## Write authority

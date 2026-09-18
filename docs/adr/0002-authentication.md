@@ -5,7 +5,7 @@
 
 ## Context
 
-TODO: the authentication requirements for Bug triage fix verify.
+TODO: the authentication requirements for Autonomous code change.
 
 ## Decision
 

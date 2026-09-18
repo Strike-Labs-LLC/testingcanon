@@ -6,7 +6,7 @@
 > approval step on anything that deploys or deletes. Strike Labs is not liable for the
 > outcome. See `DISCLAIMER.md`.
 
-This package configures a GitHub repository to run the **Bug triage fix verify** pipeline you designed.
+This package configures a GitHub repository to run the **Autonomous code change** pipeline you designed.
 
 
 - Platform: GitHub
@@ -48,9 +48,9 @@ git checkout -b setup/ai-sdlc
 ### 3. Install with the Canon installer — do not rsync
 
 ```bash
-unzip ~/Downloads/bug-triage-fix-verify-github-package.zip -d /tmp/sdlc-package
-node /tmp/sdlc-package/.canon/flows/beta-9de674/install.mjs --target . --dry-run
-node /tmp/sdlc-package/.canon/flows/beta-9de674/install.mjs --target .
+unzip ~/Downloads/<downloaded-canon-package>.zip -d /tmp/canon-package
+node /tmp/canon-package/.canon/install.mjs --target . --dry-run
+node /tmp/canon-package/.canon/install.mjs --target .
 ```
 
 Never copy the package with rsync or cp. The installer classifies every path and treats a pre-existing Canon-owned file as a conflict unless the content already matches.
@@ -75,7 +75,7 @@ git push -u origin setup/ai-sdlc
 ## Open a pull request
 
 1. Open a pull request from `setup/ai-sdlc` into `main`.
-2. Review the generated files — especially the workflows, hooks, and CODEOWNERS.
+2. Review the generated files — especially the workflows, hooks, and generated instructions.
 3. Merge through the repository's normal review controls.
 4. Return to Canon and verify installation before starting a run.
 
@@ -134,7 +134,7 @@ Settings → Secrets and variables → Actions → **Variables**:
 
 | Variable | Value |
 | --- | --- |
-| `CANON_AGENT_PROVIDER` | `github-models` (default, uses the built-in token and the workflow's `models: read` permission), `anthropic`, `openai`, or `command` |
+| `CANON_AGENT_PROVIDER` | `anthropic`, `openai`, or `command`; there is no silent default |
 | `CANON_AGENT_COMMAND` | Only for `command`: the CLI to pipe each stage into (Claude Code, Cursor, Copilot CLI) |
 
 Add `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` as an Actions **secret** if you picked that provider.
@@ -148,8 +148,9 @@ real coding agent with a shell, file editing, and Git:
 | `CANON_CODING_AGENT` | `copilot` (default), `claude`, `codex`, or `command` |
 | `CANON_CODING_AGENT_COMMAND` | Only for `command`: the coding-agent CLI to run |
 
-Add the matching Actions **secret**: `COPILOT_GITHUB_TOKEN` for Copilot CLI,
-`ANTHROPIC_API_KEY` for Claude Code, `OPENAI_API_KEY` for Codex. Action stages fail
+The Copilot CLI uses the workflow's short-lived `GITHUB_TOKEN`. Add the matching Actions
+**secret** for other agents: `ANTHROPIC_API_KEY` for Claude Code or `OPENAI_API_KEY`
+for Codex. Action stages fail
 closed if no coding agent is configured — Canon will not fake code changes with a chat reply.
 Their work is committed to `canon/<run>/<stage>` and opened as a pull request.
 
@@ -183,7 +184,7 @@ approval applies on top of the decision.
 
 ### 5. Read the results
 
-Artifacts are committed to `.canon/flows/beta-9de674/artifacts/<run-id>/<stage>/`. Loop-backs are capped, so a
+Artifacts are committed to `.canon/artifacts/<run-id>/<stage>/`. Loop-backs are capped, so a
 coder/reviewer cycle fails the run with `loop-limit-exceeded` instead of running forever.
 
 ## Verify the installation

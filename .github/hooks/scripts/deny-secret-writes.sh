@@ -41,7 +41,10 @@ fi
 TOOL_NAME="$(printf '%s' "$PAYLOAD" | jq -r '.toolName // .tool_name // ""')"
 # The tool's arguments object. Fall back to the whole event so a payload that inlines its
 # arguments at the top level is still inspected rather than silently allowed.
-TOOL_ARGS="$(printf '%s' "$PAYLOAD" | jq -c 'if (.toolArgs? // .tool_args?) then (.toolArgs // .tool_args) else . end')"
+TOOL_ARGS="$(printf '%s' "$PAYLOAD" | jq -c '
+  (.toolArgs // .tool_args // .) as $args |
+  if ($args | type) == "string" then (try ($args | fromjson) catch {}) else $args end
+')"
 
 # Value of a single named argument, empty when absent.
 tool_arg() {

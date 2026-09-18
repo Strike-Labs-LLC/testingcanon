@@ -6,7 +6,7 @@ applyTo: "{infra,terraform,deploy,charts,.github/workflows}/**/*.{tf,yml,yaml,hc
 
 # Infrastructure standards
 
-- Infrastructure changes are reviewed by an owner listed in CODEOWNERS.
+- Infrastructure changes require the repository's configured governance review.
 - No credentials in source; use the platform secret store.
 - Pin action and image versions; never track a floating tag.
 - Grant least privilege for every role, token, and service account.

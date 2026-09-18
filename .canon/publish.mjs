@@ -14,7 +14,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 
-import { loadGraph, readRun, resultComment, CANON_ROOT } from "./state.mjs";
+import { loadGraph, readRun, resultComment, responseSection, CANON_ROOT } from "./state.mjs";
 import { stageById } from "./engine.mjs";
 import { allowedToWrite, matchesAny, normalizePath } from "./paths.mjs";
 import { useBrokeredToken } from "./canon-token.mjs";
@@ -57,7 +57,7 @@ const SECRET_PATTERNS = [
 ];
 
 function git(...args) {
-  return execFileSync("git", args, { encoding: "utf8" }).trim();
+  return execFileSync("git", args, { encoding: "utf8", maxBuffer: 8 * 1024 * 1024 }).trim();
 }
 
 function arg(name, fallback = "") {
@@ -99,7 +99,7 @@ export function validatePatch({ stage, record, patch, files, baseSha, headSha })
         `the branch is at ${headSha.slice(0, 12)}).`,
     );
   }
-  if (record.sourcePatchHash && record.sourcePatchHash !== sha256(patch.replace(/\n$/, ""))) {
+  if (record.sourcePatchHash && record.sourcePatchHash !== sha256(patch)) {
     problems.push("the patch does not match the hash the stage recorded for it.");
   }
   if (files.length > MAX_FILES) {
@@ -296,8 +296,8 @@ async function main() {
       // Compare against the branch the patch was cut from, not the workspace head.
       let branchHead = "";
       try {
-        git("fetch", "origin", record.baseSha);
-        branchHead = record.baseSha;
+        git("fetch", "origin", process.env.CANON_DEFAULT_BRANCH || "main");
+        branchHead = git("rev-parse", `origin/${process.env.CANON_DEFAULT_BRANCH || "main"}`);
       } catch {
         branchHead = record.baseSha ?? "";
       }
@@ -338,7 +338,13 @@ async function main() {
         outbox,
         stage.id,
         resultComment(
-          { ...record, status: "failed", outcome: undefined, summary: refusal.split("\n")[0] },
+          {
+            ...record,
+            response: undefined,
+            status: "failed",
+            outcome: undefined,
+            summary: refusal.split("\n")[0],
+          },
           `### ${stage.name} — failed\n\n${refusal}`,
         ),
       );
@@ -352,6 +358,9 @@ async function main() {
       resultComment(
         {
           ...record,
+          // The agent's prose belongs in the visible comment, not in the
+          // machine-readable marker.
+          response: undefined,
           candidateSha: change?.sha ?? null,
           branch: change?.branch ?? null,
           pullRequest: change?.url ?? null,
@@ -363,6 +372,8 @@ async function main() {
           `### ${stage.name} — ${record.outcome}`,
           "",
           record.summary ?? "",
+          "",
+          responseSection(record.response),
           "",
           record.artifact ? `Artifact: \`${record.artifact}\`` : "",
           persisted?.sha

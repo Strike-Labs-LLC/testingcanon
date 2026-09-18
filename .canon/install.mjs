@@ -20,7 +20,7 @@
  *   node .canon/install.mjs [--target <repo root>] [--dry-run] [--force]
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { hashContents, mergeRegion } from "./canon-hash.mjs";
@@ -32,10 +32,7 @@ const value = (name, fallback) => {
   return index === -1 ? fallback : args[index + 1];
 };
 
-// This script ships as `<package>/.canon/install.mjs`. The manifest sits next
-// to it, and every manifest path is relative to the package root one level up.
 const scriptDir = dirname(fileURLToPath(import.meta.url));
-const packageRoot = resolve(scriptDir, "..");
 const target = resolve(value("--target", process.cwd()));
 const dryRun = flag("--dry-run");
 const force = flag("--force");
@@ -44,10 +41,15 @@ const manifest = readJson(join(scriptDir, "manifest.json"));
 if (!manifest) {
   fail("No .canon/manifest.json in this package. Re-download the package from Canon.");
 }
+// Runtime files can live at `.canon/` or `.canon/flows/<slug>/`. The manifest
+// records that repository-relative root, so path resolution never guesses its depth.
+const runtimeRoot = String(manifest.runtimeRoot || ".canon").replace(/^\/+|\/+$/g, "");
+const packageRoot = resolve(scriptDir, ...runtimeRoot.split("/").map(() => ".."));
 
-const canonRoot = relative(packageRoot, scriptDir) || ".canon";
+const canonRoot = runtimeRoot || relative(packageRoot, scriptDir) || ".canon";
 const previous = migrate(readJson(join(target, canonRoot, "manifest.json")));
 const previousByPath = new Map(previous.files.map((entry) => [entry.path, entry]));
+const legacyRoots = findLegacyRoots();
 
 const results = [];
 
@@ -90,6 +92,12 @@ function plan(entry, incoming) {
 }
 
 const conflicts = results.filter((result) => result.action === "conflict");
+const missing = results.filter((result) => result.action === "missing-in-package");
+
+if (missing.length) {
+  report();
+  process.exit(1);
+}
 
 if (!dryRun) {
   for (const result of results) {
@@ -147,6 +155,9 @@ if (!dryRun) {
   );
   if (conflicts.length) write(join(target, "CONFLICTS.md"), conflictReport(conflicts));
   else rmSync(join(target, "CONFLICTS.md"), { force: true });
+  for (const legacy of legacyRoots) {
+    if (legacy.safe) rmSync(legacy.absolute, { recursive: true, force: true });
+  }
 }
 
 report();
@@ -165,6 +176,30 @@ function report() {
     console.log("Review CONFLICTS.md, then rerun with --force to accept Canon's version.");
     process.exitCode = 2;
   }
+  if (missing.length) console.log(`${missing.length} compiled file(s) are missing from this package.`);
+  for (const legacy of legacyRoots) {
+    console.log(`  ${legacy.safe ? "remove legacy" : "preserve legacy"}  ${legacy.relative}`);
+  }
+}
+
+/**
+ * Package v1.0 briefly installed a namespaced runtime at `<slug>/` in the
+ * repository root. Remove it only when its manifest proves it belongs to this
+ * same blueprint. Unknown or corrupt directories are preserved and reported.
+ */
+function findLegacyRoots() {
+  if (!manifest.runtimeRoot?.startsWith(".canon/flows/")) return [];
+  const slug = manifest.runtimeRoot.split("/").pop();
+  if (!slug) return [];
+  const candidates = [join(target, slug)];
+  return candidates
+    .filter((absolute) => existsSync(absolute) && statSync(absolute).isDirectory())
+    .map((absolute) => {
+      const raw = readJson(join(absolute, "manifest.json"));
+      const sameBlueprint =
+        raw?.blueprint?.id && raw.blueprint.id === manifest.blueprint?.id;
+      return { absolute, relative: relative(target, absolute), safe: Boolean(sameBlueprint) };
+    });
 }
 
 function conflictReport(list) {

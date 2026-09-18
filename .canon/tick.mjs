@@ -19,6 +19,7 @@ import {
   stampRelease,
   ensureIssue,
   CONFLICT_LABEL,
+  runtimeLabel,
 } from "./state.mjs";
 import {
   readyStages,
@@ -93,7 +94,7 @@ async function requireIntactTrail(issueNumber, graph, run) {
       "do not edit the run record by hand.",
     ].join("\n"),
   );
-  await addLabel(issueNumber, "run-failed");
+  await addLabel(issueNumber, runtimeLabel("run-failed"));
   return false;
 }
 
@@ -273,13 +274,15 @@ async function advance(issueNumber) {
   await postAuditDigest(issueNumber, run);
 
   if (run.status === "running") {
-    await dispatchWorkflow("orchestration-step.yml", { run_issue: String(issueNumber) });
+    await dispatchWorkflow(process.env.CANON_STEP_WORKFLOW || "orchestration-step.yml", {
+      run_issue: String(issueNumber),
+    });
     console.log("Re-dispatched the next tick.");
     return;
   }
 
   if (run.status === "awaiting_human") {
-    await addLabel(issueNumber, "awaiting-human");
+    await addLabel(issueNumber, runtimeLabel("awaiting-human"));
     console.log("Run is waiting on a human decision.");
     return;
   }
@@ -295,7 +298,7 @@ async function advance(issueNumber) {
       }),
     ].join("\n"),
   );
-  await addLabel(issueNumber, run.status === "completed" ? "run-completed" : "run-failed");
+  await addLabel(issueNumber, runtimeLabel(run.status === "completed" ? "run-completed" : "run-failed"));
   if (run.status === "completed" && run.source?.number) {
     await comment(
       run.source.number,

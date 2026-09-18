@@ -1,8 +1,9 @@
 ---
 name: test-suite-runner
 description: "Runs the full test suite against the pull request and reports the result."
-model: "Gemini 3.6 Flash"
+model: "gemini-3.6-flash"
 tools: [read, search, shell]
+disable-model-invocation: true
 ---
 
 
@@ -32,11 +33,7 @@ The suite has been run against the candidate commit and the result is reported w
 
 ## Outcomes
 
-State exactly one outcome at the end of your response, using this format:
-
-```text
-STATUS: <OUTCOME>
-```
+End your response with the machine-readable `canon-result` block supplied in the run brief. Use exactly one of this stage's allowed outcomes.
 
 - If passed → hand off to **Deployment Runner** (conditional)
 - If failed → hand off to **Feature Coder** (return (loop back))

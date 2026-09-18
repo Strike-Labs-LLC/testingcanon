@@ -157,10 +157,19 @@ export async function brokerToken(operation, context = {}) {
   return body.token;
 }
 
+/** Proves the App installation and broker can mint the publisher's exact scope. */
+export async function verifyBrokerAccess(context = {}) {
+  const value = await brokerToken("publish_patch", context);
+  return Boolean(value);
+}
+
 /**
  * Configure Git and the GitHub API clients in this process to use a brokered
- * token. The checkout persisted no credentials, so this is the only way a
- * trusted job can push at all.
+ * token. The App installation token contract requires issue read access (to
+ * verify the run record) and pull-request creation access (to publish guarded
+ * changes), in addition to the operation-specific contents or release access.
+ * The checkout persisted no credentials, so this is the only way a trusted
+ * job can push at all.
  */
 export async function useBrokeredToken(operation, context = {}) {
   const token = await brokerToken(operation, context);
