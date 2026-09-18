@@ -1,7 +1,7 @@
 ---
 name: "Create tests"
-description: "Create tests in Autonomous code change."
-agent: "test-suite-runner"
+description: "Create tests in Autonomous feature delivery."
+agent: "test-author"
 ---
 
 Write the missing tests for the code under discussion.

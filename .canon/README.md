@@ -1,6 +1,6 @@
 # Canon orchestration runtime
 
-Generated runtime for **Autonomous code change**.
+Generated runtime for **Autonomous feature delivery**.
 
 Edit the blueprint in Canon and recompile. Do not edit these files by hand.
 
@@ -71,7 +71,7 @@ Nothing in this directory holds a standing credential that can change the reposi
 
 Action stages never fall back to plain inference. If no coding agent is configured, the stage fails.
 
-Action stages in this blueprint: **Feature Coder**, **Test Suite Runner**, **Deployment Runner**
+Action stages in this blueprint: **Feature Coder**, **Test Author**, **QA Verifier**, **Deployment Runner**
 
 ## Start a run
 

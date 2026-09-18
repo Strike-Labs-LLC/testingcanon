@@ -5,7 +5,7 @@ description: Diagnose a failure in CI, staging, or production.
 
 # Incident analysis
 
-Applies to Autonomous code change (web application). Follow `AGENTS.md` first.
+Applies to Autonomous feature delivery (web application). Follow `AGENTS.md` first.
 
 ## Procedure
 

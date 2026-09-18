@@ -19,7 +19,7 @@ John’s Flow #1 orchestration flow.
 - AI integration: None
 - Styling: Tailwind CSS
 - Default branch: `main`
-- Environments: development, staging, production, momma
+- Environments: development, staging, production
 
 ## Canonical tool names
 
@@ -73,20 +73,33 @@ When sources disagree, the higher entry wins:
 
 ## SDLC lifecycle
 
-1. **Feature Coder** — Coder
-2. **Code Reviewer** — Code Reviewer
-3. **Test Suite Runner** — Tester
-4. **Deployment Runner** — DevOps Deploy
+1. **Delivery Orchestrator** — Engineering Orchestrator
+2. **Requirements Analyst** — Product Manager
+3. **Acceptance Criteria Author** — Product Manager
+4. **Feature Coder** — Coder
+5. **Code Reviewer** — Code Reviewer
+6. **Test Author** — Tester
+7. **QA Verifier** — QA
+8. **Release Gatekeeper** — Release Reviewer
+9. **Deployment Runner** — DevOps Deploy
 
 ### Transitions
 
-- Feature Coder → Code Reviewer — Always (always)
-- Code Reviewer → Test Suite Runner — If approved (conditional)
+- Delivery Orchestrator → Requirements Analyst — Always (always)
+- Requirements Analyst → Acceptance Criteria Author — Always (always)
+- Acceptance Criteria Author → Feature Coder — Always (always)
+- Feature Coder → Code Reviewer — Always (split (parallel))
+- Feature Coder → Test Author — Always (split (parallel))
 - Code Reviewer → Feature Coder — If changes required (return (loop back))
-- Test Suite Runner → Deployment Runner — If passed (conditional)
-- Test Suite Runner → Feature Coder — If failed (return (loop back))
+- Test Author → Feature Coder — If failed (return (loop back))
+- Code Reviewer → QA Verifier — If approved (conditional)
+- Test Author → QA Verifier — If passed (conditional)
+- QA Verifier → Feature Coder — If failed (return (loop back))
+- QA Verifier → Release Gatekeeper — If passed (conditional)
+- Release Gatekeeper → Deployment Runner — If approved (conditional)
+- Release Gatekeeper → Feature Coder — If blocked (return (loop back))
 
-Pipeline start: **Feature Coder**
+Pipeline start: **Delivery Orchestrator**
 Pipeline end: **Deployment Runner**
 
 ## Definition of Ready
@@ -149,7 +162,12 @@ or when the same stage fails twice for the same reason.
 
 ## Agent roster
 
-- `.github/agents/01-feature-coder.agent.md` — Feature Coder (Coder)
-- `.github/agents/02-code-reviewer.agent.md` — Code Reviewer (Code Reviewer)
-- `.github/agents/03-test-suite-runner.agent.md` — Test Suite Runner (Tester)
-- `.github/agents/04-deployment-runner.agent.md` — Deployment Runner (DevOps Deploy)
+- `.github/agents/00-delivery-orchestrator.agent.md` — Delivery Orchestrator (Engineering Orchestrator)
+- `.github/agents/02-requirements-analyst.agent.md` — Requirements Analyst (Product Manager)
+- `.github/agents/03-acceptance-criteria-author.agent.md` — Acceptance Criteria Author (Product Manager)
+- `.github/agents/04-feature-coder.agent.md` — Feature Coder (Coder)
+- `.github/agents/05-code-reviewer.agent.md` — Code Reviewer (Code Reviewer)
+- `.github/agents/06-test-author.agent.md` — Test Author (Tester)
+- `.github/agents/07-qa-verifier.agent.md` — QA Verifier (QA)
+- `.github/agents/08-release-gatekeeper.agent.md` — Release Gatekeeper (Release Reviewer)
+- `.github/agents/09-deployment-runner.agent.md` — Deployment Runner (DevOps Deploy)

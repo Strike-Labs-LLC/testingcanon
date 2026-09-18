@@ -1,12 +1,12 @@
 {
   "version": 1,
   "algorithm": "sha256",
-  "compiledAt": "2026-09-18T02:02:36.401Z",
+  "compiledAt": "2026-09-18T18:49:01.920Z",
   "blueprint": {
-    "name": "Auto Bug Fixer",
-    "hash": "canon1:dd5fd58de02f51d1"
+    "name": "John’s Flow #1",
+    "hash": "canon1:db30080b39fe9c67"
   },
-  "packageSha256": "e24246577917fa202a2763e6e8c2042fc4f83a0523de6f5eb4237b6242b54c6d",
+  "packageSha256": "5777aaaa3e99cf7ef3a6a02128fd814598a04e3badc8dca2478ada5d0a63eb68",
   "signed": false,
   "note": "Unsigned local digest. A Canon-held signature is required before this package is sellable.",
   "files": [
@@ -32,7 +32,7 @@
     },
     {
       "path": ".canon/graph.json",
-      "sha256": "741493ece87830cc1f2af3b2205dbe359ca58681951f26ed09f8dd3eb2faf23f"
+      "sha256": "68cfe41c312d604d92dd516d6697b60619df5a12b680387a561be44afda0f8e0"
     },
     {
       "path": ".canon/human.mjs",
@@ -40,7 +40,7 @@
     },
     {
       "path": ".canon/identity.json",
-      "sha256": "3589d4810b23bffeedfde9863693e2b6fd39bd59c86c84460a84f7985d0bcc7c"
+      "sha256": "5fbe33724605c5a468cfab7c7af419c321ab7afddcfca164d93ff22aee2709cb"
     },
     {
       "path": ".canon/install.mjs",
@@ -64,7 +64,7 @@
     },
     {
       "path": ".canon/preflight.mjs",
-      "sha256": "86f3253724c4bf4c0346df96dc4ab1bd2640eeb2720fd44d2fc3b85d0395fd1a"
+      "sha256": "336771e774e2ef37555b16bb001f70cbf868cb4e97ae17c961d704ed9559d89a"
     },
     {
       "path": ".canon/publish.mjs",
@@ -72,7 +72,7 @@
     },
     {
       "path": ".canon/README.md",
-      "sha256": "efb6dde44d0fe08780984dd0698b51894d865b7ccb740161a1a0c3d4425c179d"
+      "sha256": "a86ea97540cd00cedb4411ecd343e14bfc1dd8742606d0ea930ff3c05c6f6705"
     },
     {
       "path": ".canon/release.mjs",
@@ -115,24 +115,44 @@
       "sha256": "c19f86b3cff216a1df5e62aa86020213b2f8ec42b1eaf5821251aae9a6b20b27"
     },
     {
-      "path": ".github/agents/01-feature-coder.agent.md",
-      "sha256": "f461e920340ee27ca8bac8edda83cf1b443c8d7bfab69fed369e21f3fde1fbac"
+      "path": ".github/agents/00-delivery-orchestrator.agent.md",
+      "sha256": "fd2371250d6a719c386ea106aa1aa8f425d0dfaa63bccc7e4a362e38a799d0f9"
     },
     {
-      "path": ".github/agents/02-code-reviewer.agent.md",
-      "sha256": "6d7134e8a83afbc0f101e6b82da0365ce2ff15e8b6570d551ca4c4bbae6761a1"
+      "path": ".github/agents/02-requirements-analyst.agent.md",
+      "sha256": "3101c5674bc6a68364fcf4e750be44bb0584a5f95c85435b818e7574bf90647b"
     },
     {
-      "path": ".github/agents/03-test-suite-runner.agent.md",
-      "sha256": "3127fb8faa6295621ccdee8c7925f6e452585527237c1fb82ea05d3b16ef50c0"
+      "path": ".github/agents/03-acceptance-criteria-author.agent.md",
+      "sha256": "4058b824357db25842bb99c6150951f1c22a13acef0fae55763b41d0f60fdf0b"
     },
     {
-      "path": ".github/agents/04-deployment-runner.agent.md",
-      "sha256": "6ace1b0d0f1d892131c590bf45aefd1fdbbdb5ab79c20521e405981998124a48"
+      "path": ".github/agents/04-feature-coder.agent.md",
+      "sha256": "f9567bb387dd82ae1d07bd52a547c134abba9ba7ac276f957bc642d062522cb5"
+    },
+    {
+      "path": ".github/agents/05-code-reviewer.agent.md",
+      "sha256": "17283c0e910e3948fc40fe4b6314fbe0e6460fdd3d092aa80dfacd1eed6b0c37"
+    },
+    {
+      "path": ".github/agents/06-test-author.agent.md",
+      "sha256": "5d644a5afa6cc7aa995d7dd2ab1bf7e8a121c113392f6e218d967c97fc7e3208"
+    },
+    {
+      "path": ".github/agents/07-qa-verifier.agent.md",
+      "sha256": "75d1499e661e2726930b718a47db78229d8edc39c5c8f23f8e566b221d1886f6"
+    },
+    {
+      "path": ".github/agents/08-release-gatekeeper.agent.md",
+      "sha256": "4991a46f2078bcd0bdb921b98923ee38c10364b7ee80918f6af94b10dc5932d9"
+    },
+    {
+      "path": ".github/agents/09-deployment-runner.agent.md",
+      "sha256": "51015646fc112de37cc3661da45db16a6b581224db660b9608630b8668bae6c1"
     },
     {
       "path": ".github/copilot-instructions.md",
-      "sha256": "6afaeff8f8813090dcf8611f659cb9e63bf68886a4e58188253ffff4a717a26b"
+      "sha256": "7052977424bff0ce8dd34dd8440c4792bc865392ae1b10091c8bb2c98d1457de"
     },
     {
       "path": ".github/dependabot.yml",
@@ -216,7 +236,7 @@
     },
     {
       "path": ".github/ISSUE_TEMPLATE/bug.yml",
-      "sha256": "88016f0272a63cb7c9612274d202dd46a3cde9b33b9441757eef5242b3d824be"
+      "sha256": "61edac3d4a4781b781c50b1466189eddb98aee3abf384748803966f40a41f9f9"
     },
     {
       "path": ".github/ISSUE_TEMPLATE/config.yml",
@@ -224,7 +244,7 @@
     },
     {
       "path": ".github/ISSUE_TEMPLATE/feature.yml",
-      "sha256": "24cdcd6fb3556411eaefb4c1f08f763ced917ee9555466ffc1abfb457a7845cf"
+      "sha256": "fd1f7703c0011453e82f5b29f9833e7c27bbe7faed3dae4a047f8f495bc8b749"
     },
     {
       "path": ".github/ISSUE_TEMPLATE/security.yml",
@@ -236,51 +256,59 @@
     },
     {
       "path": ".github/prompts/create-feature.prompt.md",
-      "sha256": "b9bd01d9f39d1548b02eae4a6ded0405b4af6deb9c380d85ef86c57e926683f2"
+      "sha256": "d0df4ff4fc5494cd8ea27dc370341bc38383d758a32ad6098aa1f70f16a9b7a4"
     },
     {
       "path": ".github/prompts/create-tests.prompt.md",
-      "sha256": "8ccf9621b72b517bbddc141d81fa972bdf23148042bb0e0e8c5c9496a03dc271"
+      "sha256": "955ab5cd767d644a4ebf75679a93c351b9e921dad0a5f782889b3d25202c0531"
     },
     {
       "path": ".github/prompts/investigate-bug.prompt.md",
-      "sha256": "c88afd45bb7b72d20605f33dd550a20401b7522b672977bb7780d4a9bb199fa8"
+      "sha256": "e8fccebc68d2f5db88e35338d1051185687cdb351a06c9c5f672819b961b3ac3"
     },
     {
       "path": ".github/prompts/prepare-release.prompt.md",
-      "sha256": "ad7c32b7645dbf5e18485e1cabe89454d27cdbe1fd7f49a6c471b5ef91bffe40"
+      "sha256": "abff01d04def5135e2507e490a57fd61eefb826c500710996780aceda97228df"
     },
     {
       "path": ".github/prompts/review-pr.prompt.md",
-      "sha256": "c83e217c844deca9a22b0344e967c5b5de986c70b9f358606345c81cbc9c313c"
+      "sha256": "58a46963efce12e60cd151abc7dda20884a3a1471ac630a427a6aae628b79c8d"
     },
     {
       "path": ".github/PULL_REQUEST_TEMPLATE.md",
-      "sha256": "75f5c5222302916746d9187c32831f433ce3f3b21615393d237ba114f1d54ae7"
+      "sha256": "6b1a1a1eb478fb0382d6bc6117296f4a2fe9a66ae5c8f775af0200e7c3169840"
     },
     {
       "path": ".github/skills/implementation/SKILL.md",
-      "sha256": "a92a563e52ff9e0798af2c07d469ee41b37876ff276307b92e05cf1ecbb7733b"
+      "sha256": "46b99cea53443869ea13b10ddeaf218f1427fe4a7fed747b1a713cd2969457fd"
     },
     {
       "path": ".github/skills/incident-analysis/SKILL.md",
-      "sha256": "85f923f83fa3baa0e1ead7bf197d962959d6ddb1baf8e043b35804c92d92d2c1"
+      "sha256": "0dfdddf15a50292985e7a0358f325e8b6d653451c401bd5f013ab8da5af5fdb8"
     },
     {
       "path": ".github/skills/release-readiness/SKILL.md",
-      "sha256": "df88e9941a914c762dc824a2535914908284de89d623eab41a5712a0360a6b54"
+      "sha256": "5b2ecbe0af49cdb903eb4f953b9935eb3687f67cb03e0fca4f0b409ab1aed763"
+    },
+    {
+      "path": ".github/skills/requirements-analysis/SKILL.md",
+      "sha256": "764ced75188265c362eb5f8a2907aa1d4e825e840d6be7a13d891d6125da596f"
     },
     {
       "path": ".github/skills/security-review/SKILL.md",
-      "sha256": "46322f3b4354ded40e01844574da427bb564873526a43c61410c2e9400aa6706"
+      "sha256": "dd3b0506a264df07555b8352b656f5669bd2899c74e9047b3b6627343cbb4310"
     },
     {
       "path": ".github/skills/testing/SKILL.md",
-      "sha256": "030d41df51feb6b34034ee91221fa1c67cf17c5d57a096305497f77d6b8e2497"
+      "sha256": "daa2883e68fea7fac590d81962a2f8280161f4ba055cdab5a94c3549aa50fbf7"
+    },
+    {
+      "path": ".github/skills/ticket-breakdown/SKILL.md",
+      "sha256": "95b3bc2affb7d3735a02f658b8d29952d4ded598774231d0888f54d0de0e2752"
     },
     {
       "path": ".github/workflows/build.yml",
-      "sha256": "1f65c53f88953ac9b5aecd5de9a0d77fccf465c0c69751da8292066a58f80503"
+      "sha256": "3cc92581b9c40d4dbcf3d245d12b3597e68738c149c1b18eeb01878a9eb92bbf"
     },
     {
       "path": ".github/workflows/ci.yml",
@@ -304,7 +332,7 @@
     },
     {
       "path": ".github/workflows/orchestration-pipeline.yml",
-      "sha256": "a2b9cb3c7feca3288f037b8a4fe548b7050f64cbeb1463216fefe01b97016fde"
+      "sha256": "57e3df025954d5daa3a47e6aa28fdbd3741051f399faf4ff83ac0d3030da779d"
     },
     {
       "path": ".github/workflows/orchestration-step.yml",
@@ -324,7 +352,7 @@
     },
     {
       "path": ".sdlc/agent-routing.yml",
-      "sha256": "f1ea76ec5e8d01a8dfa5e073a45753f13d5cb4ac4d271a93c666dacf5af91d80"
+      "sha256": "e3afd7ff7aea727625f2488969413e742c1f3fc805b151d31ae5db15c111e608"
     },
     {
       "path": ".sdlc/approval-policy.json",
@@ -332,11 +360,11 @@
     },
     {
       "path": ".sdlc/blueprint.json",
-      "sha256": "b24f5cc2979fed6ac50485a9e672a765bb079d7a62b1317cb9420a03f601593e"
+      "sha256": "ca0b8d7a98f9fd4fd5e886d51a0ff90069f45afbcf289a1099e44d4e2e22c6fe"
     },
     {
       "path": ".sdlc/blueprint.yml",
-      "sha256": "12201d3ffb995af907a863053779b3e5fec9dedb04644de0b5b3675d6679eebb"
+      "sha256": "6710b91cc252d1900c42544d6eff4981ccd08116191056fb1043e44aa3e940b0"
     },
     {
       "path": ".sdlc/compliance.yml",
@@ -344,7 +372,7 @@
     },
     {
       "path": ".sdlc/github-setup.json",
-      "sha256": "913a8d8fd63ce55b51f5d18bec01dfa790538cf621fdee56c8fb487cf7404917"
+      "sha256": "0608107782414cbe429535c20f4705cf59ce2c7f66123d696070abb6991b6fd4"
     },
     {
       "path": ".sdlc/github/apply.sh",
@@ -353,10 +381,6 @@
     {
       "path": ".sdlc/github/environment-development.json",
       "sha256": "e791f8ea2d355baa931aa33903554dcc4fb60c666a41afddba8dbc92779dd66c"
-    },
-    {
-      "path": ".sdlc/github/environment-momma.json",
-      "sha256": "9152213f109a96890a39f38da50d77c42f050cf34273e22e9fb905f22bae7b56"
     },
     {
       "path": ".sdlc/github/environment-production.json",
@@ -380,7 +404,7 @@
     },
     {
       "path": ".sdlc/lifecycle.yml",
-      "sha256": "cb0801c9c5355959782251a2f5eb4f6842ce7841400b1cc315223a28ce450ab1"
+      "sha256": "4e3d8da3b6df5a0bef60f3a4a0be37ed794c6ace816b1ee97f494f3edd14b98b"
     },
     {
       "path": ".sdlc/quality-gates.yml",
@@ -388,11 +412,11 @@
     },
     {
       "path": ".sdlc/README.md",
-      "sha256": "5bbe97ea382b30029233df882f6f89916782aebd863c2c1863ae1f0ddfdddfd4"
+      "sha256": "13f67c6a74cb8547d4b7bd7afb745c25dd88c3503251fcb5db43f8b06ef5cfa1"
     },
     {
       "path": "AGENTS.md",
-      "sha256": "cdcb687512a1ec04f535bce25fc771df74795b0ded71898fd805ca7ffa1a921a"
+      "sha256": "8fa972c8bac34a05a737ac271d773124378c1e4ec19691825615c71c2b608178"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -400,7 +424,7 @@
     },
     {
       "path": "DISCLAIMER.md",
-      "sha256": "a5e6c69cc67d538b3b811b02bd62cc2092c3ad26e5e1309d47cb60bf3bfe2164"
+      "sha256": "746bcbe548b776f0410c5fb94d801f475b003b890b4ab0646c14264e4fa708d3"
     },
     {
       "path": "docs/adr/0001-architecture.md",
@@ -408,7 +432,7 @@
     },
     {
       "path": "docs/adr/0002-authentication.md",
-      "sha256": "f2d1229b0fe24503f449d0c0e96aeb3a019db8e3ef501012d93c0728900f9f4e"
+      "sha256": "035662ed00805d57df2c6add8c6c765cd45cf947b6b6b411e5b6f63ae3ba919e"
     },
     {
       "path": "docs/API.md",
@@ -424,19 +448,23 @@
     },
     {
       "path": "docs/DEPLOYMENT.md",
-      "sha256": "8045a2e2b5d534267b0626145e4f45b137611ecb9e240c19e7fa6169fc3b97a1"
+      "sha256": "10ef64265df8d31ad886177b0fb15284a0d459c39a3177c2c9ae03b212a79f2d"
     },
     {
       "path": "docs/GITHUB-SETUP.md",
-      "sha256": "6a9ea8533f6f32ed507d0e37e09a503b595a640c6275575e18c01916610e710e"
+      "sha256": "5f1471934f11f25c59ce6591a5d1c53034f9ee345419a7d7771b5fe18fd14568"
+    },
+    {
+      "path": "docs/ORCHESTRATION.md",
+      "sha256": "ed15c12f5e77facd8cc32f7cff997f50fe0c566ad8ec76957e2c813618a7ace7"
     },
     {
       "path": "docs/PRODUCT.md",
-      "sha256": "16e55fd74fd32ad790ca55272222dbfdc611e6226768ce9fdfc0ddf6182df8fe"
+      "sha256": "e9754ec57b98347db52872a861dfdbc6808fb50ca38ab3dbb0459efd73528984"
     },
     {
       "path": "docs/RELEASE-PROCESS.md",
-      "sha256": "1d188d05fda00755c589ac035d99865fa90fa8d95f9f90e8a75ff1ce556b8dcc"
+      "sha256": "621468514c69c5496077277fda72680538b4bed980f6533d8a8dd36d67eab717"
     },
     {
       "path": "docs/RUNBOOK.md",
@@ -456,11 +484,11 @@
     },
     {
       "path": "INSTALL-GITHUB.md",
-      "sha256": "1accc9d60468fcd0e0f0dc081ed876f9acdf12cd90bf87d1ba76e90db1858257"
+      "sha256": "1792334ce15dec824caa4217bc96cd0221f5cc69cf9bd34993e1c6fcd8ffefe8"
     },
     {
       "path": "README.md",
-      "sha256": "3f842b78eb510c533e8119b46a3ce98ac68e5e59bded67a2c4af89febb99f8a0"
+      "sha256": "0add982db7139363af0382a21f5dc06c3f9af39f2d56952c42768f490ea3568a"
     },
     {
       "path": "SECURITY.md",

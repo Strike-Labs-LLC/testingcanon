@@ -7,7 +7,6 @@
 - development
 - staging
 - production
-- momma
 
 ## Pipeline
 

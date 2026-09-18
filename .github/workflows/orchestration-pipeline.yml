@@ -1,4 +1,4 @@
-# Starts an orchestration run for Autonomous code change.
+# Starts an orchestration run for Autonomous feature delivery.
 # The run record lives in a GitHub issue labelled `canon-run`; every stage result and
 # human decision is appended to that issue, so the whole run is auditable in the repo.
 name: Orchestration pipeline

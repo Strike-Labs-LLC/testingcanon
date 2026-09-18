@@ -3,7 +3,7 @@
 version: 1
 
 project:
-  name: Autonomous code change
+  name: Autonomous feature delivery
   type: web-application
   description: "John’s Flow #1 orchestration flow."
 
@@ -20,7 +20,6 @@ environments:
   - development
   - staging
   - production
-  - momma
 
 workflow:
   branch_strategy: trunk-based
@@ -52,65 +51,142 @@ documentation:
   runbook: optional
 
 pipeline:
-  name: Auto Bug Fixer
-  entry: feature-coder
+  name: "John’s Flow #1"
+  entry: delivery-orchestrator
 
 agents:
+  delivery-orchestrator:
+    name: Delivery Orchestrator
+    role: orchestrator
+    role_label: Engineering Orchestrator
+    output_artifact: status_update
+    description: Owns the work item from intake to release and drives every stage in order.
+    task: "Open the work item for the requested feature, dispatch the requirements stage, and record each stage result as it returns."
+    acceptance_criteria: "The work item states the requested feature and the current stage, and every stage transition is recorded."
+    instructions: "You are the Delivery Orchestrator. Open the work item for the requested feature, dispatch each stage in order, and record every outcome on the work item. Route failed work back to the coder with the failing stage's findings. Never implement the change yourself and never merge. Post a machine-readable status update after every transition."
+  requirements-analyst:
+    name: Requirements Analyst
+    role: product_manager
+    role_label: Product Manager
+    output_artifact: spec
+    description: Turns the feature request into a specification with scope and exclusions.
+    task: Convert the feature request into a written requirements statement with scope and an explicit out-of-scope list.
+    acceptance_criteria: "The requirements state the problem, the affected users, the scope, and the out-of-scope list without ambiguity."
+    instructions: "You are the Requirements Analyst. Read the feature request, clarify intent, and write the requirements: the problem, the users affected, the scope, and what is explicitly out of scope. Ask for missing context rather than guessing. Do not write acceptance criteria — that is the next stage's job."
+  acceptance-criteria-author:
+    name: Acceptance Criteria Author
+    role: product_manager
+    role_label: Product Manager
+    output_artifact: spec
+    description: "Writes numbered, testable acceptance criteria from the requirements."
+    task: "Write numbered, testable acceptance criteria covering the happy path, failure paths, and scope edges."
+    acceptance_criteria: "Every requirement maps to at least one criterion, and each criterion is verifiable without further clarification."
+    instructions: "You are the Acceptance Criteria Author. Read the requirements and write numbered acceptance criteria that a tester can verify without further clarification. Each criterion names the observable behaviour, the precondition, and the expected result. Cover the happy path, the failure paths, and the edges of the stated scope."
   feature-coder:
     name: Feature Coder
     role: coder
     role_label: Coder
     output_artifact: code_diff
-    description: Implements the requested change and opens the pull request.
-    task: "Implement the requested change, add tests, run the suite, and open a pull request with the diff summary."
-    acceptance_criteria: "The branch builds, the suite passes locally, and the pull request describes the change and its scope."
-    instructions: "You are the Feature Coder agent. Implement the requested change, add or update tests that prove it, run the suite locally, and open a pull request with a summary of what changed and why. Keep the diff scoped to the request. Never merge, never commit secrets, and never disable a failing test."
+    description: Implements the feature against the acceptance criteria and opens the pull request.
+    task: "Implement the acceptance criteria, add tests, run the suite, and open a pull request mapping criteria to tests."
+    acceptance_criteria: "The branch builds, the suite passes locally, every criterion has a test, and the diff stays inside the stated scope."
+    instructions: "You are the Feature Coder agent. Implement exactly what the acceptance criteria describe, no more. Add or update tests for every criterion, run the suite locally, and open a pull request that summarises the change and maps each criterion to its test. Never merge, never force-push, never commit secrets, and never disable a failing test."
   code-reviewer:
     name: Code Reviewer
     role: code_reviewer
     role_label: Code Reviewer
     output_artifact: review_notes
-    description: "Reviews the pull request for correctness, security, and coverage."
-    task: Review the pull request diff and record an approval or specific change requests.
-    acceptance_criteria: "Every finding names a file and line and states the change required, and the review ends with one outcome."
-    instructions: "You are the Code Reviewer agent. Review the pull request diff for correctness, style, security, and test coverage. Do not edit the code under review. Approve when it is ready, or request changes with findings that each name a file, a line, and the required change."
-  test-suite-runner:
-    name: Test Suite Runner
+    description: "Independent review of scope, correctness, security, and test coverage."
+    task: "Review the diff against the acceptance criteria and record an approval or specific, actionable findings."
+    acceptance_criteria: "Every finding names a file, a line, and the required change, and the review states one clear outcome."
+    instructions: "You are the Code Reviewer agent. Review the pull request against the acceptance criteria for scope adherence, correctness, error handling, security, and test coverage. Never edit the code under review. Every finding must name a file, a line, and the change required. Approve when the diff is ready, or request changes with the specific findings."
+  test-author:
+    name: Test Author
     role: tester
     role_label: Tester
     output_artifact: test_report
-    description: Runs the full test suite against the pull request and reports the result.
-    task: Run the automated suite against the branch and report pass or fail with the output attached.
-    acceptance_criteria: The suite has been run against the candidate commit and the result is reported with logs for any failure.
-    instructions: "You are the Test Suite Runner agent. Run the full automated test suite against the pull request branch and verify the behaviour the change describes. Attach the run output. Report a pass, or a failure with the failing test names and reproduction steps. Never weaken assertions to get a green run."
+    description: Writes and runs the automated tests that prove each acceptance criterion.
+    task: "Write tests for each acceptance criterion, run the full suite against the branch, and report pass or fail with output."
+    acceptance_criteria: "Every criterion has a test, the suite has been run against the candidate commit, and failures carry reproduction steps."
+    instructions: "You are the Test Author agent. Write automated tests that prove each acceptance criterion on the candidate branch, then run the full suite and attach the output. Report a pass, or a failure with the failing test names and reproduction steps. Never weaken assertions or modify product code to get a green run."
+  qa-verifier:
+    name: QA Verifier
+    role: qa
+    role_label: QA
+    output_artifact: test_report
+    description: Confirms the change meets every acceptance criterion before release.
+    task: Verify every acceptance criterion against the candidate commit and record an explicit pass or fail for each.
+    acceptance_criteria: "Every acceptance criterion has an explicit pass or fail result, and each failure carries reproduction steps."
+    instructions: "You are the QA Verifier. Using the review notes and the test report, verify each acceptance criterion explicitly on the candidate commit and record a pass or fail for it. Confirm the failures found earlier are actually fixed. Never modify product code to make a check pass. Report readiness, or a failure with reproduction steps."
+  release-gatekeeper:
+    name: Release Gatekeeper
+    role: release_reviewer
+    role_label: Release Reviewer
+    output_artifact: approval
+    description: Assesses release readiness and records the release decision.
+    task: "Assess scope, migrations, rollback, monitoring, and blast radius, then record an approve or block decision."
+    acceptance_criteria: "Each readiness area is assessed in writing, and the decision is either approved or blocked with a named mitigation."
+    instructions: "You are the Release Gatekeeper. Assess release readiness for the candidate commit: scope, migrations, rollback plan, monitoring, and blast radius. Record an approval only when the review notes and the QA report are both clean. Block the release with the specific risk and the mitigation required when they are not. Never merge or deploy yourself."
   deployment-runner:
     name: Deployment Runner
     role: devops_deploy
     role_label: DevOps Deploy
     output_artifact: deployment
-    description: Deploys the verified change and confirms health.
-    task: "Deploy the verified commit, run smoke tests, and report health status or roll back."
+    description: Deploys the approved release and confirms health.
+    task: "Deploy the approved commit, run smoke tests, and report health status or roll back."
     acceptance_criteria: "The deployment is healthy, smoke tests pass, and the rollback path is confirmed."
-    instructions: "You are the Deployment Runner agent. Deploy the commit that passed review and the test suite to the target environment, run smoke tests, and monitor health for the agreed window. Deploy only after a recorded approval and a passing test run. Roll back on failure and report exactly what happened."
+    instructions: "You are the Deployment Runner agent. Deploy the approved commit to the target environment, run smoke tests, and monitor health for the agreed window. Deploy only after the Release Gatekeeper's recorded approval. Roll back on failure and report exactly what happened."
 
 transitions:
+  - from: delivery-orchestrator
+    to: requirements-analyst
+    when: Always
+    label: Work dispatched
+  - from: requirements-analyst
+    to: acceptance-criteria-author
+    when: Always
+    label: Requirements defined
+  - from: acceptance-criteria-author
+    to: feature-coder
+    when: Always
+    label: Criteria ready
   - from: feature-coder
     to: code-reviewer
     when: Always
     label: Pull request opened
-  - from: code-reviewer
-    to: test-suite-runner
-    when: If approved
-    label: Review approved
+  - from: feature-coder
+    to: test-author
+    when: Always
+    label: Branch ready for tests
   - from: code-reviewer
     to: feature-coder
     when: If changes required
     label: Changes required
-  - from: test-suite-runner
-    to: deployment-runner
-    when: If passed
-    label: Tests passed
-  - from: test-suite-runner
+  - from: test-author
     to: feature-coder
     when: If failed
     label: Tests failed
+  - from: code-reviewer
+    to: qa-verifier
+    when: If approved
+    label: Review approved
+  - from: test-author
+    to: qa-verifier
+    when: If passed
+    label: Tests passed
+  - from: qa-verifier
+    to: feature-coder
+    when: If failed
+    label: QA failed
+  - from: qa-verifier
+    to: release-gatekeeper
+    when: If passed
+    label: QA passed
+  - from: release-gatekeeper
+    to: deployment-runner
+    when: If approved
+    label: Release approved
+  - from: release-gatekeeper
+    to: feature-coder
+    when: If blocked
+    label: Release blocked

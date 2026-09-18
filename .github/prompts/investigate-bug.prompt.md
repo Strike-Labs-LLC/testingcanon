@@ -1,10 +1,10 @@
 ---
 name: "Investigate a bug"
-description: "Investigate a bug in Autonomous code change."
+description: "Investigate a bug in Autonomous feature delivery."
 agent: "feature-coder"
 ---
 
-Diagnose the linked defect in Autonomous code change.
+Diagnose the linked defect in Autonomous feature delivery.
 
 1. Establish the timeline and the first failing signal.
 2. Reproduce the failure or explain why it cannot be reproduced.

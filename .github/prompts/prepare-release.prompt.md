@@ -1,7 +1,7 @@
 ---
 name: "Prepare a release"
-description: "Prepare a release in Autonomous code change."
-agent: agent
+description: "Prepare a release in Autonomous feature delivery."
+agent: "release-gatekeeper"
 ---
 
 Prepare the release for the candidate commit.

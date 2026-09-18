@@ -57,7 +57,6 @@ Without this ruleset the pipeline is advisory only: anything can push directly t
 - **development** — deployments allowed from `main`
 - **staging** — deployments allowed from `main`
 - **production** — required reviewers: **unresolved — set an approver on the human release gate**; protected branches only; prevent self-review on
-- **momma** — deployments allowed from `main`
 
 Approval authority per gate (`.sdlc/approval-policy.json`):
 
@@ -146,7 +145,7 @@ assignment options:
 gh api --method POST repos/YOUR-ORG/YOUR-REPO/issues/ISSUE_NUMBER/assignees \
   -f "assignees[]=copilot-swe-agent[bot]" \
   -f "agent_assignment[base_branch]=main" \
-  -f "agent_assignment[custom_agent]=feature-coder"
+  -f "agent_assignment[custom_agent]=delivery-orchestrator"
 ```
 
 Stage-to-agent mapping lives in `.sdlc/agent-routing.yml`.

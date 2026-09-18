@@ -5,7 +5,7 @@ description: Assess a change for security and privacy risk.
 
 # Security review
 
-Applies to Autonomous code change (web application). Follow `AGENTS.md` first.
+Applies to Autonomous feature delivery (web application). Follow `AGENTS.md` first.
 
 ## Procedure
 

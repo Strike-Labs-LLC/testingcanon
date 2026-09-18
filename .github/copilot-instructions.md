@@ -1,4 +1,4 @@
-# Copilot instructions — Autonomous code change
+# Copilot instructions — Autonomous feature delivery
 
 Repository-wide context automatically supplied to GitHub Copilot. Governance lives in
 `AGENTS.md`; this file describes how to actually work in this repository.

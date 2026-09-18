@@ -1,7 +1,7 @@
 ---
 name: "Create a feature"
-description: "Create a feature in Autonomous code change."
-agent: agent
+description: "Create a feature in Autonomous feature delivery."
+agent: "delivery-orchestrator"
 ---
 
 Take the linked issue and drive it through the pipeline in AGENTS.md.

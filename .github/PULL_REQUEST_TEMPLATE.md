@@ -8,10 +8,15 @@ Closes #
 
 ## Pipeline gates
 
-1. [ ] Feature Coder — Coder
-2. [ ] Code Reviewer — Code Reviewer
-3. [ ] Test Suite Runner — Tester
-4. [ ] Deployment Runner — DevOps Deploy
+1. [ ] Delivery Orchestrator — Engineering Orchestrator
+2. [ ] Requirements Analyst — Product Manager
+3. [ ] Acceptance Criteria Author — Product Manager
+4. [ ] Feature Coder — Coder
+5. [ ] Code Reviewer — Code Reviewer
+6. [ ] Test Author — Tester
+7. [ ] QA Verifier — QA
+8. [ ] Release Gatekeeper — Release Reviewer
+9. [ ] Deployment Runner — DevOps Deploy
 
 ## Definition of Done
 

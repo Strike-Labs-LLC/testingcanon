@@ -1,4 +1,4 @@
-# Autonomous code change — product overview
+# Autonomous feature delivery — product overview
 
 > Scaffold generated from the SDLC blueprint. Fill in the sections marked TODO.
 

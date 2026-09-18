@@ -6,7 +6,7 @@
 > approval step on anything that deploys or deletes. Strike Labs is not liable for the
 > outcome. See `DISCLAIMER.md`.
 
-This package configures a GitHub repository to run the **Autonomous code change** pipeline you designed.
+This package configures a GitHub repository to run the **Autonomous feature delivery** pipeline you designed.
 
 
 - Platform: GitHub

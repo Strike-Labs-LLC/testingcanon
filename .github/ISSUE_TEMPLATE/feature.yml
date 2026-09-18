@@ -1,5 +1,5 @@
 name: Feature
-description: A new capability that enters the Autonomous code change SDLC pipeline.
+description: A new capability that enters the Autonomous feature delivery SDLC pipeline.
 title: "[Feature] "
 labels: ["feature", "needs-triage"]
 body:

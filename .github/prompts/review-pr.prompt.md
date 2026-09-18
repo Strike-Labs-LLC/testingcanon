@@ -1,6 +1,6 @@
 ---
 name: "Review a pull request"
-description: "Review a pull request in Autonomous code change."
+description: "Review a pull request in Autonomous feature delivery."
 agent: "code-reviewer"
 ---
 
