@@ -1,0 +1,62 @@
+# Resumes a run when a named principal submits a native PR review
+# (APPROVE / REQUEST_CHANGES) on the candidate SHA, or posts /canon on the run issue.
+name: Orchestration human gate — Bug triage fix verify
+
+env:
+  CANON_ROOT: .canon/flows/beta-9de674
+  CANON_RUN_LABEL: canon-run:beta-9de674
+
+on:
+  pull_request_review:
+    types: [submitted]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  actions: write
+
+jobs:
+  decide-review:
+    if: github.event_name == 'pull_request_review' && github.event.review.state != 'commented'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+      - name: Record pull request review
+        run: node ${{ env.CANON_ROOT }}/human.mjs --event pull_request_review --pr "$PR_NUMBER" --actor "$REVIEW_ACTOR" --review_state "$REVIEW_STATE" --sha "$REVIEW_SHA" --body "$REVIEW_BODY"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REVIEW_ACTOR: ${{ github.event.review.user.login }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+          REVIEW_SHA: ${{ github.event.review.commit_id }}
+          REVIEW_BODY: ${{ github.event.review.body }}
+
+  decide-comment:
+    if: >-
+      github.event_name == 'issue_comment' &&
+      contains(github.event.issue.labels.*.name, 'canon-run:beta-9de674') &&
+      startsWith(github.event.comment.body, '/canon')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+      - name: Record issue decision
+        run: node ${{ env.CANON_ROOT }}/human.mjs --issue "$ISSUE_NUMBER" --actor "$COMMENT_ACTOR" --body "$COMMENT_BODY"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_ACTOR: ${{ github.event.comment.user.login }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+

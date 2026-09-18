@@ -6,7 +6,7 @@
 > approval step on anything that deploys or deletes. Strike Labs is not liable for the
 > outcome. See `DISCLAIMER.md`.
 
-This package configures a GitHub repository to run the **Autonomous code change** pipeline you designed.
+This package configures a GitHub repository to run the **Bug triage fix verify** pipeline you designed.
 
 
 - Platform: GitHub
@@ -48,9 +48,9 @@ git checkout -b setup/ai-sdlc
 ### 3. Install with the Canon installer — do not rsync
 
 ```bash
-unzip ~/Downloads/autonomous-code-change-github-package.zip -d /tmp/sdlc-package
-node /tmp/sdlc-package/.canon/install.mjs --target . --dry-run
-node /tmp/sdlc-package/.canon/install.mjs --target .
+unzip ~/Downloads/bug-triage-fix-verify-github-package.zip -d /tmp/sdlc-package
+node /tmp/sdlc-package/.canon/flows/beta-9de674/install.mjs --target . --dry-run
+node /tmp/sdlc-package/.canon/flows/beta-9de674/install.mjs --target .
 ```
 
 Never copy the package with rsync or cp. The installer classifies every path and treats a pre-existing Canon-owned file as a conflict unless the content already matches.
@@ -183,7 +183,7 @@ approval applies on top of the decision.
 
 ### 5. Read the results
 
-Artifacts are committed to `.canon/artifacts/<run-id>/<stage>/`. Loop-backs are capped, so a
+Artifacts are committed to `.canon/flows/beta-9de674/artifacts/<run-id>/<stage>/`. Loop-backs are capped, so a
 coder/reviewer cycle fails the run with `loop-limit-exceeded` instead of running forever.
 
 ## Verify the installation

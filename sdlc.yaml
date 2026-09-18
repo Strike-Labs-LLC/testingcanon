@@ -3,9 +3,9 @@
 version: 1
 
 project:
-  name: Autonomous code change
+  name: Bug triage fix verify
   type: web-application
-  description: "John’s Flow #1 orchestration flow."
+  description: "John’s Flow #5 orchestration flow."
 
 architecture:
   frontend: React
@@ -20,7 +20,6 @@ environments:
   - development
   - staging
   - production
-  - momma
 
 workflow:
   branch_strategy: trunk-based
@@ -33,12 +32,12 @@ workflow:
     integration: required
     e2e: optional
   deployment:
-    mechanism: lovable
+    mechanism: unknown
     staging:
       automatic: true
       command: ""
     production:
-      approval_required: false
+      approval_required: true
       command: ""
 
 security:
@@ -52,65 +51,82 @@ documentation:
   runbook: optional
 
 pipeline:
-  name: Auto Bug Fixer
-  entry: feature-coder
+  name: Beta
+  entry: bug-triage
 
 agents:
-  feature-coder:
-    name: Feature Coder
+  bug-triage:
+    name: Bug Triage
+    role: product_manager
+    role_label: Product Manager
+    output_artifact: ticket
+    description: "Confirms the reproduction, sets priority, and defines what fixed means."
+    task: "Reproduce the report, write the reproduction steps, set priority and severity, and define the acceptance criteria for the fix."
+    acceptance_criteria: "The ticket contains reproduction steps, expected versus observed behaviour, a priority, and testable acceptance criteria."
+    instructions: "You are the Product Manager agent handling triage. Confirm the bug reproduces, capture the exact steps, the expected behaviour, and the observed behaviour, set the priority and severity, and define what fixed means as testable acceptance criteria. If it does not reproduce, say so and ask for the missing detail rather than guessing."
+  coder:
+    name: Coder
     role: coder
     role_label: Coder
     output_artifact: code_diff
-    description: Implements the requested change and opens the pull request.
-    task: "Implement the requested change, add tests, run the suite, and open a pull request with the diff summary."
-    acceptance_criteria: "The branch builds, the suite passes locally, and the pull request describes the change and its scope."
-    instructions: "You are the Feature Coder agent. Implement the requested change, add or update tests that prove it, run the suite locally, and open a pull request with a summary of what changed and why. Keep the diff scoped to the request. Never merge, never commit secrets, and never disable a failing test."
+    description: "Finds the root cause and implements a minimal, tested fix."
+    task: "Diagnose the root cause, implement a minimal fix, and add a regression test that covers the reported reproduction."
+    acceptance_criteria: "The root cause is written down, the fix is minimal, and a regression test fails without the fix and passes with it."
+    instructions: "You are the Coder agent. Find the root cause of the bug, then implement the smallest fix that addresses it. Add a regression test that fails before the fix and passes after it. Do not refactor beyond the fix. Never merge and never disable a failing test. Return the diff with a written root-cause explanation."
   code-reviewer:
     name: Code Reviewer
     role: code_reviewer
     role_label: Code Reviewer
     output_artifact: review_notes
-    description: "Reviews the pull request for correctness, security, and coverage."
-    task: Review the pull request diff and record an approval or specific change requests.
-    acceptance_criteria: "Every finding names a file and line and states the change required, and the review ends with one outcome."
-    instructions: "You are the Code Reviewer agent. Review the pull request diff for correctness, style, security, and test coverage. Do not edit the code under review. Approve when it is ready, or request changes with findings that each name a file, a line, and the required change."
-  test-suite-runner:
-    name: Test Suite Runner
+    description: "Reviews the fix for correctness, side effects, and coverage."
+    task: Review the fix against the stated root cause and check the regression test actually covers the report.
+    acceptance_criteria: The review confirms the fix matches the root cause and every finding is specific and actionable.
+    instructions: "You are the Code Reviewer agent. Review the bug fix for correctness, unintended side effects, and regression coverage. Confirm the diagnosis matches the change. Do not edit the code. Approve, or request changes with findings that each name a file, a line, and the change required."
+  fix-verification:
+    name: Fix Verification
     role: tester
     role_label: Tester
     output_artifact: test_report
-    description: Runs the full test suite against the pull request and reports the result.
-    task: Run the automated suite against the branch and report pass or fail with the output attached.
-    acceptance_criteria: The suite has been run against the candidate commit and the result is reported with logs for any failure.
-    instructions: "You are the Test Suite Runner agent. Run the full automated test suite against the pull request branch and verify the behaviour the change describes. Attach the run output. Report a pass, or a failure with the failing test names and reproduction steps. Never weaken assertions to get a green run."
-  deployment-runner:
-    name: Deployment Runner
-    role: devops_deploy
-    role_label: DevOps Deploy
-    output_artifact: deployment
-    description: Deploys the verified change and confirms health.
-    task: "Deploy the verified commit, run smoke tests, and report health status or roll back."
-    acceptance_criteria: "The deployment is healthy, smoke tests pass, and the rollback path is confirmed."
-    instructions: "You are the Deployment Runner agent. Deploy the commit that passed review and the test suite to the target environment, run smoke tests, and monitor health for the agreed window. Deploy only after a recorded approval and a passing test run. Roll back on failure and report exactly what happened."
+    description: Verifies the original reproduction is gone and nothing regressed.
+    task: "Re-run the original reproduction and the full suite against the fix, and report the outcome with output attached."
+    acceptance_criteria: "The original reproduction no longer occurs, the suite is green, and the evidence is attached."
+    instructions: "You are the Tester agent. Verify the fix against the original reproduction steps, then run the full suite to confirm nothing else regressed. Attach the run output. Report a pass, or a failure with the exact step that still fails. Never weaken an assertion to get a green run. Do not edit source or tests."
+  bug-closeout:
+    name: Bug Closeout
+    role: orchestrator
+    role_label: Engineering Orchestrator
+    output_artifact: status_update
+    description: "Records the outcome, links the evidence, and closes the report."
+    task: "Summarise the root cause and fix on the ticket, attach the evidence, and close the report."
+    acceptance_criteria: "The ticket is closed with a root-cause summary and links to the diff, review notes, and test report."
+    instructions: "You are the closeout orchestrator. Once the review is approved and the verification passed, summarise the root cause and the fix on the ticket, link the diff, the review notes, and the test report, and close the bug. Do not implement or modify code. Post the final STATUS: DONE comment."
 
 transitions:
-  - from: feature-coder
+  - from: bug-triage
+    to: coder
+    when: Always
+    label: Triaged and ready to fix
+  - from: coder
     to: code-reviewer
     when: Always
-    label: Pull request opened
+    label: Fix ready for review
+  - from: coder
+    to: fix-verification
+    when: Always
+    label: Fix ready to verify
   - from: code-reviewer
-    to: test-suite-runner
+    to: bug-closeout
     when: If approved
     label: Review approved
+  - from: fix-verification
+    to: bug-closeout
+    when: If passed
+    label: Verification passed
   - from: code-reviewer
-    to: feature-coder
+    to: coder
     when: If changes required
     label: Changes required
-  - from: test-suite-runner
-    to: deployment-runner
-    when: If passed
-    label: Tests passed
-  - from: test-suite-runner
-    to: feature-coder
+  - from: fix-verification
+    to: coder
     when: If failed
-    label: Tests failed
+    label: Still reproduces

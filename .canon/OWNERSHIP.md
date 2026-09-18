@@ -1,6 +1,6 @@
 # File ownership
 
-Canon records an owner for every file it writes in `.canon/manifest.json`.
+Canon records an owner for every file it writes in `.canon/flows/beta-9de674/manifest.json`.
 The installer honours these rules, so reinstalling never destroys your work.
 
 | Owner | Key | Rule |
@@ -13,12 +13,12 @@ The installer honours these rules, so reinstalling never destroys your work.
 
 | Task | Command |
 | --- | --- |
-| Preview an install | `node .canon/install.mjs --dry-run` |
-| Install or update | `node .canon/install.mjs` |
-| Accept Canon's version of conflicted files | `node .canon/install.mjs --force` |
-| Verify the installation | `node .canon/verify.mjs` |
-| See what removal would do | `node .canon/uninstall.mjs` |
-| Remove Canon | `node .canon/uninstall.mjs --apply` |
+| Preview an install | `node .canon/flows/beta-9de674/install.mjs --dry-run` |
+| Install or update | `node .canon/flows/beta-9de674/install.mjs` |
+| Accept Canon's version of conflicted files | `node .canon/flows/beta-9de674/install.mjs --force` |
+| Verify the installation | `node .canon/flows/beta-9de674/verify.mjs` |
+| See what removal would do | `node .canon/flows/beta-9de674/uninstall.mjs` |
+| Remove Canon | `node .canon/flows/beta-9de674/uninstall.mjs --apply` |
 
 Run the installer from the package root with the repository as `--target`, or copy the
 package into the repository and run it there.

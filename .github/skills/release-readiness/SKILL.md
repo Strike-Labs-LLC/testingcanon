@@ -5,7 +5,7 @@ description: Decide whether a candidate build may be released.
 
 # Release readiness
 
-Applies to Autonomous code change (web application). Follow `AGENTS.md` first.
+Applies to Bug triage fix verify (web application). Follow `AGENTS.md` first.
 
 ## Procedure
 

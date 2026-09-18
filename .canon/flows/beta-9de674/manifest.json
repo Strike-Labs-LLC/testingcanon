@@ -1,0 +1,821 @@
+{
+  "manifestVersion": 2,
+  "canonVersion": "1.0.0",
+  "adapter": {
+    "id": "github",
+    "version": "1.0.0"
+  },
+  "installScope": "repository",
+  "blueprint": {
+    "id": "beta",
+    "name": "Beta",
+    "hash": "canon1:1775c37cc923e1d1"
+  },
+  "files": [
+    {
+      "path": ".canon/flows/beta-9de674/attestation.json",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:793108919c7ac1f6",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/canon-hash.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:2a9e088ce36426da",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/canon-token.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:bb89ce1e44312c3a",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/coding-agent.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:f2f5fbdc6fc6e0a1",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/engine.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:b7074ae50641424c",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/escalate.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:35a5020f2f6e1252",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/graph.json",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:101ba1ff206b9345",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/human.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:3a18e73695335dd4",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/identity.json",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:f84500394eeea4be",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/install.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:2ad0c6a4b6c92f25",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/invoke-agent.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:5469794ef332dc1b",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/merge.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:be8596b4633431af",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/paths.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:14b599d2acd4fa0d",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/publish.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:1c7e377dd744fd73",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/README.md",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:abdeaedf7db49b33",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/release.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:838fc1d9779fbaab",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/removal-plan.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:c2a8f47a2812ba1c",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/report.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:ac6205ffd7f3c9e2",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/run-stage.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:b8c73cc21bb8dfa0",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/start-run.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:fac7f4f0da4348b6",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/state.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:13e058d42fa215ac",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/tick.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:3dfbc1ca641bf00a",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/uninstall.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:6332bc1e586b9675",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/flows/beta-9de674/verify.mjs",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:6310cf086988fa10",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/OWNERSHIP.md",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:0cc888126507be71",
+      "source": "runtime"
+    },
+    {
+      "path": ".canon/require-script.sh",
+      "purpose": "Orchestration runtime",
+      "ownership": "canon",
+      "hash": "canon1:f8b538c463c3e6a8",
+      "source": "runtime"
+    },
+    {
+      "path": ".github/agents/00-bug-closeout.agent.md",
+      "purpose": "Agent definition",
+      "ownership": "canon",
+      "hash": "canon1:6f314d69352ae72a",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/agents/01-bug-triage.agent.md",
+      "purpose": "Agent definition",
+      "ownership": "canon",
+      "hash": "canon1:4e93a80697fb75b8",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/agents/02-coder.agent.md",
+      "purpose": "Agent definition",
+      "ownership": "canon",
+      "hash": "canon1:1ce22cbda1fdfec1",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/agents/03-code-reviewer.agent.md",
+      "purpose": "Agent definition",
+      "ownership": "canon",
+      "hash": "canon1:61802ad9226f3419",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/agents/04-fix-verification.agent.md",
+      "purpose": "Agent definition",
+      "ownership": "canon",
+      "hash": "canon1:b1f5c1d980783052",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/copilot-instructions.md",
+      "purpose": "Generated documentation",
+      "ownership": "canon",
+      "hash": "canon1:85531b997e13574e",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/dependabot.yml",
+      "purpose": "Dependency updates",
+      "ownership": "merge",
+      "hash": "canon1:69c0c82613f7e073",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/DEPLOYMENT.md",
+      "purpose": "Deployment runbook",
+      "ownership": "user",
+      "hash": "canon1:4810addcd56c6de0",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/hooks/audit.json",
+      "purpose": "Copilot hook",
+      "ownership": "canon",
+      "hash": "canon1:836b4f9e508c153e",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/hooks/policy.json",
+      "purpose": "Copilot hook",
+      "ownership": "canon",
+      "hash": "canon1:5aa4b5048be6fc42",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/hooks/scripts/audit-log.sh",
+      "purpose": "Copilot hook",
+      "ownership": "canon",
+      "hash": "canon1:ff9c45984ff8bd6a",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/hooks/scripts/check-command.sh",
+      "purpose": "Copilot hook",
+      "ownership": "canon",
+      "hash": "canon1:1c5cff5da91d8978",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/hooks/scripts/check-protected-paths.sh",
+      "purpose": "Copilot hook",
+      "ownership": "canon",
+      "hash": "canon1:18509e03672f8016",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/hooks/scripts/deny-destructive-data.sh",
+      "purpose": "Copilot hook",
+      "ownership": "canon",
+      "hash": "canon1:32c242097828599e",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/hooks/scripts/deny-secret-writes.sh",
+      "purpose": "Copilot hook",
+      "ownership": "canon",
+      "hash": "canon1:134d945385e9e426",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/hooks/scripts/require-tests.sh",
+      "purpose": "Copilot hook",
+      "ownership": "canon",
+      "hash": "canon1:091009ca999f325f",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/hooks/security.json",
+      "purpose": "Copilot hook",
+      "ownership": "canon",
+      "hash": "canon1:84e159987487e34c",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/instructions/ai-integration.instructions.md",
+      "purpose": "Path instructions",
+      "ownership": "canon",
+      "hash": "canon1:04d1dad649659bad",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/instructions/backend.instructions.md",
+      "purpose": "Path instructions",
+      "ownership": "canon",
+      "hash": "canon1:127782b050a8ad50",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/instructions/database.instructions.md",
+      "purpose": "Path instructions",
+      "ownership": "canon",
+      "hash": "canon1:36e4c079eac8e1b6",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/instructions/desktop.instructions.md",
+      "purpose": "Path instructions",
+      "ownership": "canon",
+      "hash": "canon1:f640522ea1eb1d4a",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/instructions/frontend.instructions.md",
+      "purpose": "Path instructions",
+      "ownership": "canon",
+      "hash": "canon1:cf901533996d620d",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/instructions/infrastructure.instructions.md",
+      "purpose": "Path instructions",
+      "ownership": "canon",
+      "hash": "canon1:98c1a3cfd1eb1b61",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/instructions/security.instructions.md",
+      "purpose": "Path instructions",
+      "ownership": "canon",
+      "hash": "canon1:4f76be39e7139616",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/instructions/styling.instructions.md",
+      "purpose": "Path instructions",
+      "ownership": "canon",
+      "hash": "canon1:d90d59f5a7a266b9",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/instructions/tests.instructions.md",
+      "purpose": "Path instructions",
+      "ownership": "canon",
+      "hash": "canon1:d3dc9757050f7c63",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug.yml",
+      "purpose": "Issue form",
+      "ownership": "canon",
+      "hash": "canon1:81dad37e9355d6ee",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/config.yml",
+      "purpose": "Issue form",
+      "ownership": "canon",
+      "hash": "canon1:6783d89cf432e2ed",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature.yml",
+      "purpose": "Issue form",
+      "ownership": "canon",
+      "hash": "canon1:162889e4e4a5bf68",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/security.yml",
+      "purpose": "Issue form",
+      "ownership": "canon",
+      "hash": "canon1:a90d6924b2c8f34d",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/technical-debt.yml",
+      "purpose": "Issue form",
+      "ownership": "canon",
+      "hash": "canon1:fcd33cc9890430b9",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/prompts/create-feature.prompt.md",
+      "purpose": "Prompt file",
+      "ownership": "canon",
+      "hash": "canon1:980bc03676a99c25",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/prompts/create-tests.prompt.md",
+      "purpose": "Prompt file",
+      "ownership": "canon",
+      "hash": "canon1:e5a5995e544f10e3",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/prompts/investigate-bug.prompt.md",
+      "purpose": "Prompt file",
+      "ownership": "canon",
+      "hash": "canon1:afe4a9fa9e4f8c23",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/prompts/prepare-release.prompt.md",
+      "purpose": "Prompt file",
+      "ownership": "canon",
+      "hash": "canon1:3fefa2c9faee802b",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/prompts/review-pr.prompt.md",
+      "purpose": "Prompt file",
+      "ownership": "canon",
+      "hash": "canon1:2bec52a859d378c4",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "purpose": "Generated documentation",
+      "ownership": "canon",
+      "hash": "canon1:dcf66679f72c298d",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/skills/implementation/SKILL.md",
+      "purpose": "Agent skill",
+      "ownership": "canon",
+      "hash": "canon1:08db8013f3ecb566",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/skills/release-readiness/SKILL.md",
+      "purpose": "Agent skill",
+      "ownership": "canon",
+      "hash": "canon1:dd93d648eb7175da",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/skills/requirements-analysis/SKILL.md",
+      "purpose": "Agent skill",
+      "ownership": "canon",
+      "hash": "canon1:af3a24523db228f2",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/skills/security-review/SKILL.md",
+      "purpose": "Agent skill",
+      "ownership": "canon",
+      "hash": "canon1:ff0e925f044736d2",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/skills/testing/SKILL.md",
+      "purpose": "Agent skill",
+      "ownership": "canon",
+      "hash": "canon1:0645f34dfcb644fd",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/skills/ticket-breakdown/SKILL.md",
+      "purpose": "Agent skill",
+      "ownership": "canon",
+      "hash": "canon1:ef7719961bde15cb",
+      "source": "blueprint"
+    },
+    {
+      "path": ".github/workflows/canon-beta-9de674-build.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:b1b8ef8fc37fa145",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/canon-beta-9de674-escalate.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:eff4acf6e84ae7b2",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/canon-beta-9de674-human.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:b2bcfd5a1f9ef913",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/canon-beta-9de674-pipeline.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:1fdf8dee550e6bae",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/canon-beta-9de674-release-guard.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:6f73f0892f7c9c6e",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/canon-beta-9de674-release.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:3e73fd59128ccadc",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/canon-beta-9de674-step.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:7f5f08569c5fc73b",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:bbc665eda7444286",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/copilot-setup-steps.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:8b9a62a9c22e4d8c",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/dependency-review.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:bfeae787d0cdb590",
+      "source": "workflow"
+    },
+    {
+      "path": ".github/workflows/test.yml",
+      "purpose": "Workflow",
+      "ownership": "canon",
+      "hash": "canon1:98001c5074e3dcec",
+      "source": "workflow"
+    },
+    {
+      "path": ".sdlc/agent-routing.yml",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:403fa10cfd3fc96e",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/approval-policy.json",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:1c438fbd038d31cc",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/blueprint.json",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:662de19cd979d201",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/blueprint.yml",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:2f991d631b640910",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/compliance.yml",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:f5587521404412fb",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/github-setup.json",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:5687231ca2ac5f5e",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/github/apply.sh",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:103de1693db04971",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/github/environment-development-bug-triage-fix-verify.json",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:8801aa7bb51e6dc4",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/github/environment-production-bug-triage-fix-verify.json",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:8c140ed6294efb34",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/github/environment-staging-bug-triage-fix-verify.json",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:7ec78a5ccbc4ad28",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/github/labels.sh",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:f5b34b8729839963",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/github/ruleset-branch.json",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:4e45cd06e9a2c211",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/github/ruleset-tags.json",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:fc508f9b4cd22595",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/lifecycle.yml",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:9d8523dcbf8b3504",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/quality-gates.yml",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:dae843727afdfb88",
+      "source": "spec"
+    },
+    {
+      "path": ".sdlc/README.md",
+      "purpose": "Lifecycle specification",
+      "ownership": "canon",
+      "hash": "canon1:aef505e33e44aaf4",
+      "source": "spec"
+    },
+    {
+      "path": "AGENTS.md",
+      "purpose": "Agent contract",
+      "ownership": "canon",
+      "hash": "canon1:d7031d5378abb758",
+      "source": "blueprint"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "purpose": "Contribution guide",
+      "ownership": "merge",
+      "hash": "canon1:112e643a32b0ab3a",
+      "source": "blueprint"
+    },
+    {
+      "path": "DISCLAIMER.md",
+      "purpose": "Generated documentation",
+      "ownership": "canon",
+      "hash": "canon1:70a4d9103cbc9c86",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/adr/0001-architecture.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:d3a694138f9333d6",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/adr/0002-authentication.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:8a713661ce374c0a",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/API.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:a6613faa13cb17e6",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:644946de3f0a90d5",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/DATA-MODEL.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:bc7059dd0ab7bfee",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/DEPLOYMENT.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:ec93994b6735b621",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/GITHUB-SETUP.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:e1403f65d1c42f49",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/PRODUCT.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:461a0dcd6cee5ec6",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/RELEASE-PROCESS.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:549345f6f63bd1b8",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/RUNBOOK.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:cdb6b20b2b3f0463",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/SECURITY.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:d7b11e3679f70232",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/TESTING.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:b21697f70b8a2e10",
+      "source": "blueprint"
+    },
+    {
+      "path": "docs/THREAT-MODEL.md",
+      "purpose": "Project documentation",
+      "ownership": "user",
+      "hash": "canon1:e763e70f2a48745a",
+      "source": "blueprint"
+    },
+    {
+      "path": "INSTALL-GITHUB.md",
+      "purpose": "Generated documentation",
+      "ownership": "canon",
+      "hash": "canon1:858173b83a9eaa9a",
+      "source": "blueprint"
+    },
+    {
+      "path": "README.md",
+      "purpose": "Repository overview",
+      "ownership": "merge",
+      "hash": "canon1:81a8f8c17042bdc2",
+      "source": "blueprint"
+    },
+    {
+      "path": "SECURITY.md",
+      "purpose": "Security policy",
+      "ownership": "merge",
+      "hash": "canon1:101db8a266ace4de",
+      "source": "blueprint"
+    }
+  ]
+}

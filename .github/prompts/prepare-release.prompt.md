@@ -1,6 +1,6 @@
 ---
 name: "Prepare a release"
-description: "Prepare a release in Autonomous code change."
+description: "Prepare a release in Bug triage fix verify."
 agent: agent
 ---
 

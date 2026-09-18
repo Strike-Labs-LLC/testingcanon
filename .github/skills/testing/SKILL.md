@@ -5,7 +5,7 @@ description: Verify a change against its acceptance criteria.
 
 # Testing
 
-Applies to Autonomous code change (web application). Follow `AGENTS.md` first.
+Applies to Bug triage fix verify (web application). Follow `AGENTS.md` first.
 
 ## Procedure
 

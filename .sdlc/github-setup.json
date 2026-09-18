@@ -8,10 +8,9 @@
       ".sdlc/github/ruleset-tags.json"
     ],
     "environments": [
-      ".sdlc/github/environment-development.json",
-      ".sdlc/github/environment-staging.json",
-      ".sdlc/github/environment-production.json",
-      ".sdlc/github/environment-momma.json"
+      ".sdlc/github/environment-development-bug-triage-fix-verify.json",
+      ".sdlc/github/environment-staging-bug-triage-fix-verify.json",
+      ".sdlc/github/environment-production-bug-triage-fix-verify.json"
     ],
     "apply": ".sdlc/github/apply.sh"
   },
@@ -95,45 +94,45 @@
       "source": "triage"
     },
     {
-      "name": "canon:start",
+      "name": "canon:start:beta-9de674",
       "color": "0969da",
-      "description": "Starts a Canon orchestration run",
+      "description": "Starts a Canon orchestration run (Bug triage fix verify)",
       "source": "runtime"
     },
     {
-      "name": "canon-run",
+      "name": "canon-run:beta-9de674",
       "color": "0e8a16",
-      "description": "Canon orchestration run",
+      "description": "Canon orchestration run (Bug triage fix verify)",
       "source": "runtime"
     },
     {
-      "name": "awaiting-human",
+      "name": "awaiting-human:beta-9de674",
       "color": "bf8700",
-      "description": "A human gate is open on this run",
+      "description": "A human gate is open on this run (Bug triage fix verify)",
       "source": "runtime"
     },
     {
-      "name": "run-completed",
+      "name": "run-completed:beta-9de674",
       "color": "1a7f37",
-      "description": "Canon run finished successfully",
+      "description": "Canon run finished successfully (Bug triage fix verify)",
       "source": "runtime"
     },
     {
-      "name": "run-failed",
+      "name": "run-failed:beta-9de674",
       "color": "d1242f",
-      "description": "Canon run failed",
+      "description": "Canon run failed (Bug triage fix verify)",
       "source": "runtime"
     },
     {
-      "name": "resource-conflict",
+      "name": "resource-conflict:beta-9de674",
       "color": "d1242f",
-      "description": "Two stages own the same resource in a run",
+      "description": "Two stages own the same resource in a run (Bug triage fix verify)",
       "source": "runtime"
     },
     {
-      "name": "sla-breached",
+      "name": "sla-breached:beta-9de674",
       "color": "d1242f",
-      "description": "A human gate passed its response time",
+      "description": "A human gate passed its response time (Bug triage fix verify)",
       "source": "runtime"
     },
     {
@@ -201,28 +200,34 @@
   },
   "copilotAgents": [
     {
-      "slug": "feature-coder",
+      "slug": "bug-triage",
+      "role": "product_manager",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/01-bug-triage.agent.md"
+    },
+    {
+      "slug": "coder",
       "role": "coder",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/01-feature-coder.agent.md"
+      "file": ".github/agents/02-coder.agent.md"
     },
     {
       "slug": "code-reviewer",
       "role": "code_reviewer",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/02-code-reviewer.agent.md"
+      "file": ".github/agents/03-code-reviewer.agent.md"
     },
     {
-      "slug": "test-suite-runner",
+      "slug": "fix-verification",
       "role": "tester",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/03-test-suite-runner.agent.md"
+      "file": ".github/agents/04-fix-verification.agent.md"
     },
     {
-      "slug": "deployment-runner",
-      "role": "devops_deploy",
+      "slug": "bug-closeout",
+      "role": "orchestrator",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/04-deployment-runner.agent.md"
+      "file": ".github/agents/00-bug-closeout.agent.md"
     }
   ],
   "humanGates": []

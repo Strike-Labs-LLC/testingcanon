@@ -1,7 +1,7 @@
 ---
 name: "Create a feature"
-description: "Create a feature in Autonomous code change."
-agent: agent
+description: "Create a feature in Bug triage fix verify."
+agent: "bug-closeout"
 ---
 
 Take the linked issue and drive it through the pipeline in AGENTS.md.

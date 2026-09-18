@@ -1,0 +1,47 @@
+# Starts an orchestration run for Bug triage fix verify.
+# The run record lives in a GitHub issue labelled `canon-run:beta-9de674`; every stage result and
+# human decision is appended to that issue, so the whole run is auditable in the repo.
+name: Orchestration pipeline — Bug triage fix verify
+
+env:
+  CANON_ROOT: .canon/flows/beta-9de674
+  CANON_RUN_LABEL: canon-run:beta-9de674
+
+on:
+  workflow_dispatch:
+    inputs:
+      objective:
+        description: What this run should deliver
+        required: false
+        default: ''
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  start:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'canon:start:beta-9de674'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+      # The objective is attacker-controlled text (an issue title). It is bound to an
+      # environment variable and never interpolated into the shell command, so a title
+      # containing shell metacharacters is data, not code.
+      - name: Start run
+        run: node ${{ env.CANON_ROOT }}/start-run.mjs --objective "$CANON_OBJECTIVE" --trigger "$CANON_TRIGGER" --issue "$CANON_SOURCE_ISSUE" --sha "$CANON_BASE_SHA"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CANON_OBJECTIVE: ${{ github.event.inputs.objective || github.event.issue.title }}
+          CANON_TRIGGER: ${{ github.event_name }}
+          CANON_SOURCE_ISSUE: ${{ github.event.issue.number }}
+          CANON_SOURCE_ISSUE_URL: ${{ github.event.issue.html_url }}
+          CANON_BASE_SHA: ${{ github.sha }}

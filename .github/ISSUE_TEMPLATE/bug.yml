@@ -1,5 +1,5 @@
 name: Bug
-description: A defect in Autonomous code change.
+description: A defect in Bug triage fix verify.
 title: "[Bug] "
 labels: ["bug", "needs-triage"]
 body:
@@ -30,7 +30,6 @@ body:
         - development
         - staging
         - production
-        - momma
     validations:
       required: true
   - type: dropdown

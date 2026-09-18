@@ -5,7 +5,7 @@ description: Implement an approved ticket to the repository's standards.
 
 # Implementation
 
-Applies to Autonomous code change (web application). Follow `AGENTS.md` first.
+Applies to Bug triage fix verify (web application). Follow `AGENTS.md` first.
 
 ## Procedure
 
