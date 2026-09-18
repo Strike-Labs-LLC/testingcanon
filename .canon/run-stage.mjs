@@ -9,7 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { loadGraph, readRun, comment, resultComment } from "./state.mjs";
+import { loadGraph, readRun, comment, resultComment, CANON_ROOT } from "./state.mjs";
 import { invokeCodingAgent } from "./coding-agent.mjs";
 import { stageById, forwardInbound, handoffsFor } from "./engine.mjs";
 import { allowedToWrite, normalizePath } from "./paths.mjs";
@@ -70,9 +70,9 @@ function capturePatches(run, stage, outboxDir) {
     return target;
   };
 
-  const artifactPrefix = `.canon/artifacts/${run.runId}/${stage.id}`;
+  const artifactPrefix = `${CANON_ROOT}/artifacts/${run.runId}/${stage.id}`;
   const artifactSpec = ["--", artifactPrefix];
-  const sourceSpec = ["--", ".", ":(exclude).canon/artifacts"];
+  const sourceSpec = ["--", ".", `:(exclude)${CANON_ROOT}/artifacts`];
 
   const sourceFiles = names(sourceSpec);
   const artifactFiles = names(artifactSpec);
@@ -115,8 +115,8 @@ function restoreArtifacts(run) {
     return false; // No artifacts committed yet — this is the first stage.
   }
   try {
-    git("checkout", `origin/${branch}`, "--", ".canon/artifacts");
-    git("reset", "--", ".canon/artifacts");
+    git("checkout", `origin/${branch}`, "--", `${CANON_ROOT}/artifacts`);
+    git("reset", "--", `${CANON_ROOT}/artifacts`);
     return true;
   } catch {
     return false;
@@ -129,7 +129,7 @@ function restoreArtifacts(run) {
  * a guarded path is failed rather than committed.
  */
 function guardedViolations(stage) {
-  const changed = statusPaths(".").filter((file) => !file.startsWith(".canon/artifacts"));
+  const changed = statusPaths(".").filter((file) => !file.startsWith(`${CANON_ROOT}/artifacts`));
   return changed.filter((file) => !allowedToWrite(file, stage));
 }
 
@@ -157,7 +157,7 @@ function statusPaths(spec) {
 
 /** True when a read-only stage left the workspace dirty. */
 function dirtyWorkspace() {
-  return git("status", "--porcelain", "--", ".", ":(exclude).canon/artifacts")
+  return git("status", "--porcelain", "--", ".", `:(exclude)${CANON_ROOT}/artifacts`)
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
@@ -341,7 +341,7 @@ async function main() {
     upstreamContext(graph, run, stage) || "No upstream artifacts — you are the first stage.",
   ].join("\n");
 
-  const dir = path.join(".canon", "artifacts", run.runId, stage.id);
+  const dir = path.join(CANON_ROOT, "artifacts", run.runId, stage.id);
   fs.mkdirSync(dir, { recursive: true });
 
   // Every stage that must see the repository runs in a coding agent. Action

@@ -7,12 +7,13 @@
 - development
 - staging
 - production
+- momma
 
 ## Pipeline
 
-- Deployment method: Not identified
+- Deployment method: Lovable
 - Staging: automatic from the default branch
-- Production: requires recorded human approval
+- Production: automatic once gates pass
 
 
 - Staging: no deploy command configured, so no staging workflow was generated (see `.github/DEPLOYMENT.md`).

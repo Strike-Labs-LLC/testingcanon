@@ -6,7 +6,7 @@
 > approval step on anything that deploys or deletes. Strike Labs is not liable for the
 > outcome. See `DISCLAIMER.md`.
 
-This package configures a GitHub repository to run the **Bug triage fix verify** pipeline you designed.
+This package configures a GitHub repository to run the **Autonomous code change** pipeline you designed.
 
 
 - Platform: GitHub
@@ -48,7 +48,7 @@ git checkout -b setup/ai-sdlc
 ### 3. Install with the Canon installer — do not rsync
 
 ```bash
-unzip ~/Downloads/bug-triage-fix-verify-github-package.zip -d /tmp/sdlc-package
+unzip ~/Downloads/autonomous-code-change-github-package.zip -d /tmp/sdlc-package
 node /tmp/sdlc-package/.canon/install.mjs --target . --dry-run
 node /tmp/sdlc-package/.canon/install.mjs --target .
 ```

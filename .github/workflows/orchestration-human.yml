@@ -2,6 +2,10 @@
 # (APPROVE / REQUEST_CHANGES) on the candidate SHA, or posts /canon on the run issue.
 name: Orchestration human gate
 
+env:
+  CANON_ROOT: .canon
+  CANON_RUN_LABEL: canon-run
+
 on:
   pull_request_review:
     types: [submitted]
@@ -26,7 +30,7 @@ jobs:
         with:
           node-version: '20'
       - name: Record pull request review
-        run: node .canon/human.mjs --event pull_request_review --pr "$PR_NUMBER" --actor "$REVIEW_ACTOR" --review_state "$REVIEW_STATE" --sha "$REVIEW_SHA" --body "$REVIEW_BODY"
+        run: node ${{ env.CANON_ROOT }}/human.mjs --event pull_request_review --pr "$PR_NUMBER" --actor "$REVIEW_ACTOR" --review_state "$REVIEW_STATE" --sha "$REVIEW_SHA" --body "$REVIEW_BODY"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -49,7 +53,7 @@ jobs:
         with:
           node-version: '20'
       - name: Record issue decision
-        run: node .canon/human.mjs --issue "$ISSUE_NUMBER" --actor "$COMMENT_ACTOR" --body "$COMMENT_BODY"
+        run: node ${{ env.CANON_ROOT }}/human.mjs --issue "$ISSUE_NUMBER" --actor "$COMMENT_ACTOR" --body "$COMMENT_BODY"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}

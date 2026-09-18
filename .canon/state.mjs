@@ -13,7 +13,14 @@ const REPO = process.env.GITHUB_REPOSITORY || "";
 // brokered installation token after the module has already been imported.
 const token = () => process.env.GITHUB_TOKEN || "";
 
-export const RUN_LABEL = "canon-run";
+/**
+ * Where this flow's runtime lives, and which run issues belong to it. A
+ * repository may run several flows at once, so each flow's workflows export
+ * `CANON_ROOT` and `CANON_RUN_LABEL`; the unprefixed defaults are the legacy
+ * single-flow layout.
+ */
+export const CANON_ROOT = process.env.CANON_ROOT || ".canon";
+export const RUN_LABEL = process.env.CANON_RUN_LABEL || "canon-run";
 export const RESULT_MARKER = "canon:result";
 export const RUN_BLOCK_START = "<!-- canon:run -->";
 export const RUN_BLOCK_END = "<!-- /canon:run -->";
@@ -39,7 +46,7 @@ export async function gh(route, init = {}) {
   return response.status === 204 ? null : response.json();
 }
 
-export function loadGraph(root = ".canon") {
+export function loadGraph(root = CANON_ROOT) {
   return JSON.parse(fs.readFileSync(path.join(root, "graph.json"), "utf8"));
 }
 

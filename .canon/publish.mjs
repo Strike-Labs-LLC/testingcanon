@@ -14,7 +14,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 
-import { loadGraph, readRun, resultComment } from "./state.mjs";
+import { loadGraph, readRun, resultComment, CANON_ROOT } from "./state.mjs";
 import { stageById } from "./engine.mjs";
 import { allowedToWrite, matchesAny, normalizePath } from "./paths.mjs";
 import { useBrokeredToken } from "./canon-token.mjs";
@@ -255,8 +255,8 @@ function writeResult(outbox, stageId, body) {
 
 async function main() {
   const issueNumber = Number(arg("issue"));
-  const inbox = arg("inbox", ".canon/inbox");
-  const outbox = arg("outbox", ".canon/outbox");
+  const inbox = arg("inbox", `${CANON_ROOT}/inbox`);
+  const outbox = arg("outbox", `${CANON_ROOT}/outbox`);
   if (!issueNumber) throw new Error("No run issue was supplied.");
   if (!fs.existsSync(inbox)) {
     console.log("Nothing to publish.");

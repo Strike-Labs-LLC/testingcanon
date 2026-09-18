@@ -14,7 +14,8 @@
  */
 
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { dirname, join, relative, resolve } from "node:path";
 import { MERGE_BEGIN, MERGE_END, hashContents } from "./canon-hash.mjs";
 
 const args = process.argv.slice(2);
@@ -22,9 +23,15 @@ const apply = args.includes("--apply");
 const targetIndex = args.indexOf("--target");
 const target = resolve(targetIndex === -1 ? process.cwd() : args[targetIndex + 1]);
 
-const manifestPath = join(target, ".canon", "manifest.json");
+// A repository can hold several Canon flows, each installed under its own
+// directory. This script always belongs to exactly one of them, so its own
+// location -- not a hardcoded ".canon" -- decides which installation it reads
+// and writes. Legacy single-flow installs resolve to ".canon" unchanged.
+const canonRoot = dirname(fileURLToPath(import.meta.url));
+const canonRel = relative(target, canonRoot) || ".canon";
+const manifestPath = join(canonRoot, "manifest.json");
 if (!existsSync(manifestPath)) {
-  console.error("No .canon/manifest.json found — Canon is not installed in this repository.");
+  console.error(`No ${canonRel}/manifest.json found — Canon is not installed in this repository.`);
   process.exit(1);
 }
 
@@ -72,7 +79,9 @@ for (const entry of clean) {
   writeFileSync(absolute, stripRegion(readFileSync(absolute, "utf8")));
 }
 rmSync(manifestPath, { force: true });
-rmSync(join(target, ".canon"), { recursive: true, force: true });
+// Only this flow's own directory. Another flow's runtime may sit beside it,
+// and removing one flow must never delete another's installation.
+rmSync(join(target, canonRel), { recursive: true, force: true });
 rmSync(join(target, "CONFLICTS.md"), { force: true });
 
 console.log("");

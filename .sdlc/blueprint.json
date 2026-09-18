@@ -1,10 +1,10 @@
 {
   "version": 7,
-  "name": "Beta",
+  "name": "Auto Bug Fixer",
   "project": {
-    "name": "Bug triage fix verify",
+    "name": "Autonomous code change",
     "type": "web-application",
-    "description": "John’s Flow #5 orchestration flow.",
+    "description": "John’s Flow #1 orchestration flow.",
     "repository": {
       "owner": "",
       "name": "",
@@ -27,6 +27,7 @@
       "existingWorkflows": [],
       "containers": [],
       "deployment": [],
+      "environments": [],
       "notes": [
         "No package.json at main. Canon's generated checks run npm scripts, so set the commands by hand for a HTML repository.",
         "Canon read README to fill these answers."
@@ -98,7 +99,8 @@
     "environments": [
       "development",
       "staging",
-      "production"
+      "production",
+      "momma"
     ],
     "workflow": {
       "branchStrategy": "trunk-based",
@@ -112,12 +114,12 @@
       },
       "deployment": {
         "stagingAutomatic": true,
-        "productionApprovalRequired": true,
+        "productionApprovalRequired": false,
         "stagingCommand": "",
         "productionCommand": "",
-        "platform": "unknown",
-        "method": "unknown",
-        "mechanism": "unknown"
+        "platform": "lovable",
+        "method": "platform-managed",
+        "mechanism": "lovable"
       }
     },
     "security": {
@@ -135,28 +137,34 @@
     },
     "policy": {
       "pack": "custom",
-      "disabled": []
+      "disabled": [
+        "deploy-needs-human",
+        "entry-role-convention"
+      ]
     }
   },
   "agents": [
     {
-      "id": "agent_rhbaklmj",
-      "name": "Bug Triage",
-      "description": "Confirms the reproduction, sets priority, and defines what fixed means.",
-      "role": "product_manager",
+      "id": "agent_vsdhkqum",
+      "name": "Feature Coder",
+      "description": "Implements the requested change and opens the pull request.",
+      "role": "coder",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Product Manager agent handling triage. Confirm the bug reproduces, capture the exact steps, the expected behaviour, and the observed behaviour, set the priority and severity, and define what fixed means as testable acceptance criteria. If it does not reproduce, say so and ask for the missing detail rather than guessing.",
+      "systemPrompt": "You are the Feature Coder agent. Implement the requested change, add or update tests that prove it, run the suite locally, and open a pull request with a summary of what changed and why. Keep the diff scoped to the request. Never merge, never commit secrets, and never disable a failing test.",
       "temperature": 0.2,
       "tools": [
         "read_files",
         "search_code",
-        "update_issue"
+        "edit_files",
+        "run_tests",
+        "run_commands",
+        "open_pull_request"
       ],
       "inputNotes": "",
       "outputNotes": "",
-      "outputArtifact": "ticket",
-      "taskDescription": "Reproduce the report, write the reproduction steps, set priority and severity, and define the acceptance criteria for the fix.",
-      "acceptanceCriteria": "The ticket contains reproduction steps, expected versus observed behaviour, a priority, and testable acceptance criteria.",
+      "outputArtifact": "code_diff",
+      "taskDescription": "Implement the requested change, add tests, run the suite, and open a pull request with the diff summary.",
+      "acceptanceCriteria": "The branch builds, the suite passes locally, and the pull request describes the change and its scope.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -166,8 +174,9 @@
       "escalateTo": "",
       "consumes": [],
       "forbiddenActions": [
-        "Never write application code.",
-        "Never merge, force-push, or rewrite history."
+        "Never merge, force-push, or rewrite history.",
+        "Never read, print, or commit secrets, tokens, or .env values.",
+        "Never disable or delete failing tests."
       ],
       "joinPolicy": {
         "mode": "all",
@@ -179,56 +188,12 @@
       }
     },
     {
-      "id": "agent_6nide6ex",
-      "name": "Coder",
-      "description": "Finds the root cause and implements a minimal, tested fix.",
-      "role": "coder",
-      "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Coder agent. Find the root cause of the bug, then implement the smallest fix that addresses it. Add a regression test that fails before the fix and passes after it. Do not refactor beyond the fix. Never merge and never disable a failing test. Return the diff with a written root-cause explanation.",
-      "temperature": 0.2,
-      "tools": [
-        "read_files",
-        "search_code",
-        "edit_files",
-        "run_tests",
-        "run_commands"
-      ],
-      "inputNotes": "",
-      "outputNotes": "",
-      "outputArtifact": "code_diff",
-      "taskDescription": "Diagnose the root cause, implement a minimal fix, and add a regression test that covers the reported reproduction.",
-      "acceptanceCriteria": "The root cause is written down, the fix is minimal, and a regression test fails without the fix and passes with it.",
-      "executor": "ai",
-      "assignee": "",
-      "humanInstructions": "",
-      "decisionOutcomes": [],
-      "responseTimeHours": 0,
-      "notifyVia": "github_review",
-      "escalateTo": "",
-      "consumes": [
-        "ticket"
-      ],
-      "forbiddenActions": [
-        "Never merge, force-push, or rewrite history.",
-        "Never read, print, or commit secrets, tokens, or .env values.",
-        "Never disable or delete failing tests."
-      ],
-      "joinPolicy": {
-        "mode": "all",
-        "threshold": 1
-      },
-      "position": {
-        "x": 320,
-        "y": 260
-      }
-    },
-    {
-      "id": "agent_pqvx34ci",
+      "id": "agent_xwxkkf5s",
       "name": "Code Reviewer",
-      "description": "Reviews the fix for correctness, side effects, and coverage.",
+      "description": "Reviews the pull request for correctness, security, and coverage.",
       "role": "code_reviewer",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Code Reviewer agent. Review the bug fix for correctness, unintended side effects, and regression coverage. Confirm the diagnosis matches the change. Do not edit the code. Approve, or request changes with findings that each name a file, a line, and the change required.",
+      "systemPrompt": "You are the Code Reviewer agent. Review the pull request diff for correctness, style, security, and test coverage. Do not edit the code under review. Approve when it is ready, or request changes with findings that each name a file, a line, and the required change.",
       "temperature": 0.2,
       "tools": [
         "read_files",
@@ -238,8 +203,8 @@
       "inputNotes": "",
       "outputNotes": "",
       "outputArtifact": "review_notes",
-      "taskDescription": "Review the fix against the stated root cause and check the regression test actually covers the report.",
-      "acceptanceCriteria": "The review confirms the fix matches the root cause and every finding is specific and actionable.",
+      "taskDescription": "Review the pull request diff and record an approval or specific change requests.",
+      "acceptanceCriteria": "Every finding names a file and line and states the change required, and the review ends with one outcome.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -262,17 +227,17 @@
         "threshold": 1
       },
       "position": {
-        "x": 640,
-        "y": 460
+        "x": 160,
+        "y": 300
       }
     },
     {
-      "id": "agent_m8xfkys5",
-      "name": "Fix Verification",
-      "description": "Verifies the original reproduction is gone and nothing regressed.",
+      "id": "agent_znv9km0b",
+      "name": "Test Suite Runner",
+      "description": "Runs the full test suite against the pull request and reports the result.",
       "role": "tester",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Tester agent. Verify the fix against the original reproduction steps, then run the full suite to confirm nothing else regressed. Attach the run output. Report a pass, or a failure with the exact step that still fails. Never weaken an assertion to get a green run. Do not edit source or tests.",
+      "systemPrompt": "You are the Test Suite Runner agent. Run the full automated test suite against the pull request branch and verify the behaviour the change describes. Attach the run output. Report a pass, or a failure with the failing test names and reproduction steps. Never weaken assertions to get a green run.",
       "temperature": 0.2,
       "tools": [
         "read_files",
@@ -282,8 +247,8 @@
       "inputNotes": "",
       "outputNotes": "",
       "outputArtifact": "test_report",
-      "taskDescription": "Re-run the original reproduction and the full suite against the fix, and report the outcome with output attached.",
-      "acceptanceCriteria": "The original reproduction no longer occurs, the suite is green, and the evidence is attached.",
+      "taskDescription": "Run the automated suite against the branch and report pass or fail with the output attached.",
+      "acceptanceCriteria": "The suite has been run against the candidate commit and the result is reported with logs for any failure.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -306,28 +271,27 @@
         "threshold": 1
       },
       "position": {
-        "x": 200,
+        "x": 560,
         "y": 460
       }
     },
     {
-      "id": "agent_zfskv6el",
-      "name": "Bug Closeout",
-      "description": "Records the outcome, links the evidence, and closes the report.",
-      "role": "orchestrator",
+      "id": "agent_jx6vu1gv",
+      "name": "Deployment Runner",
+      "description": "Deploys the verified change and confirms health.",
+      "role": "devops_deploy",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the closeout orchestrator. Once the review is approved and the verification passed, summarise the root cause and the fix on the ticket, link the diff, the review notes, and the test report, and close the bug. Do not implement or modify code. Post the final STATUS: DONE comment.",
+      "systemPrompt": "You are the Deployment Runner agent. Deploy the commit that passed review and the test suite to the target environment, run smoke tests, and monitor health for the agreed window. Deploy only after a recorded approval and a passing test run. Roll back on failure and report exactly what happened.",
       "temperature": 0.2,
       "tools": [
-        "read_files",
-        "update_issue",
-        "post_comment"
+        "run_commands",
+        "read_files"
       ],
       "inputNotes": "",
       "outputNotes": "",
-      "outputArtifact": "status_update",
-      "taskDescription": "Summarise the root cause and fix on the ticket, attach the evidence, and close the report.",
-      "acceptanceCriteria": "The ticket is closed with a root-cause summary and links to the diff, review notes, and test report.",
+      "outputArtifact": "deployment",
+      "taskDescription": "Deploy the verified commit, run smoke tests, and report health status or roll back.",
+      "acceptanceCriteria": "The deployment is healthy, smoke tests pass, and the rollback path is confirmed.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -335,27 +299,31 @@
       "responseTimeHours": 0,
       "notifyVia": "github_review",
       "escalateTo": "",
-      "consumes": [],
+      "consumes": [
+        "test_report",
+        "review_notes"
+      ],
       "forbiddenActions": [
-        "Never merge, force-push, or rewrite history.",
-        "Never perform implementation work yourself — delegate it."
+        "Never deploy to production without a recorded approval and a passing test run.",
+        "Never read, print, or commit secrets, tokens, or .env values.",
+        "Never skip the environment protection rule."
       ],
       "joinPolicy": {
         "mode": "all",
         "threshold": 1
       },
       "position": {
-        "x": 460,
+        "x": 800,
         "y": 660
       }
     }
   ],
   "edges": [
     {
-      "id": "edge_5lfiw3pm",
-      "from": "agent_rhbaklmj",
-      "to": "agent_6nide6ex",
-      "label": "Triaged and ready to fix",
+      "id": "edge_0q22amb3",
+      "from": "agent_vsdhkqum",
+      "to": "agent_xwxkkf5s",
+      "label": "Pull request opened",
       "condition": {
         "type": "always",
         "outcome": "approved",
@@ -363,31 +331,9 @@
       }
     },
     {
-      "id": "edge_5yg0xzio",
-      "from": "agent_6nide6ex",
-      "to": "agent_pqvx34ci",
-      "label": "Fix ready for review",
-      "condition": {
-        "type": "always",
-        "outcome": "approved",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_qpeuhs17",
-      "from": "agent_6nide6ex",
-      "to": "agent_m8xfkys5",
-      "label": "Fix ready to verify",
-      "condition": {
-        "type": "always",
-        "outcome": "approved",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_6jfkmdw4",
-      "from": "agent_pqvx34ci",
-      "to": "agent_zfskv6el",
+      "id": "edge_z0a8x2hl",
+      "from": "agent_xwxkkf5s",
+      "to": "agent_znv9km0b",
       "label": "Review approved",
       "condition": {
         "type": "outcome",
@@ -396,20 +342,9 @@
       }
     },
     {
-      "id": "edge_8almrczr",
-      "from": "agent_m8xfkys5",
-      "to": "agent_zfskv6el",
-      "label": "Verification passed",
-      "condition": {
-        "type": "outcome",
-        "outcome": "passed",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_6pt8fk3t",
-      "from": "agent_pqvx34ci",
-      "to": "agent_6nide6ex",
+      "id": "edge_ux2e1cet",
+      "from": "agent_xwxkkf5s",
+      "to": "agent_vsdhkqum",
       "label": "Changes required",
       "condition": {
         "type": "outcome",
@@ -418,10 +353,21 @@
       }
     },
     {
-      "id": "edge_eahst8wx",
-      "from": "agent_m8xfkys5",
-      "to": "agent_6nide6ex",
-      "label": "Still reproduces",
+      "id": "edge_ie17pxra",
+      "from": "agent_znv9km0b",
+      "to": "agent_jx6vu1gv",
+      "label": "Tests passed",
+      "condition": {
+        "type": "outcome",
+        "outcome": "passed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_glljuahd",
+      "from": "agent_znv9km0b",
+      "to": "agent_vsdhkqum",
+      "label": "Tests failed",
       "condition": {
         "type": "outcome",
         "outcome": "failed",
@@ -430,10 +376,10 @@
     }
   ],
   "groups": [],
-  "entryAgentId": "agent_rhbaklmj",
+  "entryAgentId": "agent_vsdhkqum",
   "exitAgentIds": [
-    "agent_zfskv6el"
+    "agent_jx6vu1gv"
   ],
-  "createdAt": "2026-09-17T05:44:21.070Z",
-  "updatedAt": "2026-09-17T05:50:20.964Z"
+  "createdAt": "2026-09-17T22:52:25.616Z",
+  "updatedAt": "2026-09-18T02:02:36.401Z"
 }

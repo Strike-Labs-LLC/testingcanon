@@ -15,8 +15,9 @@
  */
 
 import { existsSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { createHash } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import { hashContents } from "./canon-hash.mjs";
 
 const args = process.argv.slice(2);
@@ -27,15 +28,16 @@ const target = resolve(targetIndex === -1 ? process.cwd() : args[targetIndex + 1
 const failures = [];
 const warnings = [];
 
-const manifestPath = join(target, ".canon", "manifest.json");
+const canonRel = relative(target, dirname(fileURLToPath(import.meta.url))) || ".canon";
+const manifestPath = join(target, canonRel, "manifest.json");
 if (!existsSync(manifestPath)) {
   finish([
-    { check: "manifest", message: ".canon/manifest.json is missing — Canon is not installed." },
+    { check: "manifest", message: `${canonRel}/manifest.json is missing — Canon is not installed.` },
   ]);
 }
 
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-const attestationPath = join(target, ".canon", "attestation.json");
+const attestationPath = join(target, canonRel, "attestation.json");
 if (existsSync(attestationPath)) {
   try {
     const attestation = JSON.parse(readFileSync(attestationPath, "utf8"));
@@ -90,7 +92,7 @@ for (const entry of manifest.files ?? []) {
   if (entry.ownership !== "canon") continue;
   const actual = hashContents(readFileSync(absolute, "utf8"));
   if (actual !== entry.hash) {
-    if (entry.path.startsWith(".canon/")) {
+    if (entry.path.startsWith(`${canonRel}/`)) {
       failures.push({
         check: "modified-runtime",
         message: `${entry.path} no longer matches the compiled runtime.`,
@@ -105,9 +107,9 @@ for (const entry of manifest.files ?? []) {
 }
 
 // 2. The orchestration graph parses and points only at files that exist.
-const graphPath = join(target, ".canon", "graph.json");
+const graphPath = join(target, canonRel, "graph.json");
 if (!existsSync(graphPath)) {
-  failures.push({ check: "graph", message: ".canon/graph.json is missing — no run can start." });
+  failures.push({ check: "graph", message: `${canonRel}/graph.json is missing — no run can start.` });
 } else {
   let graph = null;
   try {
@@ -115,7 +117,7 @@ if (!existsSync(graphPath)) {
   } catch (error) {
     failures.push({
       check: "graph",
-      message: `.canon/graph.json is not valid JSON: ${error.message}`,
+      message: `${canonRel}/graph.json is not valid JSON: ${error.message}`,
     });
   }
   if (graph) {
@@ -197,7 +199,7 @@ function finish(list) {
 
 function graphWorkflows() {
   try {
-    const parsed = JSON.parse(readFileSync(join(target, ".canon", "graph.json"), "utf8"));
+    const parsed = JSON.parse(readFileSync(join(target, canonRel, "graph.json"), "utf8"));
     return Array.isArray(parsed.workflows) ? parsed.workflows : null;
   } catch {
     return null;

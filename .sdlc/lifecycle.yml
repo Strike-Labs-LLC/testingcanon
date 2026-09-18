@@ -1,65 +1,51 @@
 # Lifecycle stages, generated from the SDLC blueprint.
 version: 7
-entry: "bug-triage"
+entry: "feature-coder"
 exits:
-  - "bug-closeout"
+  - "deployment-runner"
 stages:
-  - id: bug-triage
+  - id: feature-coder
     order: 1
-    name: "Bug Triage"
-    role: product_manager
-    output: ticket
-    acceptance: "The ticket contains reproduction steps, expected versus observed behaviour, a priority, and testable acceptance criteria."
-  - id: coder
-    order: 2
-    name: "Coder"
+    name: "Feature Coder"
     role: coder
     output: code_diff
-    acceptance: "The root cause is written down, the fix is minimal, and a regression test fails without the fix and passes with it."
+    acceptance: "The branch builds, the suite passes locally, and the pull request describes the change and its scope."
   - id: code-reviewer
-    order: 3
+    order: 2
     name: "Code Reviewer"
     role: code_reviewer
     output: review_notes
-    acceptance: "The review confirms the fix matches the root cause and every finding is specific and actionable."
-  - id: fix-verification
-    order: 4
-    name: "Fix Verification"
+    acceptance: "Every finding names a file and line and states the change required, and the review ends with one outcome."
+  - id: test-suite-runner
+    order: 3
+    name: "Test Suite Runner"
     role: tester
     output: test_report
-    acceptance: "The original reproduction no longer occurs, the suite is green, and the evidence is attached."
-  - id: bug-closeout
-    order: 5
-    name: "Bug Closeout"
-    role: orchestrator
-    output: status_update
-    acceptance: "The ticket is closed with a root-cause summary and links to the diff, review notes, and test report."
+    acceptance: "The suite has been run against the candidate commit and the result is reported with logs for any failure."
+  - id: deployment-runner
+    order: 4
+    name: "Deployment Runner"
+    role: devops_deploy
+    output: deployment
+    acceptance: "The deployment is healthy, smoke tests pass, and the rollback path is confirmed."
 transitions:
-  - from: bug-triage
-    to: coder
+  - from: feature-coder
+    to: code-reviewer
     kind: always
     condition: "Always"
-  - from: coder
-    to: code-reviewer
-    kind: split
-    condition: "Always"
-  - from: coder
-    to: fix-verification
-    kind: split
-    condition: "Always"
   - from: code-reviewer
-    to: bug-closeout
+    to: test-suite-runner
     kind: conditional
     condition: "If approved"
-  - from: fix-verification
-    to: bug-closeout
-    kind: conditional
-    condition: "If passed"
   - from: code-reviewer
-    to: coder
+    to: feature-coder
     kind: return
     condition: "If changes required"
-  - from: fix-verification
-    to: coder
+  - from: test-suite-runner
+    to: deployment-runner
+    kind: conditional
+    condition: "If passed"
+  - from: test-suite-runner
+    to: feature-coder
     kind: return
     condition: "If failed"

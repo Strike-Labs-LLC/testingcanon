@@ -1,10 +1,10 @@
 ---
 name: "Investigate a bug"
-description: "Investigate a bug in Bug triage fix verify."
-agent: "coder"
+description: "Investigate a bug in Autonomous code change."
+agent: "feature-coder"
 ---
 
-Diagnose the linked defect in Bug triage fix verify.
+Diagnose the linked defect in Autonomous code change.
 
 1. Establish the timeline and the first failing signal.
 2. Reproduce the failure or explain why it cannot be reproduced.

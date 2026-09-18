@@ -1,11 +1,11 @@
 # ADR 0002 — Authentication approach
 
 - Status: proposed
-- Date: 2026-09-17
+- Date: 2026-09-18
 
 ## Context
 
-TODO: the authentication requirements for Bug triage fix verify.
+TODO: the authentication requirements for Autonomous code change.
 
 ## Decision
 

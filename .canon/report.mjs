@@ -11,7 +11,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { comment, resultComment, readRun } from "./state.mjs";
+import { comment, resultComment, readRun, CANON_ROOT } from "./state.mjs";
 
 function arg(name, fallback = "") {
   const index = process.argv.indexOf(`--${name}`);
@@ -40,7 +40,7 @@ function collect(dir) {
 
 async function main() {
   const issueNumber = Number(arg("issue"));
-  const dir = arg("outbox", ".canon/outbox");
+  const dir = arg("outbox", `${CANON_ROOT}/outbox`);
   const planned = arg("stages", "")
     .split(",")
     .map((s) => s.trim())

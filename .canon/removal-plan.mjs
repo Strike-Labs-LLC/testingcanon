@@ -5,13 +5,15 @@
  *   node .canon/removal-plan.mjs [--target <repo root>]
  */
 import { existsSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { hashContents } from "./canon-hash.mjs";
 
 const targetIndex = process.argv.indexOf("--target");
 const target = resolve(targetIndex === -1 ? process.cwd() : process.argv[targetIndex + 1]);
-const ledgerPath = join(target, ".canon", "install-ledger.json");
-const manifestPath = join(target, ".canon", "manifest.json");
+const canonRel = relative(target, dirname(fileURLToPath(import.meta.url))) || ".canon";
+const ledgerPath = join(target, canonRel, "install-ledger.json");
+const manifestPath = join(target, canonRel, "manifest.json");
 
 if (!existsSync(manifestPath)) {
   console.error("Canon is not installed here.");
@@ -47,4 +49,4 @@ for (const entry of manifest.files ?? []) {
 
 console.log("");
 console.log("Re-run only after an authorized administrator reviews this list.");
-console.log("Use node .canon/uninstall.mjs --dry-run first. Never one-click destroy.");
+console.log(`Use node ${canonRel}/uninstall.mjs --dry-run first. Never one-click destroy.`);

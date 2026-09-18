@@ -1,7 +1,7 @@
 ---
 name: "Create tests"
-description: "Create tests in Bug triage fix verify."
-agent: "fix-verification"
+description: "Create tests in Autonomous code change."
+agent: "test-suite-runner"
 ---
 
 Write the missing tests for the code under discussion.

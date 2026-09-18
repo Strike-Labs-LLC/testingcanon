@@ -2,6 +2,10 @@
 # then re-dispatch itself until the run completes, fails, or waits on a person.
 name: Orchestration step
 
+env:
+  CANON_ROOT: .canon
+  CANON_RUN_LABEL: canon-run
+
 on:
   workflow_dispatch:
     inputs:
@@ -39,7 +43,7 @@ jobs:
         with:
           node-version: '20'
       - id: plan
-        run: node .canon/tick.mjs plan --issue "$CANON_RUN_ISSUE"
+        run: node ${{ env.CANON_ROOT }}/tick.mjs plan --issue "$CANON_RUN_ISSUE"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_RUN_ISSUE: ${{ inputs.run_issue }}
@@ -81,9 +85,9 @@ jobs:
             *) echo "Using custom coding agent command." ;;
           esac
       - name: Run stage
-        run: node .canon/run-stage.mjs --issue "$CANON_RUN_ISSUE" --stage "$CANON_STAGE"
+        run: node ${{ env.CANON_ROOT }}/run-stage.mjs --issue "$CANON_RUN_ISSUE" --stage "$CANON_STAGE"
         env:
-          CANON_OUTBOX: .canon/outbox
+          CANON_OUTBOX: ${{ env.CANON_ROOT }}/outbox
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_AGENT_PROVIDER: ${{ vars.CANON_AGENT_PROVIDER }}
           CANON_AGENT_COMMAND: ${{ vars.CANON_AGENT_COMMAND }}
@@ -97,9 +101,9 @@ jobs:
           CANON_STAGE: ${{ matrix.stage }}
       - name: Record a job-level failure
         if: failure() || cancelled()
-        run: node .canon/run-stage.mjs --report-failure --issue "$CANON_RUN_ISSUE" --stage "$CANON_STAGE" --reason "The stage job did not finish (job status ${{ job.status }})."
+        run: node ${{ env.CANON_ROOT }}/run-stage.mjs --report-failure --issue "$CANON_RUN_ISSUE" --stage "$CANON_STAGE" --reason "The stage job did not finish (job status ${{ job.status }})."
         env:
-          CANON_OUTBOX: .canon/outbox
+          CANON_OUTBOX: ${{ env.CANON_ROOT }}/outbox
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_RUN_ISSUE: ${{ inputs.run_issue }}
           CANON_STAGE: ${{ matrix.stage }}
@@ -108,7 +112,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: canon-stage-${{ matrix.stage }}
-          path: .canon/outbox
+          path: ${{ env.CANON_ROOT }}/outbox
           if-no-files-found: ignore
           retention-days: 7
 
@@ -146,9 +150,9 @@ jobs:
             *) echo "Using custom coding agent command." ;;
           esac
       - name: Run stage
-        run: node .canon/run-stage.mjs --issue "$CANON_RUN_ISSUE" --stage "$CANON_STAGE"
+        run: node ${{ env.CANON_ROOT }}/run-stage.mjs --issue "$CANON_RUN_ISSUE" --stage "$CANON_STAGE"
         env:
-          CANON_OUTBOX: .canon/outbox
+          CANON_OUTBOX: ${{ env.CANON_ROOT }}/outbox
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_AGENT_PROVIDER: ${{ vars.CANON_AGENT_PROVIDER }}
           CANON_AGENT_COMMAND: ${{ vars.CANON_AGENT_COMMAND }}
@@ -162,9 +166,9 @@ jobs:
           CANON_STAGE: ${{ matrix.stage }}
       - name: Record a job-level failure
         if: failure() || cancelled()
-        run: node .canon/run-stage.mjs --report-failure --issue "$CANON_RUN_ISSUE" --stage "$CANON_STAGE" --reason "The stage job did not finish (job status ${{ job.status }})."
+        run: node ${{ env.CANON_ROOT }}/run-stage.mjs --report-failure --issue "$CANON_RUN_ISSUE" --stage "$CANON_STAGE" --reason "The stage job did not finish (job status ${{ job.status }})."
         env:
-          CANON_OUTBOX: .canon/outbox
+          CANON_OUTBOX: ${{ env.CANON_ROOT }}/outbox
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_RUN_ISSUE: ${{ inputs.run_issue }}
           CANON_STAGE: ${{ matrix.stage }}
@@ -173,7 +177,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: canon-stage-${{ matrix.stage }}
-          path: .canon/outbox
+          path: ${{ env.CANON_ROOT }}/outbox
           if-no-files-found: ignore
           retention-days: 7
 
@@ -203,10 +207,10 @@ jobs:
           node-version: '20'
       - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
-          path: .canon/inbox
+          path: ${{ env.CANON_ROOT }}/inbox
           pattern: canon-stage-*
           merge-multiple: true
-      - run: node .canon/publish.mjs --issue "$CANON_RUN_ISSUE" --inbox .canon/inbox --outbox .canon/outbox
+      - run: node ${{ env.CANON_ROOT }}/publish.mjs --issue "$CANON_RUN_ISSUE" --inbox ${{ env.CANON_ROOT }}/inbox --outbox ${{ env.CANON_ROOT }}/outbox
         env:
           CANON_BROKER_URL: ${{ vars.CANON_BROKER_URL || 'https://usecanon.app/api/public/runtime/token' }}
           CANON_RUN_ISSUE: ${{ inputs.run_issue }}
@@ -216,7 +220,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: canon-result-published
-          path: .canon/outbox
+          path: ${{ env.CANON_ROOT }}/outbox
           if-no-files-found: ignore
           retention-days: 7
 
@@ -238,10 +242,10 @@ jobs:
           node-version: '20'
       - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
-          path: .canon/outbox
+          path: ${{ env.CANON_ROOT }}/outbox
           pattern: canon-result-*
           merge-multiple: true
-      - run: node .canon/report.mjs --issue "$CANON_RUN_ISSUE" --outbox .canon/outbox --stages "$CANON_PLANNED"
+      - run: node ${{ env.CANON_ROOT }}/report.mjs --issue "$CANON_RUN_ISSUE" --outbox ${{ env.CANON_ROOT }}/outbox --stages "$CANON_PLANNED"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_RUN_ISSUE: ${{ inputs.run_issue }}
@@ -263,7 +267,7 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '20'
-      - run: node .canon/tick.mjs advance --issue "$CANON_RUN_ISSUE"
+      - run: node ${{ env.CANON_ROOT }}/tick.mjs advance --issue "$CANON_RUN_ISSUE"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_RUN_ISSUE: ${{ inputs.run_issue }}

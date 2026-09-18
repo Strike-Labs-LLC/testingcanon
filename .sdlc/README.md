@@ -1,7 +1,7 @@
 # .sdlc — canonical SDLC specification
 
 Everything in `AGENTS.md`, `.github/`, and `docs/` is compiled from these files by the
-Bug triage fix verify pipeline builder.
+Autonomous code change pipeline builder.
 
 | File | Purpose |
 | --- | --- |

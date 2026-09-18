@@ -1,11 +1,11 @@
-# Copilot instructions — Bug triage fix verify
+# Copilot instructions — Autonomous code change
 
 Repository-wide context automatically supplied to GitHub Copilot. Governance lives in
 `AGENTS.md`; this file describes how to actually work in this repository.
 
 ## What this application is
 
-John’s Flow #5 orchestration flow.
+John’s Flow #1 orchestration flow.
 
 ## How the repository is organized
 
@@ -56,7 +56,7 @@ npm run lint
 - Tests: unit (required), integration (required), e2e (optional).
 - Security scanning: secret scanning (required), dependency scanning (required).
 - Documentation: architecture (required), api (required), runbook (optional).
-- Production deployments require explicit human approval.
+- Production deployments are automatic once gates pass.
 - Staging deploys automatically from the default branch.
 - The pull request description explains what changed and why.
 - Documentation affected by the change is updated in the same pull request.

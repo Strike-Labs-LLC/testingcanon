@@ -15,4 +15,4 @@ testing:
   e2e: optional
 release:
   staging_automatic: true
-  production_approval_required: true
+  production_approval_required: false

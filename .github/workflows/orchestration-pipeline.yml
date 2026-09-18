@@ -1,7 +1,11 @@
-# Starts an orchestration run for Bug triage fix verify.
+# Starts an orchestration run for Autonomous code change.
 # The run record lives in a GitHub issue labelled `canon-run`; every stage result and
 # human decision is appended to that issue, so the whole run is auditable in the repo.
 name: Orchestration pipeline
+
+env:
+  CANON_ROOT: .canon
+  CANON_RUN_LABEL: canon-run
 
 on:
   workflow_dispatch:
@@ -33,7 +37,7 @@ jobs:
       # environment variable and never interpolated into the shell command, so a title
       # containing shell metacharacters is data, not code.
       - name: Start run
-        run: node .canon/start-run.mjs --objective "$CANON_OBJECTIVE" --trigger "$CANON_TRIGGER" --issue "$CANON_SOURCE_ISSUE" --sha "$CANON_BASE_SHA"
+        run: node ${{ env.CANON_ROOT }}/start-run.mjs --objective "$CANON_OBJECTIVE" --trigger "$CANON_TRIGGER" --issue "$CANON_SOURCE_ISSUE" --sha "$CANON_BASE_SHA"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CANON_OBJECTIVE: ${{ github.event.inputs.objective || github.event.issue.title }}

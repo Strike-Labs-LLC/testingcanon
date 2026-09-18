@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "accountId": "8975e5f1-eafe-4760-a27c-4cbffb2a95b6",
-  "blueprintId": "9de67459-4198-4142-b923-8aa49a56a2ae",
-  "blueprintVersion": 1,
+  "blueprintId": "f3d87746-26ab-4065-a471-ee3e0565eb2d",
+  "blueprintVersion": 2,
   "target": "github",
   "repository": {
     "owner": "Strike-Labs-LLC",

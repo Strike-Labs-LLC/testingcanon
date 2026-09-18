@@ -1,7 +1,7 @@
 <!-- canon:begin — Canon owns this region. Edits inside it are replaced on reinstall. -->
-# Bug triage fix verify
+# Autonomous code change
 
-John’s Flow #5 orchestration flow.
+John’s Flow #1 orchestration flow.
 
 ## AI SDLC pipeline
 
@@ -15,11 +15,10 @@ This repository is configured to run an AI-assisted software development lifecyc
 
 ## Pipeline stages
 
-1. Bug Triage — Product Manager
-2. Coder — Coder
-3. Code Reviewer — Code Reviewer
-4. Fix Verification — Tester
-5. Bug Closeout — Engineering Orchestrator
+1. Feature Coder — Coder
+2. Code Reviewer — Code Reviewer
+3. Test Suite Runner — Tester
+4. Deployment Runner — DevOps Deploy
 
 ## Getting started
 

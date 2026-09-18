@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "name": "Bug triage fix verify",
-  "entry": "bug-triage",
+  "name": "Autonomous code change",
+  "entry": "feature-coder",
   "exits": [
-    "bug-closeout"
+    "deployment-runner"
   ],
   "workflows": [
     ".github/workflows/orchestration-pipeline.yml",
@@ -15,105 +15,15 @@
   "locks": [],
   "stages": [
     {
-      "id": "bug-triage",
-      "name": "Bug Triage",
-      "role": "product_manager",
-      "executor": "ai",
-      "execution": "inference",
-      "model": "google/gemini-3.6-flash",
-      "description": "Confirms the reproduction, sets priority, and defines what fixed means.",
-      "task": "Reproduce the report, write the reproduction steps, set priority and severity, and define the acceptance criteria for the fix.",
-      "acceptance": "The ticket contains reproduction steps, expected versus observed behaviour, a priority, and testable acceptance criteria.",
-      "forbidden": [
-        "Never write application code.",
-        "Never merge, force-push, or rewrite history.",
-        "Never modify application code.",
-        "Never add, change, disable, or delete tests.",
-        "Never modify documentation files.",
-        "Never create or delete branches.",
-        "Never open, reopen, or close pull requests.",
-        "Never run the test suite — request it from a stage that may.",
-        "Never run shell commands.",
-        "Never modify files under .github/workflows or .canon.",
-        "Never modify infrastructure, IaC definitions, or cloud configuration.",
-        "Never read, print, create, or change secrets, tokens, or .env values.",
-        "Never merge, force-push, or rewrite history.",
-        "Never deploy to production."
-      ],
-      "authority": [
-        "read_repository",
-        "read_issues"
-      ],
-      "tools": {
-        "write": false,
-        "shell": false,
-        "denyPaths": [
-          ".github/workflows/**",
-          ".github/CODEOWNERS",
-          "CODEOWNERS",
-          "docs/CODEOWNERS",
-          ".github/rulesets/**",
-          "SECURITY.md",
-          "**/SECURITY.md",
-          ".github/dependabot.yml",
-          ".canon/**",
-          ".sdlc/**",
-          "release-please-config.json",
-          ".release-please-manifest.json",
-          ".releaserc*",
-          "release.config.*",
-          "infra/**",
-          "terraform/**",
-          "**/*.tf",
-          "helm/**",
-          "k8s/**",
-          "Dockerfile",
-          "**/.env*",
-          "**/secrets/**"
-        ],
-        "granted": [
-          "read_repository",
-          "read_issues"
-        ]
-      },
-      "producesCandidate": false,
-      "attestsCandidate": false,
-      "ownership": {
-        "paths": [],
-        "branches": [],
-        "environments": []
-      },
-      "locks": [],
-      "concurrency": "stage-bug-triage",
-      "consumes": [],
-      "produces": "ticket",
-      "agentFile": ".github/agents/01-bug-triage.agent.md",
-      "gate": null,
-      "join": {
-        "mode": "all",
-        "threshold": 1
-      },
-      "outcomes": [
-        "approved"
-      ],
-      "decisions": [],
-      "assignee": "",
-      "instructions": "",
-      "responseTimeHours": 0,
-      "notifyVia": "github_review",
-      "escalateTo": "",
-      "environment": null
-    },
-    {
-      "id": "coder",
-      "name": "Coder",
+      "id": "feature-coder",
+      "name": "Feature Coder",
       "role": "coder",
       "executor": "ai",
       "execution": "coding-agent",
       "model": "google/gemini-3.6-flash",
-      "description": "Finds the root cause and implements a minimal, tested fix.",
-      "task": "Diagnose the root cause, implement a minimal fix, and add a regression test that covers the reported reproduction.",
-      "acceptance": "The root cause is written down, the fix is minimal, and a regression test fails without the fix and passes with it.",
+      "description": "Implements the requested change and opens the pull request.",
+      "task": "Implement the requested change, add tests, run the suite, and open a pull request with the diff summary.",
+      "acceptance": "The branch builds, the suite passes locally, and the pull request describes the change and its scope.",
       "forbidden": [
         "Never merge, force-push, or rewrite history.",
         "Never read, print, or commit secrets, tokens, or .env values.",
@@ -182,12 +92,10 @@
         "environments": []
       },
       "locks": [],
-      "concurrency": "stage-coder",
-      "consumes": [
-        "ticket"
-      ],
+      "concurrency": "stage-feature-coder",
+      "consumes": [],
       "produces": "code_diff",
-      "agentFile": ".github/agents/02-coder.agent.md",
+      "agentFile": ".github/agents/01-feature-coder.agent.md",
       "gate": null,
       "join": {
         "mode": "all",
@@ -211,9 +119,9 @@
       "executor": "ai",
       "execution": "inference",
       "model": "google/gemini-3.6-flash",
-      "description": "Reviews the fix for correctness, side effects, and coverage.",
-      "task": "Review the fix against the stated root cause and check the regression test actually covers the report.",
-      "acceptance": "The review confirms the fix matches the root cause and every finding is specific and actionable.",
+      "description": "Reviews the pull request for correctness, security, and coverage.",
+      "task": "Review the pull request diff and record an approval or specific change requests.",
+      "acceptance": "Every finding names a file and line and states the change required, and the review ends with one outcome.",
       "forbidden": [
         "Never edit the code under review.",
         "Never merge, force-push, or rewrite history.",
@@ -280,7 +188,7 @@
         "code_diff"
       ],
       "produces": "review_notes",
-      "agentFile": ".github/agents/03-code-reviewer.agent.md",
+      "agentFile": ".github/agents/02-code-reviewer.agent.md",
       "gate": null,
       "join": {
         "mode": "all",
@@ -302,15 +210,15 @@
       "environment": null
     },
     {
-      "id": "fix-verification",
-      "name": "Fix Verification",
+      "id": "test-suite-runner",
+      "name": "Test Suite Runner",
       "role": "tester",
       "executor": "ai",
       "execution": "coding-agent",
       "model": "google/gemini-3.6-flash",
-      "description": "Verifies the original reproduction is gone and nothing regressed.",
-      "task": "Re-run the original reproduction and the full suite against the fix, and report the outcome with output attached.",
-      "acceptance": "The original reproduction no longer occurs, the suite is green, and the evidence is attached.",
+      "description": "Runs the full test suite against the pull request and reports the result.",
+      "task": "Run the automated suite against the branch and report pass or fail with the output attached.",
+      "acceptance": "The suite has been run against the candidate commit and the result is reported with logs for any failure.",
       "forbidden": [
         "Never weaken assertions to get a green run.",
         "Never merge, force-push, or rewrite history.",
@@ -373,12 +281,12 @@
         "environments": []
       },
       "locks": [],
-      "concurrency": "stage-fix-verification",
+      "concurrency": "stage-test-suite-runner",
       "consumes": [
         "code_diff"
       ],
       "produces": "test_report",
-      "agentFile": ".github/agents/04-fix-verification.agent.md",
+      "agentFile": ".github/agents/03-test-suite-runner.agent.md",
       "gate": null,
       "join": {
         "mode": "all",
@@ -400,25 +308,25 @@
       "environment": null
     },
     {
-      "id": "bug-closeout",
-      "name": "Bug Closeout",
-      "role": "orchestrator",
+      "id": "deployment-runner",
+      "name": "Deployment Runner",
+      "role": "devops_deploy",
       "executor": "ai",
-      "execution": "inference",
+      "execution": "coding-agent",
       "model": "google/gemini-3.6-flash",
-      "description": "Records the outcome, links the evidence, and closes the report.",
-      "task": "Summarise the root cause and fix on the ticket, attach the evidence, and close the report.",
-      "acceptance": "The ticket is closed with a root-cause summary and links to the diff, review notes, and test report.",
+      "description": "Deploys the verified change and confirms health.",
+      "task": "Deploy the verified commit, run smoke tests, and report health status or roll back.",
+      "acceptance": "The deployment is healthy, smoke tests pass, and the rollback path is confirmed.",
       "forbidden": [
-        "Never merge, force-push, or rewrite history.",
-        "Never perform implementation work yourself — delegate it.",
+        "Never deploy to production without a recorded approval and a passing test run.",
+        "Never read, print, or commit secrets, tokens, or .env values.",
+        "Never skip the environment protection rule.",
         "Never modify application code.",
         "Never add, change, disable, or delete tests.",
         "Never modify documentation files.",
         "Never create or delete branches.",
         "Never open, reopen, or close pull requests.",
         "Never run the test suite — request it from a stage that may.",
-        "Never run shell commands.",
         "Never modify files under .github/workflows or .canon.",
         "Never modify infrastructure, IaC definitions, or cloud configuration.",
         "Never read, print, create, or change secrets, tokens, or .env values.",
@@ -427,11 +335,12 @@
       ],
       "authority": [
         "read_repository",
-        "read_issues"
+        "read_issues",
+        "run_commands"
       ],
       "tools": {
         "write": false,
-        "shell": false,
+        "shell": true,
         "denyPaths": [
           ".github/workflows/**",
           ".github/CODEOWNERS",
@@ -458,10 +367,11 @@
         ],
         "granted": [
           "read_repository",
-          "read_issues"
+          "read_issues",
+          "run_commands"
         ]
       },
-      "producesCandidate": false,
+      "producesCandidate": true,
       "attestsCandidate": false,
       "ownership": {
         "paths": [],
@@ -469,10 +379,13 @@
         "environments": []
       },
       "locks": [],
-      "concurrency": "stage-bug-closeout",
-      "consumes": [],
-      "produces": "status_update",
-      "agentFile": ".github/agents/00-bug-closeout.agent.md",
+      "concurrency": "stage-deployment-runner",
+      "consumes": [
+        "test_report",
+        "review_notes"
+      ],
+      "produces": "deployment",
+      "agentFile": ".github/agents/04-deployment-runner.agent.md",
       "gate": null,
       "join": {
         "mode": "all",
@@ -492,9 +405,9 @@
   ],
   "edges": [
     {
-      "id": "edge_5lfiw3pm",
-      "from": "bug-triage",
-      "to": "coder",
+      "id": "edge_0q22amb3",
+      "from": "feature-coder",
+      "to": "code-reviewer",
       "kind": "always",
       "loopLimit": null,
       "condition": {
@@ -504,33 +417,9 @@
       }
     },
     {
-      "id": "edge_5yg0xzio",
-      "from": "coder",
-      "to": "code-reviewer",
-      "kind": "split",
-      "loopLimit": null,
-      "condition": {
-        "type": "always",
-        "outcome": "approved",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_qpeuhs17",
-      "from": "coder",
-      "to": "fix-verification",
-      "kind": "split",
-      "loopLimit": null,
-      "condition": {
-        "type": "always",
-        "outcome": "approved",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_6jfkmdw4",
+      "id": "edge_z0a8x2hl",
       "from": "code-reviewer",
-      "to": "bug-closeout",
+      "to": "test-suite-runner",
       "kind": "conditional",
       "loopLimit": null,
       "condition": {
@@ -540,21 +429,9 @@
       }
     },
     {
-      "id": "edge_8almrczr",
-      "from": "fix-verification",
-      "to": "bug-closeout",
-      "kind": "conditional",
-      "loopLimit": null,
-      "condition": {
-        "type": "outcome",
-        "outcome": "passed",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_6pt8fk3t",
+      "id": "edge_ux2e1cet",
       "from": "code-reviewer",
-      "to": "coder",
+      "to": "feature-coder",
       "kind": "return",
       "loopLimit": 3,
       "condition": {
@@ -564,9 +441,21 @@
       }
     },
     {
-      "id": "edge_eahst8wx",
-      "from": "fix-verification",
-      "to": "coder",
+      "id": "edge_ie17pxra",
+      "from": "test-suite-runner",
+      "to": "deployment-runner",
+      "kind": "conditional",
+      "loopLimit": null,
+      "condition": {
+        "type": "outcome",
+        "outcome": "passed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_glljuahd",
+      "from": "test-suite-runner",
+      "to": "feature-coder",
       "kind": "return",
       "loopLimit": 3,
       "condition": {
@@ -575,5 +464,11 @@
         "expression": ""
       }
     }
-  ]
+  ],
+  "namespace": {
+    "slug": null,
+    "root": ".canon",
+    "runLabel": "canon-run",
+    "startLabel": "canon:start"
+  }
 }

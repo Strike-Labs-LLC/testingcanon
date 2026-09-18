@@ -18,7 +18,7 @@ jobs:
       - run: bash .canon/require-script.sh build optional
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: bug-triage-fix-verify-build
+          name: canon-autonomous-code-change-build
           path: |
             dist
             build

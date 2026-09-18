@@ -1,11 +1,11 @@
 # ADR 0001 — Baseline architecture
 
 - Status: accepted
-- Date: 2026-09-17
+- Date: 2026-09-18
 
 ## Context
 
-John’s Flow #5 orchestration flow.
+John’s Flow #1 orchestration flow.
 
 ## Decision
 

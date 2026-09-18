@@ -13,7 +13,7 @@ repository. Do not open a public issue. Expect an acknowledgement within two bus
 - Static analysis: none
 - Pull requests required: yes
 - Minimum reviewers: 1
-- Production approval required: yes
+- Production approval required: no
 
 ## Agent restrictions
 

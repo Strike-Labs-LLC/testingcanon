@@ -17,7 +17,7 @@
 - Tests: unit (required), integration (required), e2e (optional).
 - Security scanning: secret scanning (required), dependency scanning (required).
 - Documentation: architecture (required), api (required), runbook (optional).
-- Production deployments require explicit human approval.
+- Production deployments are automatic once gates pass.
 - Staging deploys automatically from the default branch.
 
 ## Working with agents

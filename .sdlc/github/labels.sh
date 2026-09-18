@@ -13,6 +13,7 @@ gh label create "ready-for-development" --color 1a7f37 --description "Design app
 gh label create "dependencies" --color 6e7781 --description "Dependency updates" --force
 gh label create "ci" --color 6e7781 --description "Pipeline changes" --force
 gh label create "canon:start" --color 0969da --description "Starts a Canon orchestration run" --force
+gh label create "canon-run" --color 0e8a16 --description "Canon orchestration run" --force
 gh label create "awaiting-human" --color bf8700 --description "A human gate is open on this run" --force
 gh label create "run-completed" --color 1a7f37 --description "Canon run finished successfully" --force
 gh label create "run-failed" --color d1242f --description "Canon run failed" --force

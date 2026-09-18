@@ -45,7 +45,8 @@ if (!manifest) {
   fail("No .canon/manifest.json in this package. Re-download the package from Canon.");
 }
 
-const previous = migrate(readJson(join(target, ".canon", "manifest.json")));
+const canonRoot = relative(packageRoot, scriptDir) || ".canon";
+const previous = migrate(readJson(join(target, canonRoot, "manifest.json")));
 const previousByPath = new Map(previous.files.map((entry) => [entry.path, entry]));
 
 const results = [];
@@ -127,9 +128,9 @@ if (!dryRun) {
         };
       }),
   };
-  write(join(target, ".canon", "manifest.json"), `${JSON.stringify(installed, null, 2)}\n`);
+  write(join(target, canonRoot, "manifest.json"), `${JSON.stringify(installed, null, 2)}\n`);
   write(
-    join(target, ".canon", "install-ledger.json"),
+    join(target, canonRoot, "install-ledger.json"),
     `${JSON.stringify(
       {
         installedAt: new Date().toISOString(),
@@ -183,7 +184,7 @@ function conflictReport(list) {
   }
   lines.push(
     "",
-    "After resolving every row, rerun `node .canon/install.mjs` so the manifest matches the repository.",
+    `After resolving every row, rerun \`node ${canonRoot}/install.mjs\` so the manifest matches the repository.`,
     "",
   );
   return lines.join("\n");
