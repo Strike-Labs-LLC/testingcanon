@@ -1,0 +1,1351 @@
+{
+  "version": 1,
+  "name": "Autonomous production engineering",
+  "entry": "specification-writer",
+  "exits": [
+    "release-gatekeeper"
+  ],
+  "workflows": [
+    ".github/workflows/orchestration-pipeline.yml",
+    ".github/workflows/orchestration-step.yml",
+    ".github/workflows/orchestration-human.yml",
+    ".github/workflows/orchestration-escalate.yml"
+  ],
+  "defaultLoopLimit": 3,
+  "locks": [],
+  "stages": [
+    {
+      "id": "specification-writer",
+      "name": "Specification Writer",
+      "role": "product_manager",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Writes the full specification: problem, users, scope, exclusions, and criteria.",
+      "task": "Write the specification with scope, an out-of-scope list, and numbered, testable acceptance criteria.",
+      "acceptance": "The specification states the problem, scope, and exclusions, and every acceptance criterion is verifiable without further clarification.",
+      "forbidden": [
+        "Never write application code.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run the test suite — request it from a stage that may.",
+        "Never run shell commands.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues"
+      ],
+      "tools": {
+        "write": false,
+        "shell": false,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": false,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-specification-writer",
+      "consumes": [],
+      "produces": "spec",
+      "agentFile": ".github/agents/01-specification-writer.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved"
+      ],
+      "decisions": [],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "solution-architect",
+      "name": "Solution Architect",
+      "role": "architect",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Designs the technical approach against the specification.",
+      "task": "Produce the technical design: modules affected, approach, data and API changes, risks, and alternatives considered.",
+      "acceptance": "The design names the modules touched, the approach, the compatibility risks, and at least one considered alternative.",
+      "forbidden": [
+        "Never implement the change — produce the design only.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run the test suite — request it from a stage that may.",
+        "Never run shell commands.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "modify_docs"
+      ],
+      "tools": {
+        "write": true,
+        "shell": false,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "modify_docs"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": false,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-solution-architect",
+      "consumes": [
+        "spec"
+      ],
+      "produces": "design_doc",
+      "agentFile": ".github/agents/02-solution-architect.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved"
+      ],
+      "decisions": [],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "engineering-manager",
+      "name": "Engineering Manager",
+      "role": "engineering_manager",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Turns the design into an implementation plan with sequencing, risks, and test strategy.",
+      "task": "Produce the implementation plan covering scope, approach, sequencing, risks, and the test strategy.",
+      "acceptance": "The plan names the modules to change, the order of work, the known risks, and the tests that must exist before review.",
+      "forbidden": [
+        "Never write application code.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run the test suite — request it from a stage that may.",
+        "Never run shell commands.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues"
+      ],
+      "tools": {
+        "write": false,
+        "shell": false,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": false,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-engineering-manager",
+      "consumes": [
+        "spec",
+        "design_doc"
+      ],
+      "produces": "design_doc",
+      "agentFile": ".github/agents/03-engineering-manager.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved"
+      ],
+      "decisions": [],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "feature-coder",
+      "name": "Feature Coder",
+      "role": "coder",
+      "executor": "ai",
+      "execution": "coding-agent",
+      "model": "google/gemini-3.6-flash",
+      "description": "Implements the plan and opens the pull request.",
+      "task": "Implement the plan, add regression tests, run the suite, and open a pull request with the candidate commit SHA.",
+      "acceptance": "The branch builds, the suite passes locally, the diff stays inside the planned scope, and the SHA is recorded.",
+      "forbidden": [
+        "Never merge, force-push, or rewrite history.",
+        "Never read, print, or commit secrets, tokens, or .env values.",
+        "Never disable or delete failing tests.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "modify_code",
+        "modify_tests",
+        "modify_docs",
+        "create_branches",
+        "open_pull_requests",
+        "run_tests",
+        "run_commands"
+      ],
+      "tools": {
+        "write": true,
+        "shell": true,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "modify_code",
+          "modify_tests",
+          "modify_docs",
+          "create_branches",
+          "open_pull_requests",
+          "run_tests",
+          "run_commands"
+        ]
+      },
+      "producesCandidate": true,
+      "attestsCandidate": false,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-feature-coder",
+      "consumes": [
+        "design_doc",
+        "spec"
+      ],
+      "produces": "code_diff",
+      "agentFile": ".github/agents/04-feature-coder.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved"
+      ],
+      "decisions": [],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "test-author",
+      "name": "Test Author",
+      "role": "tester",
+      "executor": "ai",
+      "execution": "coding-agent",
+      "model": "google/gemini-3.6-flash",
+      "description": "Writes and runs the tests that prove each acceptance criterion.",
+      "task": "Write tests for each acceptance criterion, run the full suite against the branch, and report pass or fail with output.",
+      "acceptance": "Every criterion has a test, the suite has been run against the candidate commit, and failures carry reproduction steps.",
+      "forbidden": [
+        "Never weaken assertions to get a green run.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "modify_tests",
+        "run_tests",
+        "run_commands"
+      ],
+      "tools": {
+        "write": true,
+        "shell": true,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "modify_tests",
+          "run_tests",
+          "run_commands"
+        ]
+      },
+      "producesCandidate": true,
+      "attestsCandidate": true,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-test-author",
+      "consumes": [
+        "code_diff",
+        "spec"
+      ],
+      "produces": "test_report",
+      "agentFile": ".github/agents/05-test-author.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "passed",
+        "failed"
+      ],
+      "decisions": [
+        "passed",
+        "failed"
+      ],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "qa-verifier",
+      "name": "QA Verifier",
+      "role": "qa",
+      "executor": "ai",
+      "execution": "coding-agent",
+      "model": "google/gemini-3.6-flash",
+      "description": "Runs the repository's required check commands against the candidate commit.",
+      "task": "Run the repository's required check commands against the candidate commit and record an explicit pass or fail per acceptance criterion.",
+      "acceptance": "Every required check command has been run with its output attached, and every acceptance criterion has an explicit result.",
+      "forbidden": [
+        "Never modify product code to make a test pass.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "run_tests",
+        "run_commands"
+      ],
+      "tools": {
+        "write": false,
+        "shell": true,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "run_tests",
+          "run_commands"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": true,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-qa-verifier",
+      "consumes": [
+        "code_diff",
+        "spec",
+        "test_report"
+      ],
+      "produces": "test_report",
+      "agentFile": ".github/agents/06-qa-verifier.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "passed",
+        "failed"
+      ],
+      "decisions": [
+        "passed",
+        "failed"
+      ],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "code-reviewer",
+      "name": "Code Reviewer",
+      "role": "code_reviewer",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Independent review of scope, correctness, and maintainability.",
+      "task": "Review the diff against the plan and record an approval or specific, actionable findings.",
+      "acceptance": "Every finding names a file, a line, and the required change, and the review states one clear outcome.",
+      "forbidden": [
+        "Never edit the code under review.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run shell commands.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "run_tests"
+      ],
+      "tools": {
+        "write": false,
+        "shell": true,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "run_tests"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": true,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-code-reviewer",
+      "consumes": [
+        "code_diff",
+        "design_doc",
+        "test_report"
+      ],
+      "produces": "review_notes",
+      "agentFile": ".github/agents/07-code-reviewer.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved",
+        "changes_required"
+      ],
+      "decisions": [
+        "approved",
+        "changes_required"
+      ],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "security-reviewer",
+      "name": "Security Reviewer",
+      "role": "security_auditor",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Audits the change for vulnerabilities, secrets, and unsafe dependencies.",
+      "task": "Audit the diff for vulnerabilities, secrets, and unsafe dependencies, reporting severity and remediation per finding.",
+      "acceptance": "Each finding has a severity and a concrete remediation step, and the audit ends with a pass or fail outcome.",
+      "forbidden": [
+        "Never read, print, or commit secrets, tokens, or .env values.",
+        "Never auto-remediate — report findings for the coder.",
+        "Never merge, force-push, or rewrite history.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "run_tests",
+        "run_commands"
+      ],
+      "tools": {
+        "write": false,
+        "shell": true,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "run_tests",
+          "run_commands"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": true,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-security-reviewer",
+      "consumes": [
+        "code_diff"
+      ],
+      "produces": "security_report",
+      "agentFile": ".github/agents/08-security-reviewer.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "passed",
+        "failed"
+      ],
+      "decisions": [
+        "passed",
+        "failed"
+      ],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "technical-auditor",
+      "name": "Technical Auditor",
+      "role": "release_reviewer",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Audits the whole packet for engineering quality and production risk.",
+      "task": "Audit the full packet for quality and production risk, and record an approval or specific findings.",
+      "acceptance": "Migrations, rollback, monitoring, and blast radius are each assessed in writing, and the outcome is one clear decision.",
+      "forbidden": [
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production without a recorded human approval.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run shell commands.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "run_tests"
+      ],
+      "tools": {
+        "write": false,
+        "shell": true,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "run_tests"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": true,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-technical-auditor",
+      "consumes": [
+        "code_diff",
+        "test_report",
+        "security_report"
+      ],
+      "produces": "review_notes",
+      "agentFile": ".github/agents/09-technical-auditor.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved",
+        "changes_required"
+      ],
+      "decisions": [
+        "approved",
+        "changes_required"
+      ],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "release-notes-author",
+      "name": "Release Notes Author",
+      "role": "release_engineer",
+      "executor": "ai",
+      "execution": "coding-agent",
+      "model": "google/gemini-3.6-flash",
+      "description": "Prepares the version, changelog, and rollback checklist for the release.",
+      "task": "Prepare the version, changelog, rollback plan, and release checklist from the audited packet.",
+      "acceptance": "The version, changelog, rollback plan, and checklist are complete and match the audited diff.",
+      "forbidden": [
+        "Never deploy to production without a recorded human approval.",
+        "Never read, print, or commit secrets, tokens, or .env values.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run the test suite — request it from a stage that may.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "run_commands"
+      ],
+      "tools": {
+        "write": false,
+        "shell": true,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "run_commands"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": false,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-release-notes-author",
+      "consumes": [
+        "review_notes",
+        "test_report"
+      ],
+      "produces": "release_notes",
+      "agentFile": ".github/agents/10-release-notes-author.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved"
+      ],
+      "decisions": [],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    },
+    {
+      "id": "release-gatekeeper",
+      "name": "Release Gatekeeper",
+      "role": "release_reviewer",
+      "executor": "ai",
+      "execution": "inference",
+      "model": "google/gemini-3.6-flash",
+      "description": "Records the final automated release decision against the complete packet.",
+      "task": "Verify the release packet is complete and every gate has passed, then record an approve or block decision.",
+      "acceptance": "The decision names the evidence checked, and a blocked release states exactly what is missing.",
+      "forbidden": [
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production without a recorded human approval.",
+        "Never modify application code.",
+        "Never add, change, disable, or delete tests.",
+        "Never modify documentation files.",
+        "Never create or delete branches.",
+        "Never open, reopen, or close pull requests.",
+        "Never run shell commands.",
+        "Never modify files under .github/workflows or .canon.",
+        "Never modify infrastructure, IaC definitions, or cloud configuration.",
+        "Never read, print, create, or change secrets, tokens, or .env values.",
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production."
+      ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "run_tests"
+      ],
+      "tools": {
+        "write": false,
+        "shell": true,
+        "denyPaths": [
+          ".github/hooks/**",
+          ".github/agents/**",
+          ".github/copilot-instructions.md",
+          ".github/instructions/**",
+          "AGENTS.md",
+          ".github/workflows/**",
+          ".github/CODEOWNERS",
+          "CODEOWNERS",
+          "docs/CODEOWNERS",
+          ".github/rulesets/**",
+          "SECURITY.md",
+          "**/SECURITY.md",
+          ".github/dependabot.yml",
+          ".canon/**",
+          ".sdlc/**",
+          "release-please-config.json",
+          ".release-please-manifest.json",
+          ".releaserc*",
+          "release.config.*",
+          "infra/**",
+          "terraform/**",
+          "**/*.tf",
+          "helm/**",
+          "k8s/**",
+          "Dockerfile",
+          "**/.env*",
+          "**/secrets/**",
+          ".github/**"
+        ],
+        "granted": [
+          "read_repository",
+          "read_issues",
+          "run_tests"
+        ]
+      },
+      "producesCandidate": false,
+      "attestsCandidate": true,
+      "ownership": {
+        "paths": [],
+        "branches": [],
+        "environments": []
+      },
+      "locks": [],
+      "concurrency": "stage-release-gatekeeper",
+      "consumes": [
+        "release_notes",
+        "review_notes",
+        "test_report"
+      ],
+      "produces": "approval",
+      "agentFile": ".github/agents/11-release-gatekeeper.agent.md",
+      "gate": null,
+      "join": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "outcomes": [
+        "approved",
+        "blocked"
+      ],
+      "decisions": [
+        "approved",
+        "blocked"
+      ],
+      "assignee": "",
+      "instructions": "",
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "environment": null
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_qa83pt50",
+      "from": "specification-writer",
+      "to": "solution-architect",
+      "kind": "always",
+      "loopLimit": null,
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_vj1mvhfh",
+      "from": "solution-architect",
+      "to": "engineering-manager",
+      "kind": "always",
+      "loopLimit": null,
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_6hwsaxt5",
+      "from": "engineering-manager",
+      "to": "feature-coder",
+      "kind": "always",
+      "loopLimit": null,
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_jh11uqjj",
+      "from": "feature-coder",
+      "to": "test-author",
+      "kind": "always",
+      "loopLimit": null,
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_jvmimvvj",
+      "from": "test-author",
+      "to": "feature-coder",
+      "kind": "return",
+      "loopLimit": 3,
+      "condition": {
+        "type": "outcome",
+        "outcome": "failed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_gini1clg",
+      "from": "test-author",
+      "to": "qa-verifier",
+      "kind": "conditional",
+      "loopLimit": null,
+      "condition": {
+        "type": "outcome",
+        "outcome": "passed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_u1raexzn",
+      "from": "qa-verifier",
+      "to": "feature-coder",
+      "kind": "return",
+      "loopLimit": 3,
+      "condition": {
+        "type": "outcome",
+        "outcome": "failed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_gg54z8sr",
+      "from": "qa-verifier",
+      "to": "code-reviewer",
+      "kind": "conditional",
+      "loopLimit": null,
+      "condition": {
+        "type": "outcome",
+        "outcome": "passed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_0mwk58ib",
+      "from": "code-reviewer",
+      "to": "feature-coder",
+      "kind": "return",
+      "loopLimit": 3,
+      "condition": {
+        "type": "outcome",
+        "outcome": "changes_required",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_g80kx3ft",
+      "from": "code-reviewer",
+      "to": "security-reviewer",
+      "kind": "conditional",
+      "loopLimit": null,
+      "condition": {
+        "type": "outcome",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_9aascpjw",
+      "from": "security-reviewer",
+      "to": "feature-coder",
+      "kind": "return",
+      "loopLimit": 3,
+      "condition": {
+        "type": "outcome",
+        "outcome": "failed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_5itunurn",
+      "from": "security-reviewer",
+      "to": "technical-auditor",
+      "kind": "conditional",
+      "loopLimit": null,
+      "condition": {
+        "type": "outcome",
+        "outcome": "passed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_7w2hg30g",
+      "from": "technical-auditor",
+      "to": "feature-coder",
+      "kind": "return",
+      "loopLimit": 3,
+      "condition": {
+        "type": "outcome",
+        "outcome": "changes_required",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_fc98r1id",
+      "from": "technical-auditor",
+      "to": "release-notes-author",
+      "kind": "conditional",
+      "loopLimit": null,
+      "condition": {
+        "type": "outcome",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_15o7rk02",
+      "from": "release-notes-author",
+      "to": "release-gatekeeper",
+      "kind": "always",
+      "loopLimit": null,
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_2z8e7y38",
+      "from": "release-gatekeeper",
+      "to": "feature-coder",
+      "kind": "return",
+      "loopLimit": 3,
+      "condition": {
+        "type": "outcome",
+        "outcome": "blocked",
+        "expression": ""
+      }
+    }
+  ],
+  "namespace": {
+    "slug": null,
+    "root": ".canon",
+    "runLabel": "canon-run",
+    "startLabel": "canon:start"
+  }
+}

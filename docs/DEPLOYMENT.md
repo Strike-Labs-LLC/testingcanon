@@ -8,7 +8,7 @@
 
 ## Pipeline
 
-- Deployment method: Lovable
+- Deployment method: Not identified
 - Staging: automatic from the default branch
 - Production: automatic once gates pass
 

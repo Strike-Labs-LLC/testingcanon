@@ -1,10 +1,10 @@
-# Autonomous feature delivery — product overview
+# Autonomous production engineering — product overview
 
 > Scaffold generated from the SDLC blueprint. Fill in the sections marked TODO.
 
 ## What this is
 
-John’s Flow #1 orchestration flow.
+Autonomous Production Engineering orchestration flow.
 
 ## Users
 

@@ -1,10 +1,10 @@
 {
   "version": 7,
-  "name": "John’s Flow #1",
+  "name": "Autonomous Production Engineering",
   "project": {
-    "name": "Autonomous feature delivery",
+    "name": "Autonomous production engineering",
     "type": "web-application",
-    "description": "John’s Flow #1 orchestration flow.",
+    "description": "Autonomous Production Engineering orchestration flow.",
     "repository": {
       "owner": "",
       "name": "",
@@ -154,9 +154,9 @@
         "productionApprovalRequired": false,
         "stagingCommand": "",
         "productionCommand": "",
-        "platform": "lovable",
-        "method": "platform-managed",
-        "mechanism": "lovable"
+        "platform": "unknown",
+        "method": "unknown",
+        "mechanism": "unknown"
       }
     },
     "security": {
@@ -182,12 +182,12 @@
   },
   "agents": [
     {
-      "id": "agent_1fgm5fjx",
-      "name": "Requirements Analyst",
-      "description": "Turns the feature request into a specification with scope and exclusions.",
+      "id": "agent_g200q9lq",
+      "name": "Specification Writer",
+      "description": "Writes the full specification: problem, users, scope, exclusions, and criteria.",
       "role": "product_manager",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Requirements Analyst. Read the feature request, clarify intent, and write the requirements: the problem, the users affected, the scope, and what is explicitly out of scope. Ask for missing context rather than guessing. Do not write acceptance criteria — that is the next stage's job.",
+      "systemPrompt": "You are the Specification Writer. Turn the change request into a complete specification: the problem, the users affected, the scope, what is explicitly out of scope, and numbered acceptance criteria a tester can verify. Ask for missing context rather than guessing. The specification is the contract every later stage validates against.",
       "temperature": 0.2,
       "tools": [
         "read_files",
@@ -197,8 +197,8 @@
       "inputNotes": "",
       "outputNotes": "",
       "outputArtifact": "spec",
-      "taskDescription": "Convert the feature request into a written requirements statement with scope and an explicit out-of-scope list.",
-      "acceptanceCriteria": "The requirements state the problem, the affected users, the scope, and the out-of-scope list without ambiguity.",
+      "taskDescription": "Write the specification with scope, an out-of-scope list, and numbered, testable acceptance criteria.",
+      "acceptanceCriteria": "The specification states the problem, scope, and exclusions, and every acceptance criterion is verifiable without further clarification.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -216,28 +216,27 @@
         "threshold": 1
       },
       "position": {
-        "x": 320,
-        "y": 260
+        "x": 80,
+        "y": 60
       }
     },
     {
-      "id": "agent_azpzpeah",
-      "name": "Acceptance Criteria Author",
-      "description": "Writes numbered, testable acceptance criteria from the requirements.",
-      "role": "product_manager",
+      "id": "agent_hptqadgl",
+      "name": "Solution Architect",
+      "description": "Designs the technical approach against the specification.",
+      "role": "architect",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Acceptance Criteria Author. Read the requirements and write numbered acceptance criteria that a tester can verify without further clarification. Each criterion names the observable behaviour, the precondition, and the expected result. Cover the happy path, the failure paths, and the edges of the stated scope.",
+      "systemPrompt": "You are the Solution Architect. Read the specification and produce the technical design: the modules affected, the approach, the data and API changes, the compatibility risks, and the alternatives considered. Design for the stated scope only. Never implement the change — produce the design only.",
       "temperature": 0.2,
       "tools": [
         "read_files",
-        "search_code",
-        "update_issue"
+        "search_code"
       ],
       "inputNotes": "",
       "outputNotes": "",
-      "outputArtifact": "spec",
-      "taskDescription": "Write numbered, testable acceptance criteria covering the happy path, failure paths, and scope edges.",
-      "acceptanceCriteria": "Every requirement maps to at least one criterion, and each criterion is verifiable without further clarification.",
+      "outputArtifact": "design_doc",
+      "taskDescription": "Produce the technical design: modules affected, approach, data and API changes, risks, and alternatives considered.",
+      "acceptanceCriteria": "The design names the modules touched, the approach, the compatibility risks, and at least one considered alternative.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -247,6 +246,48 @@
       "escalateTo": "",
       "consumes": [
         "spec"
+      ],
+      "forbiddenActions": [
+        "Never implement the change — produce the design only.",
+        "Never merge, force-push, or rewrite history."
+      ],
+      "joinPolicy": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "position": {
+        "x": 320,
+        "y": 260
+      }
+    },
+    {
+      "id": "agent_sp18d8j7",
+      "name": "Engineering Manager",
+      "description": "Turns the design into an implementation plan with sequencing, risks, and test strategy.",
+      "role": "engineering_manager",
+      "model": "google/gemini-3.6-flash",
+      "systemPrompt": "You are the Engineering Manager agent. Turn the specification and technical design into an implementation plan: the modules affected, the sequence of changes, the risks and their mitigations, and the test strategy covering unit, integration, and manual checks. Keep the plan small enough for one pull request, and split it if it is not.",
+      "temperature": 0.2,
+      "tools": [
+        "read_files",
+        "search_code",
+        "update_issue"
+      ],
+      "inputNotes": "",
+      "outputNotes": "",
+      "outputArtifact": "design_doc",
+      "taskDescription": "Produce the implementation plan covering scope, approach, sequencing, risks, and the test strategy.",
+      "acceptanceCriteria": "The plan names the modules to change, the order of work, the known risks, and the tests that must exist before review.",
+      "executor": "ai",
+      "assignee": "",
+      "humanInstructions": "",
+      "decisionOutcomes": [],
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "consumes": [
+        "spec",
+        "design_doc"
       ],
       "forbiddenActions": [
         "Never write application code.",
@@ -262,12 +303,12 @@
       }
     },
     {
-      "id": "agent_dhux2iub",
+      "id": "agent_5rcqcy61",
       "name": "Feature Coder",
-      "description": "Implements the feature against the acceptance criteria and opens the pull request.",
+      "description": "Implements the plan and opens the pull request.",
       "role": "coder",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Feature Coder agent. Implement exactly what the acceptance criteria describe, no more. Add or update tests for every criterion, run the suite locally, and open a pull request that summarises the change and maps each criterion to its test. Never merge, never force-push, never commit secrets, and never disable a failing test.",
+      "systemPrompt": "You are the Feature Coder agent. Implement exactly what the implementation plan describes, no more. Add or update tests for every acceptance criterion, run the suite locally, and open a pull request that references the work item and reports the candidate commit SHA. Never merge, never force-push, never commit secrets, and never disable a failing test.",
       "temperature": 0.2,
       "tools": [
         "read_files",
@@ -280,8 +321,8 @@
       "inputNotes": "",
       "outputNotes": "",
       "outputArtifact": "code_diff",
-      "taskDescription": "Implement the acceptance criteria, add tests, run the suite, and open a pull request mapping criteria to tests.",
-      "acceptanceCriteria": "The branch builds, the suite passes locally, every criterion has a test, and the diff stays inside the stated scope.",
+      "taskDescription": "Implement the plan, add regression tests, run the suite, and open a pull request with the candidate commit SHA.",
+      "acceptanceCriteria": "The branch builds, the suite passes locally, the diff stays inside the planned scope, and the SHA is recorded.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -290,6 +331,7 @@
       "notifyVia": "github_review",
       "escalateTo": "",
       "consumes": [
+        "design_doc",
         "spec"
       ],
       "forbiddenActions": [
@@ -302,61 +344,17 @@
         "threshold": 1
       },
       "position": {
-        "x": 640,
+        "x": 800,
         "y": 660
       }
     },
     {
-      "id": "agent_qd3s1o9q",
-      "name": "Code Reviewer",
-      "description": "Independent review of scope, correctness, security, and test coverage.",
-      "role": "code_reviewer",
-      "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Code Reviewer agent. Review the pull request against the acceptance criteria for scope adherence, correctness, error handling, security, and test coverage. Never edit the code under review. Every finding must name a file, a line, and the change required. Approve when the diff is ready, or request changes with the specific findings.",
-      "temperature": 0.2,
-      "tools": [
-        "read_files",
-        "search_code",
-        "post_comment"
-      ],
-      "inputNotes": "",
-      "outputNotes": "",
-      "outputArtifact": "review_notes",
-      "taskDescription": "Review the diff against the acceptance criteria and record an approval or specific, actionable findings.",
-      "acceptanceCriteria": "Every finding names a file, a line, and the required change, and the review states one clear outcome.",
-      "executor": "ai",
-      "assignee": "",
-      "humanInstructions": "",
-      "decisionOutcomes": [
-        "approved",
-        "changes_required"
-      ],
-      "responseTimeHours": 0,
-      "notifyVia": "github_review",
-      "escalateTo": "",
-      "consumes": [
-        "code_diff"
-      ],
-      "forbiddenActions": [
-        "Never edit the code under review.",
-        "Never merge, force-push, or rewrite history."
-      ],
-      "joinPolicy": {
-        "mode": "all",
-        "threshold": 1
-      },
-      "position": {
-        "x": 1040,
-        "y": 420
-      }
-    },
-    {
-      "id": "agent_gjt87jgq",
+      "id": "agent_ldhb4d7r",
       "name": "Test Author",
-      "description": "Writes and runs the automated tests that prove each acceptance criterion.",
+      "description": "Writes and runs the tests that prove each acceptance criterion.",
       "role": "tester",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Test Author agent. Write automated tests that prove each acceptance criterion on the candidate branch, then run the full suite and attach the output. Report a pass, or a failure with the failing test names and reproduction steps. Never weaken assertions or modify product code to get a green run.",
+      "systemPrompt": "You are the Test Author agent. Write automated tests that prove each acceptance criterion on the candidate branch, then run the full suite and attach the output. Report a pass, or a failure with the failing test names and reproduction steps. Never weaken assertions and never touch product code to get a green run.",
       "temperature": 0.2,
       "tools": [
         "read_files",
@@ -401,30 +399,28 @@
       },
       "position": {
         "x": 1040,
-        "y": 900
+        "y": 860
       }
     },
     {
-      "id": "agent_5zfks6jl",
+      "id": "agent_zfb5q2yp",
       "name": "QA Verifier",
-      "description": "Confirms the change meets every acceptance criterion before release.",
+      "description": "Runs the repository's required check commands against the candidate commit.",
       "role": "qa",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the QA Verifier. Your job is to run the repository's required check commands against the candidate commit and report the result. Run exactly the commands the repository resolves for this flow, in the order given, and attach the output of each. Then record an explicit pass or fail for every acceptance criterion in the specification, citing the command output as evidence. This stage is read-only: never edit application code, tests, configuration, or documentation, and never open or approve a pull request. When a check fails, report the failing command, the exact error output, and the steps to reproduce it. When the repository has no required check commands configured, say so plainly and report that no automated verification was possible.",
+      "systemPrompt": "You are the QA Verifier. Run exactly the required check commands the repository resolves for this flow against the candidate commit, in the order given, and attach the output of each. Then record an explicit pass or fail for every acceptance criterion based on that output. This stage is read-only: never change anything in the repository. Report readiness, or a failure with the failing command and reproduction steps.",
       "temperature": 0.2,
       "tools": [
         "read_files",
-        "search_code",
         "run_tests",
         "run_commands",
-        "fetch_test_logs",
         "post_comment"
       ],
       "inputNotes": "",
       "outputNotes": "",
       "outputArtifact": "test_report",
-      "taskDescription": "Run the repository's required check commands against the candidate commit, attach the output of each, and record an explicit pass or fail for every acceptance criterion with that output as evidence.",
-      "acceptanceCriteria": "Every required check command resolved for the repository has been run against the candidate commit.\nThe output of each command is attached to the report.\nEvery acceptance criterion in the specification has an explicit pass or fail verdict.\nEvery failing verdict names the failing command, its error output, and reproduction steps.\nNothing in the repository was modified by this stage.",
+      "taskDescription": "Run the repository's required check commands against the candidate commit and record an explicit pass or fail per acceptance criterion.",
+      "acceptanceCriteria": "Every required check command has been run with its output attached, and every acceptance criterion has an explicit result.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -438,21 +434,191 @@
       "consumes": [
         "code_diff",
         "spec",
+        "test_report"
+      ],
+      "forbiddenActions": [
+        "Never modify product code to make a test pass.",
+        "Never merge, force-push, or rewrite history."
+      ],
+      "joinPolicy": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "position": {
+        "x": 1280,
+        "y": 860
+      }
+    },
+    {
+      "id": "agent_n5alyp08",
+      "name": "Code Reviewer",
+      "description": "Independent review of scope, correctness, and maintainability.",
+      "role": "code_reviewer",
+      "model": "google/gemini-3.6-flash",
+      "systemPrompt": "You are the Code Reviewer agent. Review the candidate commit against the plan for scope adherence, correctness, error handling, and maintainability. Never edit anything under review. Every finding must name a file, a line, and the change required. Approve when the diff is ready, or request changes with the specific findings.",
+      "temperature": 0.2,
+      "tools": [
+        "read_files",
+        "search_code",
+        "post_comment"
+      ],
+      "inputNotes": "",
+      "outputNotes": "",
+      "outputArtifact": "review_notes",
+      "taskDescription": "Review the diff against the plan and record an approval or specific, actionable findings.",
+      "acceptanceCriteria": "Every finding names a file, a line, and the required change, and the review states one clear outcome.",
+      "executor": "ai",
+      "assignee": "",
+      "humanInstructions": "",
+      "decisionOutcomes": [
+        "approved",
+        "changes_required"
+      ],
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "consumes": [
+        "code_diff",
+        "design_doc",
+        "test_report"
+      ],
+      "forbiddenActions": [
+        "Never edit the code under review.",
+        "Never merge, force-push, or rewrite history."
+      ],
+      "joinPolicy": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "position": {
+        "x": 1520,
+        "y": 660
+      }
+    },
+    {
+      "id": "agent_i2eaa5i2",
+      "name": "Security Reviewer",
+      "description": "Audits the change for vulnerabilities, secrets, and unsafe dependencies.",
+      "role": "security_auditor",
+      "model": "google/gemini-3.6-flash",
+      "systemPrompt": "You are the Security Reviewer. Audit the candidate commit for injection, authentication and authorization flaws, leaked secrets, unsafe dependencies, and insecure configuration. Every finding names a severity, a file and line, and a concrete remediation step. Never auto-remediate — report findings for the coder.",
+      "temperature": 0.2,
+      "tools": [
+        "read_files",
+        "search_code",
+        "run_commands",
+        "post_comment"
+      ],
+      "inputNotes": "",
+      "outputNotes": "",
+      "outputArtifact": "security_report",
+      "taskDescription": "Audit the diff for vulnerabilities, secrets, and unsafe dependencies, reporting severity and remediation per finding.",
+      "acceptanceCriteria": "Each finding has a severity and a concrete remediation step, and the audit ends with a pass or fail outcome.",
+      "executor": "ai",
+      "assignee": "",
+      "humanInstructions": "",
+      "decisionOutcomes": [
+        "passed",
+        "failed"
+      ],
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "consumes": [
+        "code_diff"
+      ],
+      "forbiddenActions": [
+        "Never read, print, or commit secrets, tokens, or .env values.",
+        "Never auto-remediate — report findings for the coder.",
+        "Never merge, force-push, or rewrite history."
+      ],
+      "joinPolicy": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "position": {
+        "x": 1520,
+        "y": 1060
+      }
+    },
+    {
+      "id": "agent_aee7h6ns",
+      "name": "Technical Auditor",
+      "description": "Audits the whole packet for engineering quality and production risk.",
+      "role": "release_reviewer",
+      "model": "google/gemini-3.6-flash",
+      "systemPrompt": "You are the Technical Auditor. Audit the full packet — specification, plan, diff, review notes, check report, and security report — for engineering quality and production risk: migrations, backfills, flags, rollback plan, monitoring, and blast radius. Approve when the packet is complete and the risks are mitigated, or return findings that name the gap and the required change. Never merge or deploy.",
+      "temperature": 0.2,
+      "tools": [
+        "read_files",
+        "search_code",
+        "post_comment"
+      ],
+      "inputNotes": "",
+      "outputNotes": "",
+      "outputArtifact": "review_notes",
+      "taskDescription": "Audit the full packet for quality and production risk, and record an approval or specific findings.",
+      "acceptanceCriteria": "Migrations, rollback, monitoring, and blast radius are each assessed in writing, and the outcome is one clear decision.",
+      "executor": "ai",
+      "assignee": "",
+      "humanInstructions": "",
+      "decisionOutcomes": [
+        "approved",
+        "changes_required"
+      ],
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "consumes": [
+        "code_diff",
+        "test_report",
+        "security_report"
+      ],
+      "forbiddenActions": [
+        "Never merge, force-push, or rewrite history.",
+        "Never deploy to production without a recorded human approval."
+      ],
+      "joinPolicy": {
+        "mode": "all",
+        "threshold": 1
+      },
+      "position": {
+        "x": 1760,
+        "y": 860
+      }
+    },
+    {
+      "id": "agent_bdzx4k2f",
+      "name": "Release Notes Author",
+      "description": "Prepares the version, changelog, and rollback checklist for the release.",
+      "role": "release_engineer",
+      "model": "google/gemini-3.6-flash",
+      "systemPrompt": "You are the Release Notes Author. Prepare the release: the version, the changelog for users and operators, the rollback plan, and the release checklist. Draw only from the audited packet. Never deploy and never invent changes that are not in the diff.",
+      "temperature": 0.2,
+      "tools": [
+        "read_files",
+        "search_code",
+        "post_comment"
+      ],
+      "inputNotes": "",
+      "outputNotes": "",
+      "outputArtifact": "release_notes",
+      "taskDescription": "Prepare the version, changelog, rollback plan, and release checklist from the audited packet.",
+      "acceptanceCriteria": "The version, changelog, rollback plan, and checklist are complete and match the audited diff.",
+      "executor": "ai",
+      "assignee": "",
+      "humanInstructions": "",
+      "decisionOutcomes": [],
+      "responseTimeHours": 0,
+      "notifyVia": "github_review",
+      "escalateTo": "",
+      "consumes": [
         "review_notes",
         "test_report"
       ],
       "forbiddenActions": [
-        "Never modify code, tests, configuration, or documentation; this stage reports only.",
-        "Never read, print, or commit secrets, API keys, passwords, or credentials.",
-        "Never record a passing verdict without command output as evidence.",
-        "Never invent a check command the repository does not define.",
-        "Never approve or merge a pull request."
-      ],
-      "authority": [
-        "read_repository",
-        "read_issues",
-        "run_tests",
-        "run_commands"
+        "Never deploy to production without a recorded human approval.",
+        "Never read, print, or commit secrets, tokens, or .env values."
       ],
       "producesCandidate": false,
       "joinPolicy": {
@@ -460,17 +626,17 @@
         "threshold": 1
       },
       "position": {
-        "x": 1280,
-        "y": 660
+        "x": 2000,
+        "y": 1060
       }
     },
     {
-      "id": "agent_444zsva0",
+      "id": "agent_2yff866x",
       "name": "Release Gatekeeper",
-      "description": "Assesses release readiness and records the release decision.",
+      "description": "Records the final automated release decision against the complete packet.",
       "role": "release_reviewer",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Release Gatekeeper. Assess release readiness for the candidate commit: scope, migrations, rollback plan, monitoring, and blast radius. Record an approval only when the review notes and the QA report are both clean. Block the release with the specific risk and the mitigation required when they are not. Never merge or deploy yourself.",
+      "systemPrompt": "You are the Release Gatekeeper. Verify the release packet is complete — audit approval, release notes, check report, and security report — and that every gate in the workflow has passed in order. Record an approval only when the packet is complete. Block the release with the specific missing piece when it is not. Never merge or deploy yourself.",
       "temperature": 0.2,
       "tools": [
         "read_files",
@@ -480,8 +646,8 @@
       "inputNotes": "",
       "outputNotes": "",
       "outputArtifact": "approval",
-      "taskDescription": "Assess scope, migrations, rollback, monitoring, and blast radius, then record an approve or block decision.",
-      "acceptanceCriteria": "Each readiness area is assessed in writing, and the decision is either approved or blocked with a named mitigation.",
+      "taskDescription": "Verify the release packet is complete and every gate has passed, then record an approve or block decision.",
+      "acceptanceCriteria": "The decision names the evidence checked, and a blocked release states exactly what is missing.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -493,6 +659,7 @@
       "notifyVia": "github_review",
       "escalateTo": "",
       "consumes": [
+        "release_notes",
         "review_notes",
         "test_report"
       ],
@@ -505,17 +672,17 @@
         "threshold": 1
       },
       "position": {
-        "x": 1520,
-        "y": 860
+        "x": 2240,
+        "y": 1260
       }
     }
   ],
   "edges": [
     {
-      "id": "edge_c1",
-      "from": "agent_1fgm5fjx",
-      "to": "agent_azpzpeah",
-      "label": "Requirements defined",
+      "id": "edge_qa83pt50",
+      "from": "agent_g200q9lq",
+      "to": "agent_hptqadgl",
+      "label": "Specification approved",
       "condition": {
         "type": "always",
         "outcome": "approved",
@@ -523,10 +690,10 @@
       }
     },
     {
-      "id": "edge_c2",
-      "from": "agent_azpzpeah",
-      "to": "agent_dhux2iub",
-      "label": "Criteria ready",
+      "id": "edge_vj1mvhfh",
+      "from": "agent_hptqadgl",
+      "to": "agent_sp18d8j7",
+      "label": "Architecture ratified",
       "condition": {
         "type": "always",
         "outcome": "approved",
@@ -534,9 +701,20 @@
       }
     },
     {
-      "id": "edge_c3",
-      "from": "agent_dhux2iub",
-      "to": "agent_gjt87jgq",
+      "id": "edge_6hwsaxt5",
+      "from": "agent_sp18d8j7",
+      "to": "agent_5rcqcy61",
+      "label": "Plan ready",
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_jh11uqjj",
+      "from": "agent_5rcqcy61",
+      "to": "agent_ldhb4d7r",
       "label": "Branch ready for tests",
       "condition": {
         "type": "always",
@@ -545,9 +723,9 @@
       }
     },
     {
-      "id": "edge_c4",
-      "from": "agent_gjt87jgq",
-      "to": "agent_dhux2iub",
+      "id": "edge_jvmimvvj",
+      "from": "agent_ldhb4d7r",
+      "to": "agent_5rcqcy61",
       "label": "Tests failed",
       "condition": {
         "type": "outcome",
@@ -556,9 +734,9 @@
       }
     },
     {
-      "id": "edge_c5",
-      "from": "agent_gjt87jgq",
-      "to": "agent_5zfks6jl",
+      "id": "edge_gini1clg",
+      "from": "agent_ldhb4d7r",
+      "to": "agent_zfb5q2yp",
       "label": "Tests passed",
       "condition": {
         "type": "outcome",
@@ -567,9 +745,9 @@
       }
     },
     {
-      "id": "edge_c6",
-      "from": "agent_5zfks6jl",
-      "to": "agent_dhux2iub",
+      "id": "edge_u1raexzn",
+      "from": "agent_zfb5q2yp",
+      "to": "agent_5rcqcy61",
       "label": "Checks failed",
       "condition": {
         "type": "outcome",
@@ -578,9 +756,9 @@
       }
     },
     {
-      "id": "edge_c7",
-      "from": "agent_5zfks6jl",
-      "to": "agent_qd3s1o9q",
+      "id": "edge_gg54z8sr",
+      "from": "agent_zfb5q2yp",
+      "to": "agent_n5alyp08",
       "label": "Checks passed",
       "condition": {
         "type": "outcome",
@@ -589,9 +767,9 @@
       }
     },
     {
-      "id": "edge_c8",
-      "from": "agent_qd3s1o9q",
-      "to": "agent_dhux2iub",
+      "id": "edge_0mwk58ib",
+      "from": "agent_n5alyp08",
+      "to": "agent_5rcqcy61",
       "label": "Changes required",
       "condition": {
         "type": "outcome",
@@ -600,9 +778,9 @@
       }
     },
     {
-      "id": "edge_c9",
-      "from": "agent_qd3s1o9q",
-      "to": "agent_444zsva0",
+      "id": "edge_g80kx3ft",
+      "from": "agent_n5alyp08",
+      "to": "agent_i2eaa5i2",
       "label": "Review approved",
       "condition": {
         "type": "outcome",
@@ -611,9 +789,64 @@
       }
     },
     {
-      "id": "edge_c10",
-      "from": "agent_444zsva0",
-      "to": "agent_dhux2iub",
+      "id": "edge_9aascpjw",
+      "from": "agent_i2eaa5i2",
+      "to": "agent_5rcqcy61",
+      "label": "Vulnerabilities found",
+      "condition": {
+        "type": "outcome",
+        "outcome": "failed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_5itunurn",
+      "from": "agent_i2eaa5i2",
+      "to": "agent_aee7h6ns",
+      "label": "Security passed",
+      "condition": {
+        "type": "outcome",
+        "outcome": "passed",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_7w2hg30g",
+      "from": "agent_aee7h6ns",
+      "to": "agent_5rcqcy61",
+      "label": "Audit findings",
+      "condition": {
+        "type": "outcome",
+        "outcome": "changes_required",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_fc98r1id",
+      "from": "agent_aee7h6ns",
+      "to": "agent_bdzx4k2f",
+      "label": "Audit approved",
+      "condition": {
+        "type": "outcome",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_15o7rk02",
+      "from": "agent_bdzx4k2f",
+      "to": "agent_2yff866x",
+      "label": "Release notes ready",
+      "condition": {
+        "type": "always",
+        "outcome": "approved",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_2z8e7y38",
+      "from": "agent_2yff866x",
+      "to": "agent_5rcqcy61",
       "label": "Release blocked",
       "condition": {
         "type": "outcome",
@@ -623,10 +856,10 @@
     }
   ],
   "groups": [],
-  "entryAgentId": "agent_1fgm5fjx",
+  "entryAgentId": "agent_g200q9lq",
   "exitAgentIds": [
-    "agent_444zsva0"
+    "agent_2yff866x"
   ],
-  "createdAt": "2026-09-18T18:44:45.101Z",
-  "updatedAt": "2026-09-19T02:13:46Z"
+  "createdAt": "2026-09-19T20:02:16.897Z",
+  "updatedAt": "2026-09-19T20:02:16.897Z"
 }

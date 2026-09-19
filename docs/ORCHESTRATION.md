@@ -1,6 +1,6 @@
 # Canon orchestration runtime
 
-This repository includes the **Autonomous feature delivery** pipeline. Canon stores its executable graph,
+This repository includes the **Autonomous production engineering** pipeline. Canon stores its executable graph,
 run state helpers, policy checks, and stage handoff logic under `.canon/`.
 
 ## How a run works
