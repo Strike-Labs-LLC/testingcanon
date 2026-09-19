@@ -4,15 +4,22 @@ merge:
   minimum_reviewers: 1
   code_owner_review_required: false
   required_checks:
-    - Lint
-    - Build
-    - Unit tests
-    - Integration tests
-    - Dependency review
+    - Static checks
 testing:
-  unit: required
-  integration: required
-  e2e: optional
+  unit:
+    status: none
+    command: null
+  integration:
+    status: none
+    command: null
+  e2e:
+    status: none
+    command: null
+static_checks:
+  - name: html-validate
+    command: "npx --yes html-validate \"**/*.html\""
+  - name: links
+    command: "npx --yes linkinator . --recurse --silent --skip \"^https?://\""
 release:
   staging_automatic: true
   production_approval_required: false

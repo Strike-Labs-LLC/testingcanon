@@ -40,11 +40,7 @@ Applied from `.sdlc/github/ruleset-branch.json`.
     - Dismiss stale approvals on push: on
     - Require conversation resolution: on
   - Require status checks to pass:
-    - Lint
-    - Build
-    - Unit tests
-    - Integration tests
-    - Dependency review
+    - Static checks
 
 Release tags matching `v*` are protected by `.sdlc/github/ruleset-tags.json`, so an
 unauthorized release tag cannot be created in the first place.
@@ -54,9 +50,7 @@ Without this ruleset the pipeline is advisory only: anything can push directly t
 
 ## 3. Environments and approval authority
 
-- **development** — deployments allowed from `main`
-- **staging** — deployments allowed from `main`
-- **production** — required reviewers: **unresolved — set an approver on the human release gate**; protected branches only; prevent self-review on
+
 
 Approval authority per gate (`.sdlc/approval-policy.json`):
 
@@ -145,7 +139,7 @@ assignment options:
 gh api --method POST repos/YOUR-ORG/YOUR-REPO/issues/ISSUE_NUMBER/assignees \
   -f "assignees[]=copilot-swe-agent[bot]" \
   -f "agent_assignment[base_branch]=main" \
-  -f "agent_assignment[custom_agent]=delivery-orchestrator"
+  -f "agent_assignment[custom_agent]=requirements-analyst"
 ```
 
 Stage-to-agent mapping lives in `.sdlc/agent-routing.yml`.

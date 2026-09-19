@@ -2,23 +2,22 @@
 
 > Scaffold generated from the SDLC blueprint. Fill in the sections marked TODO.
 
-## Requirements
+## Resolved test plan
 
-- Unit: required
-- Integration: required
-- End-to-end: optional
+Canon resolved these commands from this repository. A tier with no command has no
+job, no required check, and no hook.
+
+- Unit: none — Unit: none — this repository has no package manifest.
+- Integration: none — Integration: none — this repository has no package manifest.
+- E2E: none — E2E: none — this repository has no package manifest.
 
 ## Running the suite
 
 ```bash
-bash .canon/require-script.sh test
-bash .canon/require-script.sh test:integration
-bash .canon/require-script.sh test:e2e
+npx --yes html-validate "**/*.html"
+npx --yes linkinator . --recurse --silent --skip "^https?://"
 ```
-
-A check the blueprint marks as required fails when the matching npm script is missing.
-Pass `optional` as a second argument to allow a skip.
 
 ## Standards
 
-See `.github/instructions/tests.instructions.md`.
+No testing standards file is generated for a repository without tests.

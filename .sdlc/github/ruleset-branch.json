@@ -36,19 +36,7 @@
         "strict_required_status_checks_policy": true,
         "required_status_checks": [
           {
-            "context": "Lint"
-          },
-          {
-            "context": "Build"
-          },
-          {
-            "context": "Unit tests"
-          },
-          {
-            "context": "Integration tests"
-          },
-          {
-            "context": "Dependency review"
+            "context": "Static checks"
           }
         ]
       }

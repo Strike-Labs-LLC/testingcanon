@@ -4,9 +4,7 @@
 
 ## Environments
 
-- development
-- staging
-- production
+- No environment is created by this package.
 
 ## Pipeline
 

@@ -293,21 +293,17 @@ async function main() {
 
     if (sourcePatch.trim()) {
       const files = patchFiles(sourcePatch);
-      // Compare against the branch the patch was cut from, not the workspace head.
-      let branchHead = "";
-      try {
-        git("fetch", "origin", process.env.CANON_DEFAULT_BRANCH || "main");
-        branchHead = git("rev-parse", `origin/${process.env.CANON_DEFAULT_BRANCH || "main"}`);
-      } catch {
-        branchHead = record.baseSha ?? "";
-      }
+      // A patch is cut from the run's candidate, which on a loop-back is the
+      // previous stage's commit rather than the default branch. The only staleness
+      // that matters is the candidate moving underneath the stage while it ran, so
+      // the comparison is against the run record re-read at publish time.
       const problems = validatePatch({
         stage,
         record,
         patch: sourcePatch,
         files,
         baseSha: record.baseSha,
-        headSha: branchHead,
+        headSha: String(run.candidateSha ?? "").trim() || record.baseSha,
       });
       if (problems.length) {
         refusal =

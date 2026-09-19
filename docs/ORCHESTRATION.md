@@ -45,4 +45,4 @@ run state helpers, policy checks, and stage handoff logic under `.canon/`.
 - Apply an update: `node .canon/install.mjs`
 - Preview removal: `node .canon/uninstall.mjs`
 
-Generated from blueprint version 7 on 2026-09-18.
+Generated from blueprint version 7 on 2026-09-19.

@@ -11,15 +11,15 @@ John’s Flow #1 orchestration flow.
 ## Repository architecture
 
 - Project type: web application
-- Frontend framework: React
-- Backend: Node.js
-- Database: Supabase
-- Infrastructure: AWS
+- Frontend framework: None
+- Backend: None
+- Database: None
+- Infrastructure: None
 - Desktop runtime: Electron
 - AI integration: None
 - Styling: Tailwind CSS
 - Default branch: `main`
-- Environments: development, staging, production
+- Environments: none created by Canon
 
 ## Canonical tool names
 
@@ -30,10 +30,10 @@ spelling its own documentation uses.
 
 | Field | This project | Canonical names (top 8) |
 | --- | --- | --- |
-| Frontend framework | `React` | `React`, `Next.js`, `TypeScript`, `Vue`, `Svelte`, `Angular`, `React Native`, `Tailwind CSS` |
-| Backend | `Node.js` | `Node.js`, `TypeScript`, `Python`, `Go`, `Java`, `Ruby on Rails`, `.NET`, `Supabase Edge Functions` |
-| Database | `Supabase` | `PostgreSQL`, `Supabase`, `MySQL`, `SQLite`, `MongoDB`, `Redis`, `DynamoDB`, `Snowflake` |
-| Infrastructure | `AWS` | `GitHub Actions`, `AWS`, `Vercel`, `Cloudflare`, `Google Cloud`, `Azure`, `Docker`, `Kubernetes` |
+| Frontend framework | `None` _(custom — not in the canonical list)_ | `React`, `Next.js`, `TypeScript`, `Vue`, `Svelte`, `Angular`, `React Native`, `Tailwind CSS` |
+| Backend | `None` _(custom — not in the canonical list)_ | `Node.js`, `TypeScript`, `Python`, `Go`, `Java`, `Ruby on Rails`, `.NET`, `Supabase Edge Functions` |
+| Database | `None` _(custom — not in the canonical list)_ | `PostgreSQL`, `Supabase`, `MySQL`, `SQLite`, `MongoDB`, `Redis`, `DynamoDB`, `Snowflake` |
+| Infrastructure | `None` _(custom — not in the canonical list)_ | `GitHub Actions`, `AWS`, `Vercel`, `Cloudflare`, `Google Cloud`, `Azure`, `Docker`, `Kubernetes` |
 | Desktop runtime | `Electron` | `None`, `Electron`, `Tauri`, `Neutralino`, `Capacitor`, `Qt`, `.NET MAUI` |
 | AI integration | `None` | `None`, `OpenAI`, `Anthropic`, `GitHub Models`, `Azure OpenAI`, `Google Gemini`, `Ollama`, `LangChain` |
 | SPA bridge | _not specified_ | `None`, `tRPC`, `REST`, `GraphQL`, `gRPC-Web`, `WebSocket`, `Server Actions`, `IPC` |
@@ -43,6 +43,47 @@ spelling its own documentation uses.
 
 Source: Canon · Orchestration settings → Stack (src/features/blueprint/spec/stackPresets.ts). The list is a controlled vocabulary, not a
 restriction — custom values are allowed and are recorded verbatim above.
+
+## Repository context
+
+These are the standing facts about this repository. They apply to every stage of
+every run and outrank any assumption an agent brings from another codebase.
+
+### What this repository owns
+
+Owns a single-page static web app that shows a rocket lift-off animation. This repository is Strike Labs' internal test target for Canon: pipeline changes are exercised here end to end before they reach customer repositories. It contains only static HTML, CSS, and vanilla JavaScript, with no backend, database, or build step.
+
+### Outcome it must produce
+
+A small, stable app that a Canon run can change, review, test, and release without human rework. A successful run delivers a working page change through a merged pull request with every required check green. The page loads instantly and works in current desktop and mobile browsers. It stays simple enough that any run failure points to Canon, not the app.
+
+### Who depends on it
+
+Internal only. Strike Labs engineering uses this repository to validate Canon runs; there is a single maintainer who approves all changes. No external customers, no authentication, no personal data. Favor small, readable, easy-to-debug changes over features or polish.
+
+### Tradeoff order when several approaches are valid
+
+canon-priorities:v1:{"order":["simplicity","correctness","delivery-speed","security","data-integrity","reliability","observability","maintainability","backward-compatibility","cost"]}
+
+### Must survive every change
+
+The app runs by opening index.html or serving the folder statically, with no build step.
+Zero runtime dependencies and no package manager files unless the objective explicitly requests them.
+The page loads with no console errors and honors prefers-reduced-motion.
+Every change ships through a pull request with required checks green.
+
+### Never do this
+
+Do not add package.json, frameworks, bundlers, or test runners unless the objective explicitly requests them.
+Do not add a backend, database, authentication, analytics, tracking, or external network calls.
+Do not load scripts, fonts, or assets from third-party CDNs.
+Do not modify .github/, .canon/, .sdlc/, or AGENTS.md.
+Do not commit secrets or credentials.
+
+### Not this repository's work
+
+Production hosting and uptime, customer-facing features, user accounts, payments, CRM, analytics, legacy browser support, and serving as an architecture template for other repositories.
+
 
 ## Orchestration output contract
 
@@ -73,34 +114,29 @@ When sources disagree, the higher entry wins:
 
 ## SDLC lifecycle
 
-1. **Delivery Orchestrator** — Engineering Orchestrator
-2. **Requirements Analyst** — Product Manager
-3. **Acceptance Criteria Author** — Product Manager
-4. **Feature Coder** — Coder
-5. **Code Reviewer** — Code Reviewer
-6. **Test Author** — Tester
-7. **QA Verifier** — QA
-8. **Release Gatekeeper** — Release Reviewer
-9. **Deployment Runner** — DevOps Deploy
+1. **Requirements Analyst** — Product Manager
+2. **Acceptance Criteria Author** — Product Manager
+3. **Feature Coder** — Coder
+4. **Test Author** — Tester
+5. **QA Verifier** — QA
+6. **Code Reviewer** — Code Reviewer
+7. **Release Gatekeeper** — Release Reviewer
 
 ### Transitions
 
-- Delivery Orchestrator → Requirements Analyst — Always (always)
 - Requirements Analyst → Acceptance Criteria Author — Always (always)
 - Acceptance Criteria Author → Feature Coder — Always (always)
-- Feature Coder → Code Reviewer — Always (split (parallel))
-- Feature Coder → Test Author — Always (split (parallel))
-- Code Reviewer → Feature Coder — If changes required (return (loop back))
+- Feature Coder → Test Author — Always (always)
 - Test Author → Feature Coder — If failed (return (loop back))
-- Code Reviewer → QA Verifier — If approved (conditional)
 - Test Author → QA Verifier — If passed (conditional)
 - QA Verifier → Feature Coder — If failed (return (loop back))
-- QA Verifier → Release Gatekeeper — If passed (conditional)
-- Release Gatekeeper → Deployment Runner — If approved (conditional)
+- QA Verifier → Code Reviewer — If passed (conditional)
+- Code Reviewer → Feature Coder — If changes required (return (loop back))
+- Code Reviewer → Release Gatekeeper — If approved (conditional)
 - Release Gatekeeper → Feature Coder — If blocked (return (loop back))
 
-Pipeline start: **Delivery Orchestrator**
-Pipeline end: **Deployment Runner**
+Pipeline start: **Requirements Analyst**
+Pipeline end: **Release Gatekeeper**
 
 ## Definition of Ready
 
@@ -115,9 +151,7 @@ A work item may enter implementation only when all of the following are true:
 ## Definition of Done
 
 - Acceptance criteria are demonstrably met.
-- Unit tests are written and passing.
-- Integration tests are written and passing.
-- End-to-end coverage considered.
+
 - Code review is complete and approved.
 - Static analysis considered.
 - No secrets are present in the diff.
@@ -127,7 +161,7 @@ A work item may enter implementation only when all of the following are true:
 
 - Branching: trunk based.
 - All changes ship through a pull request with at least 1 approving review(s).
-- Tests: unit (required), integration (required), e2e (optional).
+- Tests: this repository has no test command; no test gate is enforced.
 - Security scanning: secret scanning (required), dependency scanning (required).
 - Documentation: architecture (required), api (required), runbook (optional).
 - Production deployments are automatic once gates pass.
@@ -162,12 +196,10 @@ or when the same stage fails twice for the same reason.
 
 ## Agent roster
 
-- `.github/agents/00-delivery-orchestrator.agent.md` — Delivery Orchestrator (Engineering Orchestrator)
-- `.github/agents/02-requirements-analyst.agent.md` — Requirements Analyst (Product Manager)
-- `.github/agents/03-acceptance-criteria-author.agent.md` — Acceptance Criteria Author (Product Manager)
-- `.github/agents/04-feature-coder.agent.md` — Feature Coder (Coder)
-- `.github/agents/05-code-reviewer.agent.md` — Code Reviewer (Code Reviewer)
-- `.github/agents/06-test-author.agent.md` — Test Author (Tester)
-- `.github/agents/07-qa-verifier.agent.md` — QA Verifier (QA)
-- `.github/agents/08-release-gatekeeper.agent.md` — Release Gatekeeper (Release Reviewer)
-- `.github/agents/09-deployment-runner.agent.md` — Deployment Runner (DevOps Deploy)
+- `.github/agents/01-requirements-analyst.agent.md` — Requirements Analyst (Product Manager)
+- `.github/agents/02-acceptance-criteria-author.agent.md` — Acceptance Criteria Author (Product Manager)
+- `.github/agents/03-feature-coder.agent.md` — Feature Coder (Coder)
+- `.github/agents/04-test-author.agent.md` — Test Author (Tester)
+- `.github/agents/05-qa-verifier.agent.md` — QA Verifier (QA)
+- `.github/agents/06-code-reviewer.agent.md` — Code Reviewer (Code Reviewer)
+- `.github/agents/07-release-gatekeeper.agent.md` — Release Gatekeeper (Release Reviewer)

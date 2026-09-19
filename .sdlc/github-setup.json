@@ -7,11 +7,7 @@
       ".sdlc/github/ruleset-branch.json",
       ".sdlc/github/ruleset-tags.json"
     ],
-    "environments": [
-      ".sdlc/github/environment-development.json",
-      ".sdlc/github/environment-staging.json",
-      ".sdlc/github/environment-production.json"
-    ],
+    "environments": [],
     "apply": ".sdlc/github/apply.sh"
   },
   "mergeStrategy": {
@@ -200,58 +196,46 @@
   },
   "copilotAgents": [
     {
-      "slug": "delivery-orchestrator",
-      "role": "orchestrator",
-      "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/00-delivery-orchestrator.agent.md"
-    },
-    {
       "slug": "requirements-analyst",
       "role": "product_manager",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/02-requirements-analyst.agent.md"
+      "file": ".github/agents/01-requirements-analyst.agent.md"
     },
     {
       "slug": "acceptance-criteria-author",
       "role": "product_manager",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/03-acceptance-criteria-author.agent.md"
+      "file": ".github/agents/02-acceptance-criteria-author.agent.md"
     },
     {
       "slug": "feature-coder",
       "role": "coder",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/04-feature-coder.agent.md"
-    },
-    {
-      "slug": "code-reviewer",
-      "role": "code_reviewer",
-      "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/05-code-reviewer.agent.md"
+      "file": ".github/agents/03-feature-coder.agent.md"
     },
     {
       "slug": "test-author",
       "role": "tester",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/06-test-author.agent.md"
+      "file": ".github/agents/04-test-author.agent.md"
     },
     {
       "slug": "qa-verifier",
       "role": "qa",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/07-qa-verifier.agent.md"
+      "file": ".github/agents/05-qa-verifier.agent.md"
+    },
+    {
+      "slug": "code-reviewer",
+      "role": "code_reviewer",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/06-code-reviewer.agent.md"
     },
     {
       "slug": "release-gatekeeper",
       "role": "release_reviewer",
       "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/08-release-gatekeeper.agent.md"
-    },
-    {
-      "slug": "deployment-runner",
-      "role": "devops_deploy",
-      "model": "google/gemini-3.6-flash",
-      "file": ".github/agents/09-deployment-runner.agent.md"
+      "file": ".github/agents/07-release-gatekeeper.agent.md"
     }
   ],
   "humanGates": []

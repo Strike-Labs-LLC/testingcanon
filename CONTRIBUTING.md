@@ -14,7 +14,7 @@
 
 - Branching: trunk based.
 - All changes ship through a pull request with at least 1 approving review(s).
-- Tests: unit (required), integration (required), e2e (optional).
+- Tests: this repository has no test command; no test gate is enforced.
 - Security scanning: secret scanning (required), dependency scanning (required).
 - Documentation: architecture (required), api (required), runbook (optional).
 - Production deployments are automatic once gates pass.

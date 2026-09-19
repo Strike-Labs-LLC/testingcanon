@@ -63,7 +63,17 @@ async function main() {
     await addLabel(issue.number, runtimeLabel("run-failed"));
     throw new Error(`Canon preflight failed: ${preflight.failures.join("; ")}`);
   }
-  await comment(issue.number, "## Preflight passed\n\nGitHub access, the Canon App, labels, environments, rulesets, and agent configuration are ready.");
+  await comment(
+    issue.number,
+    [
+      "## Preflight passed",
+      "",
+      "GitHub access, the Canon App, labels, environments, and agent configuration are ready.",
+      ...(preflight.warnings?.length
+        ? ["", "### Notes", ...preflight.warnings.map((note) => `- ${note}`)]
+        : []),
+    ].join("\n"),
+  );
 
   setOutput("issue", String(issue.number));
   await dispatchWorkflow(process.env.CANON_STEP_WORKFLOW || "orchestration-step.yml", {

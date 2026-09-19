@@ -15,20 +15,16 @@ This repository is configured to run an AI-assisted software development lifecyc
 
 ## Pipeline stages
 
-1. Delivery Orchestrator — Engineering Orchestrator
-2. Requirements Analyst — Product Manager
-3. Acceptance Criteria Author — Product Manager
-4. Feature Coder — Coder
-5. Code Reviewer — Code Reviewer
-6. Test Author — Tester
-7. QA Verifier — QA
-8. Release Gatekeeper — Release Reviewer
-9. Deployment Runner — DevOps Deploy
+1. Requirements Analyst — Product Manager
+2. Acceptance Criteria Author — Product Manager
+3. Feature Coder — Coder
+4. Test Author — Tester
+5. QA Verifier — QA
+6. Code Reviewer — Code Reviewer
+7. Release Gatekeeper — Release Reviewer
 
 ## Getting started
 
-```bash
-npm ci
-npm run dev
-```
+This repository has no package manifest. Open the files directly, or serve them
+with any static web server.
 <!-- canon:end -->

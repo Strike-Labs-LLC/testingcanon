@@ -1,51 +1,41 @@
 # Which agent handles which stage, and how work is routed.
 platform: github
 agents:
-  - slug: delivery-orchestrator
-    file: .github/agents/00-delivery-orchestrator.agent.md
-    role: orchestrator
-    model: google/gemini-3.6-flash
-    label: "Engineering Orchestrator"
   - slug: requirements-analyst
-    file: .github/agents/02-requirements-analyst.agent.md
+    file: .github/agents/01-requirements-analyst.agent.md
     role: product_manager
     model: google/gemini-3.6-flash
     label: "Product Manager"
   - slug: acceptance-criteria-author
-    file: .github/agents/03-acceptance-criteria-author.agent.md
+    file: .github/agents/02-acceptance-criteria-author.agent.md
     role: product_manager
     model: google/gemini-3.6-flash
     label: "Product Manager"
   - slug: feature-coder
-    file: .github/agents/04-feature-coder.agent.md
+    file: .github/agents/03-feature-coder.agent.md
     role: coder
     model: google/gemini-3.6-flash
     label: "Coder"
-  - slug: code-reviewer
-    file: .github/agents/05-code-reviewer.agent.md
-    role: code_reviewer
-    model: google/gemini-3.6-flash
-    label: "Code Reviewer"
   - slug: test-author
-    file: .github/agents/06-test-author.agent.md
+    file: .github/agents/04-test-author.agent.md
     role: tester
     model: google/gemini-3.6-flash
     label: "Tester"
   - slug: qa-verifier
-    file: .github/agents/07-qa-verifier.agent.md
+    file: .github/agents/05-qa-verifier.agent.md
     role: qa
     model: google/gemini-3.6-flash
     label: "QA"
+  - slug: code-reviewer
+    file: .github/agents/06-code-reviewer.agent.md
+    role: code_reviewer
+    model: google/gemini-3.6-flash
+    label: "Code Reviewer"
   - slug: release-gatekeeper
-    file: .github/agents/08-release-gatekeeper.agent.md
+    file: .github/agents/07-release-gatekeeper.agent.md
     role: release_reviewer
     model: google/gemini-3.6-flash
     label: "Release Reviewer"
-  - slug: deployment-runner
-    file: .github/agents/09-deployment-runner.agent.md
-    role: devops_deploy
-    model: google/gemini-3.6-flash
-    label: "DevOps Deploy"
 human_gates:
   []
 routing:
@@ -53,21 +43,17 @@ routing:
     Assign an issue to a custom agent with the GitHub REST or GraphQL Copilot assignment
     endpoint, passing the target repository, base branch, custom agent slug, and model.
   rules:
-    - when_stage: delivery-orchestrator
-      custom_agent: delivery-orchestrator
     - when_stage: requirements-analyst
       custom_agent: requirements-analyst
     - when_stage: acceptance-criteria-author
       custom_agent: acceptance-criteria-author
     - when_stage: feature-coder
       custom_agent: feature-coder
-    - when_stage: code-reviewer
-      custom_agent: code-reviewer
     - when_stage: test-author
       custom_agent: test-author
     - when_stage: qa-verifier
       custom_agent: qa-verifier
+    - when_stage: code-reviewer
+      custom_agent: code-reviewer
     - when_stage: release-gatekeeper
       custom_agent: release-gatekeeper
-    - when_stage: deployment-runner
-      custom_agent: deployment-runner

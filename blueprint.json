@@ -10,27 +10,60 @@
       "name": "",
       "defaultBranch": "main"
     },
+    "context": {
+      "repositoryResponsibility": "Owns a single-page static web app that shows a rocket lift-off animation. This repository is Strike Labs' internal test target for Canon: pipeline changes are exercised here end to end before they reach customer repositories. It contains only static HTML, CSS, and vanilla JavaScript, with no backend, database, or build step.",
+      "productOutcome": "A small, stable app that a Canon run can change, review, test, and release without human rework. A successful run delivers a working page change through a merged pull request with every required check green. The page loads instantly and works in current desktop and mobile browsers. It stays simple enough that any run failure points to Canon, not the app.",
+      "primaryUsers": "Internal only. Strike Labs engineering uses this repository to validate Canon runs; there is a single maintainer who approves all changes. No external customers, no authentication, no personal data. Favor small, readable, easy-to-debug changes over features or polish.",
+      "decisionPriorities": "canon-priorities:v1:{\"order\":[\"simplicity\",\"correctness\",\"delivery-speed\",\"security\",\"data-integrity\",\"reliability\",\"observability\",\"maintainability\",\"backward-compatibility\",\"cost\"]}",
+      "mustPreserve": "The app runs by opening index.html or serving the folder statically, with no build step.\nZero runtime dependencies and no package manager files unless the objective explicitly requests them.\nThe page loads with no console errors and honors prefers-reduced-motion.\nEvery change ships through a pull request with required checks green.",
+      "mustNotDo": "Do not add package.json, frameworks, bundlers, or test runners unless the objective explicitly requests them.\nDo not add a backend, database, authentication, analytics, tracking, or external network calls.\nDo not load scripts, fonts, or assets from third-party CDNs.\nDo not modify .github/, .canon/, .sdlc/, or AGENTS.md.\nDo not commit secrets or credentials.",
+      "nonGoals": "Production hosting and uptime, customer-facing features, user accounts, payments, CRM, analytics, legacy browser support, and serving as an architecture template for other repositories."
+    },
     "toolchain": {
       "packageManager": "npm",
       "nodeVersion": "20",
       "scripts": [],
-      "testCommand": ""
+      "testCommand": "bash .canon/require-script.sh test"
     },
     "discovery": {
       "source": "Strike-Labs-LLC/testingcanon@main",
-      "inspectedAt": "2026-09-17T19:59:30.485Z",
+      "inspectedAt": "2026-09-18T21:11:05.940Z",
+      "visibility": "private",
       "languages": [
+        "JavaScript",
+        "Shell",
         "HTML"
       ],
       "languagesSource": "detected",
       "frameworks": [],
-      "existingWorkflows": [],
+      "existingWorkflows": [
+        ".github/workflows/build.yml",
+        ".github/workflows/ci.yml",
+        ".github/workflows/copilot-setup-steps.yml",
+        ".github/workflows/dependency-review.yml",
+        ".github/workflows/orchestration-escalate.yml",
+        ".github/workflows/orchestration-human.yml",
+        ".github/workflows/orchestration-pipeline.yml",
+        ".github/workflows/orchestration-step.yml",
+        ".github/workflows/release-guard.yml",
+        ".github/workflows/release.yml",
+        ".github/workflows/test.yml"
+      ],
       "containers": [],
       "deployment": [],
-      "environments": [],
+      "environments": [
+        "copilot",
+        "development",
+        "development (Bug triage fix verify)",
+        "momma",
+        "production",
+        "production (Bug triage fix verify)",
+        "staging",
+        "staging (Bug triage fix verify)"
+      ],
       "notes": [
-        "No package.json at main. Canon's generated checks run npm scripts, so set the commands by hand for a HTML repository.",
-        "Canon read README to fill these answers."
+        "No package.json at main. Canon's generated checks run npm scripts, so set the commands by hand for a JavaScript repository.",
+        "Canon read README, 11 workflow file(s) to fill these answers."
       ],
       "agenticWorkflows": {
         "status": "not-detected",
@@ -39,9 +72,9 @@
     },
     "evidence": {
       "stack.backend": {
-        "value": "Node.js",
+        "value": "None",
         "source": "confirmed",
-        "at": "2026-09-17T19:59:26.077Z"
+        "at": "2026-09-18T21:11:51.821Z"
       },
       "stack.styling": {
         "value": "Tailwind CSS",
@@ -49,14 +82,14 @@
         "at": "2026-09-17T19:59:26.077Z"
       },
       "stack.database": {
-        "value": "Supabase",
+        "value": "None",
         "source": "confirmed",
-        "at": "2026-09-17T19:59:26.077Z"
+        "at": "2026-09-18T21:11:51.821Z"
       },
       "stack.frontend": {
-        "value": "React",
+        "value": "None",
         "source": "confirmed",
-        "at": "2026-09-17T19:59:26.077Z"
+        "at": "2026-09-18T21:11:51.821Z"
       },
       "stack.aiIntegration": {
         "value": "None",
@@ -69,26 +102,26 @@
         "at": "2026-09-17T19:59:26.077Z"
       },
       "stack.infrastructure": {
-        "value": "AWS",
+        "value": "None",
         "source": "confirmed",
-        "at": "2026-09-17T19:59:26.077Z"
+        "at": "2026-09-18T21:11:51.821Z"
       },
       "toolchain.nodeVersion": {
         "value": "20",
-        "source": "confirmed",
-        "at": "2026-09-17T20:00:30.206Z"
+        "source": "detected",
+        "at": "2026-09-18T21:11:05.940Z"
       },
       "toolchain.packageManager": {
         "value": "npm",
         "source": "detected",
-        "at": "2026-09-17T15:43:57.143Z"
+        "at": "2026-09-18T21:11:05.940Z"
       }
     },
     "stack": {
-      "frontend": "React",
-      "backend": "Node.js",
-      "database": "Supabase",
-      "infrastructure": "AWS",
+      "frontend": "None",
+      "backend": "None",
+      "database": "None",
+      "infrastructure": "None",
       "desktopRuntime": "Electron",
       "aiIntegration": "None",
       "spaBridge": "",
@@ -97,9 +130,14 @@
       "testing": ""
     },
     "environments": [
+      "copilot",
       "development",
+      "development (Bug triage fix verify)",
+      "momma",
+      "production",
+      "production (Bug triage fix verify)",
       "staging",
-      "production"
+      "staging (Bug triage fix verify)"
     ],
     "workflow": {
       "branchStrategy": "trunk-based",
@@ -143,46 +181,6 @@
     }
   },
   "agents": [
-    {
-      "id": "agent_nrr6guol",
-      "name": "Delivery Orchestrator",
-      "description": "Owns the work item from intake to release and drives every stage in order.",
-      "role": "orchestrator",
-      "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Delivery Orchestrator. Open the work item for the requested feature, dispatch each stage in order, and record every outcome on the work item. Route failed work back to the coder with the failing stage's findings. Never implement the change yourself and never merge. Post a machine-readable status update after every transition.",
-      "temperature": 0.2,
-      "tools": [
-        "read_files",
-        "search_code",
-        "update_issue",
-        "post_comment"
-      ],
-      "inputNotes": "",
-      "outputNotes": "",
-      "outputArtifact": "status_update",
-      "taskDescription": "Open the work item for the requested feature, dispatch the requirements stage, and record each stage result as it returns.",
-      "acceptanceCriteria": "The work item states the requested feature and the current stage, and every stage transition is recorded.",
-      "executor": "ai",
-      "assignee": "",
-      "humanInstructions": "",
-      "decisionOutcomes": [],
-      "responseTimeHours": 0,
-      "notifyVia": "github_review",
-      "escalateTo": "",
-      "consumes": [],
-      "forbiddenActions": [
-        "Never merge, force-push, or rewrite history.",
-        "Never perform implementation work yourself — delegate it."
-      ],
-      "joinPolicy": {
-        "mode": "all",
-        "threshold": 1
-      },
-      "position": {
-        "x": 80,
-        "y": 60
-      }
-    },
     {
       "id": "agent_1fgm5fjx",
       "name": "Requirements Analyst",
@@ -389,6 +387,14 @@
         "Never weaken assertions to get a green run.",
         "Never merge, force-push, or rewrite history."
       ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "modify_tests",
+        "run_tests",
+        "run_commands"
+      ],
+      "producesCandidate": true,
       "joinPolicy": {
         "mode": "all",
         "threshold": 1
@@ -404,19 +410,21 @@
       "description": "Confirms the change meets every acceptance criterion before release.",
       "role": "qa",
       "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the QA Verifier. Using the review notes and the test report, verify each acceptance criterion explicitly on the candidate commit and record a pass or fail for it. Confirm the failures found earlier are actually fixed. Never modify product code to make a check pass. Report readiness, or a failure with reproduction steps.",
+      "systemPrompt": "You are the QA Verifier. Your job is to run the repository's required check commands against the candidate commit and report the result. Run exactly the commands the repository resolves for this flow, in the order given, and attach the output of each. Then record an explicit pass or fail for every acceptance criterion in the specification, citing the command output as evidence. This stage is read-only: never edit application code, tests, configuration, or documentation, and never open or approve a pull request. When a check fails, report the failing command, the exact error output, and the steps to reproduce it. When the repository has no required check commands configured, say so plainly and report that no automated verification was possible.",
       "temperature": 0.2,
       "tools": [
         "read_files",
+        "search_code",
         "run_tests",
         "run_commands",
+        "fetch_test_logs",
         "post_comment"
       ],
       "inputNotes": "",
       "outputNotes": "",
       "outputArtifact": "test_report",
-      "taskDescription": "Verify every acceptance criterion against the candidate commit and record an explicit pass or fail for each.",
-      "acceptanceCriteria": "Every acceptance criterion has an explicit pass or fail result, and each failure carries reproduction steps.",
+      "taskDescription": "Run the repository's required check commands against the candidate commit, attach the output of each, and record an explicit pass or fail for every acceptance criterion with that output as evidence.",
+      "acceptanceCriteria": "Every required check command resolved for the repository has been run against the candidate commit.\nThe output of each command is attached to the report.\nEvery acceptance criterion in the specification has an explicit pass or fail verdict.\nEvery failing verdict names the failing command, its error output, and reproduction steps.\nNothing in the repository was modified by this stage.",
       "executor": "ai",
       "assignee": "",
       "humanInstructions": "",
@@ -434,9 +442,19 @@
         "test_report"
       ],
       "forbiddenActions": [
-        "Never modify product code to make a test pass.",
-        "Never merge, force-push, or rewrite history."
+        "Never modify code, tests, configuration, or documentation; this stage reports only.",
+        "Never read, print, or commit secrets, API keys, passwords, or credentials.",
+        "Never record a passing verdict without command output as evidence.",
+        "Never invent a check command the repository does not define.",
+        "Never approve or merge a pull request."
       ],
+      "authority": [
+        "read_repository",
+        "read_issues",
+        "run_tests",
+        "run_commands"
+      ],
+      "producesCandidate": false,
       "joinPolicy": {
         "mode": "all",
         "threshold": 1
@@ -490,63 +508,11 @@
         "x": 1520,
         "y": 860
       }
-    },
-    {
-      "id": "agent_b6dlqvqa",
-      "name": "Deployment Runner",
-      "description": "Deploys the approved release and confirms health.",
-      "role": "devops_deploy",
-      "model": "google/gemini-3.6-flash",
-      "systemPrompt": "You are the Deployment Runner agent. Deploy the approved commit to the target environment, run smoke tests, and monitor health for the agreed window. Deploy only after the Release Gatekeeper's recorded approval. Roll back on failure and report exactly what happened.",
-      "temperature": 0.2,
-      "tools": [
-        "run_commands",
-        "read_files"
-      ],
-      "inputNotes": "",
-      "outputNotes": "",
-      "outputArtifact": "deployment",
-      "taskDescription": "Deploy the approved commit, run smoke tests, and report health status or roll back.",
-      "acceptanceCriteria": "The deployment is healthy, smoke tests pass, and the rollback path is confirmed.",
-      "executor": "ai",
-      "assignee": "",
-      "humanInstructions": "",
-      "decisionOutcomes": [],
-      "responseTimeHours": 0,
-      "notifyVia": "github_review",
-      "escalateTo": "",
-      "consumes": [
-        "approval"
-      ],
-      "forbiddenActions": [
-        "Never deploy to production without the Release Gatekeeper's recorded approval.",
-        "Never read, print, or commit secrets, tokens, or .env values.",
-        "Never skip the environment protection rule."
-      ],
-      "joinPolicy": {
-        "mode": "all",
-        "threshold": 1
-      },
-      "position": {
-        "x": 1760,
-        "y": 1060
-      }
     }
   ],
   "edges": [
     {
-      "id": "edge_zvn0897l",
-      "from": "agent_nrr6guol",
-      "to": "agent_1fgm5fjx",
-      "label": "Work dispatched",
-      "condition": {
-        "type": "always",
-        "outcome": "approved",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_scev2yfr",
+      "id": "edge_c1",
       "from": "agent_1fgm5fjx",
       "to": "agent_azpzpeah",
       "label": "Requirements defined",
@@ -557,7 +523,7 @@
       }
     },
     {
-      "id": "edge_svt4uue3",
+      "id": "edge_c2",
       "from": "agent_azpzpeah",
       "to": "agent_dhux2iub",
       "label": "Criteria ready",
@@ -568,18 +534,7 @@
       }
     },
     {
-      "id": "edge_k8zvlg1b",
-      "from": "agent_dhux2iub",
-      "to": "agent_qd3s1o9q",
-      "label": "Pull request opened",
-      "condition": {
-        "type": "always",
-        "outcome": "approved",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_70y1fe51",
+      "id": "edge_c3",
       "from": "agent_dhux2iub",
       "to": "agent_gjt87jgq",
       "label": "Branch ready for tests",
@@ -590,18 +545,7 @@
       }
     },
     {
-      "id": "edge_mnn92ekz",
-      "from": "agent_qd3s1o9q",
-      "to": "agent_dhux2iub",
-      "label": "Changes required",
-      "condition": {
-        "type": "outcome",
-        "outcome": "changes_required",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_zex3ehql",
+      "id": "edge_c4",
       "from": "agent_gjt87jgq",
       "to": "agent_dhux2iub",
       "label": "Tests failed",
@@ -612,18 +556,7 @@
       }
     },
     {
-      "id": "edge_bco9n50p",
-      "from": "agent_qd3s1o9q",
-      "to": "agent_5zfks6jl",
-      "label": "Review approved",
-      "condition": {
-        "type": "outcome",
-        "outcome": "approved",
-        "expression": ""
-      }
-    },
-    {
-      "id": "edge_4kag4c91",
+      "id": "edge_c5",
       "from": "agent_gjt87jgq",
       "to": "agent_5zfks6jl",
       "label": "Tests passed",
@@ -634,10 +567,10 @@
       }
     },
     {
-      "id": "edge_7c378i22",
+      "id": "edge_c6",
       "from": "agent_5zfks6jl",
       "to": "agent_dhux2iub",
-      "label": "QA failed",
+      "label": "Checks failed",
       "condition": {
         "type": "outcome",
         "outcome": "failed",
@@ -645,10 +578,10 @@
       }
     },
     {
-      "id": "edge_pqhwlcvy",
+      "id": "edge_c7",
       "from": "agent_5zfks6jl",
-      "to": "agent_444zsva0",
-      "label": "QA passed",
+      "to": "agent_qd3s1o9q",
+      "label": "Checks passed",
       "condition": {
         "type": "outcome",
         "outcome": "passed",
@@ -656,10 +589,21 @@
       }
     },
     {
-      "id": "edge_baa0ac8d",
-      "from": "agent_444zsva0",
-      "to": "agent_b6dlqvqa",
-      "label": "Release approved",
+      "id": "edge_c8",
+      "from": "agent_qd3s1o9q",
+      "to": "agent_dhux2iub",
+      "label": "Changes required",
+      "condition": {
+        "type": "outcome",
+        "outcome": "changes_required",
+        "expression": ""
+      }
+    },
+    {
+      "id": "edge_c9",
+      "from": "agent_qd3s1o9q",
+      "to": "agent_444zsva0",
+      "label": "Review approved",
       "condition": {
         "type": "outcome",
         "outcome": "approved",
@@ -667,7 +611,7 @@
       }
     },
     {
-      "id": "edge_6xwzv8yu",
+      "id": "edge_c10",
       "from": "agent_444zsva0",
       "to": "agent_dhux2iub",
       "label": "Release blocked",
@@ -679,10 +623,10 @@
     }
   ],
   "groups": [],
-  "entryAgentId": "agent_nrr6guol",
+  "entryAgentId": "agent_1fgm5fjx",
   "exitAgentIds": [
-    "agent_b6dlqvqa"
+    "agent_444zsva0"
   ],
   "createdAt": "2026-09-18T18:44:45.101Z",
-  "updatedAt": "2026-09-18T18:49:01.920Z"
+  "updatedAt": "2026-09-19T02:13:46Z"
 }

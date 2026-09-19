@@ -48,16 +48,52 @@ function headSha() {
  * Put the workspace on the run's trusted candidate commit so this stage evaluates
  * exactly what upstream produced, not whatever ref dispatched the workflow.
  */
-function checkoutCandidate(run) {
+export function checkoutCandidate(run, runGit = git) {
   const sha = String(run.candidateSha ?? "").trim();
-  if (!sha || headSha() === sha) return sha || headSha();
-  try {
-    git("fetch", "origin", sha);
-  } catch {
-    // The commit may already be local (same repository, recent push).
+  if (!sha) return headSha();
+  let present = hasObject(sha, runGit);
+  if (!present) {
+    try {
+      runGit("fetch", "origin", sha);
+      present = hasObject(sha, runGit);
+    } catch {
+      // Stage jobs check out with `persist-credentials: false`, so on a private
+      // repository this fetch has no credential. `fetch-depth: 0` is what makes
+      // the commit local instead; the check below says so when it is missing.
+      present = hasObject(sha, runGit);
+    }
   }
-  git("checkout", "--detach", sha);
+  if (!present) {
+    throw new Error(
+      `The candidate commit ${sha} is not present in this checkout and could not be fetched. ` +
+        `Stage jobs check out without credentials, so every candidate must already be local: ` +
+        `set \`fetch-depth: 0\` on actions/checkout in the stage job, or give the job a token ` +
+        `that can read this repository.`,
+    );
+  }
+  if (headSha() === sha) return sha;
+  runGit("checkout", "--detach", sha);
   return sha;
+}
+
+/** True when a commit-ish already exists in this clone. */
+function hasObject(ref, runGit = git) {
+  try {
+    runGit("cat-file", "-e", `${ref}^{commit}`);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** True when a ref exists locally, so an unauthenticated fetch failure is survivable. */
+function hasRef(ref, runGit = git) {
+  try {
+    runGit("rev-parse", "--verify", "--quiet", ref);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -153,16 +189,20 @@ function artifactBranch(run) {
  * the durable handoff channel — without this restore a downstream stage reads an
  * empty artifact and silently reviews nothing.
  */
-function restoreArtifacts(run) {
+export function restoreArtifacts(run, runGit = git) {
   const branch = artifactBranch(run);
+  const remote = `refs/remotes/origin/${branch}`;
   try {
-    git("fetch", "origin", `${branch}:refs/remotes/origin/${branch}`);
+    runGit("fetch", "origin", `${branch}:${remote}`);
   } catch {
-    return false; // No artifacts committed yet — this is the first stage.
+    // On a private repository the stage job has no credential, so this fetch
+    // fails even when the branch exists. A full-depth checkout already carries
+    // the ref, so the failure is not fatal — only a missing ref is.
   }
+  if (!hasRef(remote, runGit)) return false;
   try {
-    git("checkout", `origin/${branch}`, "--", `${CANON_ROOT}/artifacts`);
-    git("reset", "--", `${CANON_ROOT}/artifacts`);
+    runGit("checkout", `origin/${branch}`, "--", `${CANON_ROOT}/artifacts`);
+    runGit("reset", "--", `${CANON_ROOT}/artifacts`);
     return true;
   } catch {
     return false;
@@ -262,6 +302,28 @@ function readIfExists(file) {
   }
 }
 
+/** Per-artifact cap for findings quoted into a brief. */
+export const FINDINGS_ARTIFACT_LIMIT = 20 * 1024;
+
+/**
+ * The findings one handoff carries: who raised them, the outcome they carry, the
+ * summary, and the artifact body itself (capped, because a brief has to stay
+ * inside the model's context).
+ */
+export function findingsSection(handoff) {
+  const body = handoff.artifact ? readIfExists(handoff.artifact) : "";
+  const capped =
+    body.length > FINDINGS_ARTIFACT_LIMIT
+      ? `${body.slice(0, FINDINGS_ARTIFACT_LIMIT)}\n\n_Findings truncated at ${FINDINGS_ARTIFACT_LIMIT} characters. Read ${handoff.artifact} for the rest._`
+      : body;
+  const lines = [
+    `### From ${handoff.from} (${handoff.outcome ?? "no outcome"})`,
+    handoff.summary ? handoff.summary : "",
+    capped ? `\n${capped}` : "",
+  ].filter(Boolean);
+  return lines.length > 1 ? lines.join("\n") : "";
+}
+
 function upstreamContext(graph, run, stage) {
   const sections = [];
   // The handoff contract: what was handed over, and the commit it was judged on.
@@ -278,6 +340,14 @@ function upstreamContext(graph, run, stage) {
         `You are working at commit ${String(run.candidateSha ?? "").slice(0, 12) || "the repository head"}.`,
       ].join("\n"),
     );
+    // A loop-back resets the returning stage to pending, so the "Input from"
+    // loop below skips it and its findings would never reach this brief. The
+    // handoff itself carries them, so they are rendered from the handoff.
+    const findings = handoffs
+      .map((h) => findingsSection(h))
+      .filter(Boolean)
+      .join("\n\n");
+    if (findings) sections.push(`## Findings to address\n\n${findings}`);
   }
   for (const edge of graph.edges.filter((candidate) => candidate.to === stage.id)) {
     const source = stageById(graph, edge.from);
@@ -298,12 +368,23 @@ function upstreamContext(graph, run, stage) {
   return sections.join("\n\n");
 }
 
-function candidateDiff(run) {
+export function candidateDiff(run, runGit = gitRaw) {
   const base = String(run.baseSha ?? "").trim();
   const candidate = String(run.candidateSha ?? "").trim();
   if (!base || !candidate || base === candidate) return "";
+  // Local first: the stage job holds no credential, so a fetch is only attempted
+  // for commits a full-depth checkout did not already bring in.
+  const plain = (...args) => runGit(...args).trim();
+  for (const sha of [base, candidate]) {
+    if (hasObject(sha, plain)) continue;
+    try {
+      runGit("fetch", "origin", sha);
+    } catch {
+      // Reported below if the object is still missing.
+    }
+  }
   try {
-    const diff = gitRaw("diff", "--no-ext-diff", `${base}..${candidate}`, "--", ".");
+    const diff = runGit("diff", "--no-ext-diff", `${base}..${candidate}`, "--", ".");
     if (!diff) return "";
     const limit = 80000;
     return diff.length <= limit
@@ -435,6 +516,10 @@ async function main() {
   const agentPolicy = action
     ? policy
     : { write: false, shell: false, denyPaths: policy.denyPaths ?? [] };
+
+  // The agentStop test hook is expensive: it forces the model to continue. It is
+  // told, explicitly, whether this stage may write at all.
+  process.env.CANON_STAGE_WRITES = String(agentPolicy.write === true);
 
   let text = "";
   let failure = null;
@@ -592,7 +677,9 @@ async function main() {
   );
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if ((process.argv[1] ?? "").endsWith("run-stage.mjs")) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

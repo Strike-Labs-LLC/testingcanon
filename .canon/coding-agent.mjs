@@ -34,10 +34,11 @@ const RUNNERS = {
     bin: "copilot",
     install: "npm i -g @github/copilot@1.0.80",
     secret: "COPILOT_GITHUB_TOKEN",
+    // Copilot CLI 1.0.80 sends `-p "@-"` to the model verbatim and never reads
+    // stdin for it. The prompt therefore travels on stdin with no prompt flag.
+    stdin: true,
     build(prompt, policy, model) {
       const args = [
-        "-p",
-        "@-",
         "--log-level",
         "error",
         "--secret-env-vars",
@@ -55,6 +56,8 @@ const RUNNERS = {
     bin: "claude",
     install: "npm i -g @anthropic-ai/claude-code@2.1.247",
     secret: "ANTHROPIC_API_KEY",
+    // `claude -p` with no positional argument reads the prompt from stdin.
+    stdin: true,
     build(prompt, policy, model) {
       const allowed = ["Read", "Glob", "Grep"];
       if (policy.write) allowed.push("Edit", "Write");
@@ -62,8 +65,8 @@ const RUNNERS = {
       // `plan` blocks Bash even when the stage is explicitly allowed to run tests.
       // `dontAsk` keeps the session non-interactive while the allow/deny lists
       // below remain the authority boundary.
-      const args = ["-p", prompt, "--permission-mode", policy.write ? "acceptEdits" : "dontAsk"];
-      if (model) args.push("--model", cliModel(model));
+      const args = ["-p", "--permission-mode", policy.write ? "acceptEdits" : "dontAsk"];
+      if (model) args.push("--model", model);
       args.push("--allowedTools", allowed.join(","));
       const denied = [];
       if (!policy.write) denied.push("Edit", "Write");
@@ -76,15 +79,20 @@ const RUNNERS = {
     bin: "codex",
     install: "npm i -g @openai/codex@0.150.1",
     secret: "OPENAI_API_KEY",
+    // Codex 0.150.1 takes the prompt as a positional argument only.
+    stdin: false,
     build(prompt, policy, model) {
       const args = ["exec", "--skip-git-repo-check"];
       args.push("--sandbox", policy.write || policy.shell ? "workspace-write" : "read-only");
-      if (model) args.push("--model", cliModel(model));
+      if (model) args.push("--model", model);
       args.push(prompt);
       return args;
     },
   },
 };
+
+/** The largest prompt an argv-only CLI can receive before the kernel returns E2BIG. */
+export const ARGV_PROMPT_LIMIT = 100 * 1024;
 
 /** Copilot CLI documents gemini-3.6-flash, not google/gemini-3.6-flash. */
 function cliModel(model) {
@@ -92,6 +100,19 @@ function cliModel(model) {
   if (!raw) return "";
   const slash = raw.lastIndexOf("/");
   return slash >= 0 ? raw.slice(slash + 1) : raw;
+}
+
+/**
+ * The model id to pass to a given vendor's CLI.
+ *
+ * The blueprint's stage model is a Copilot catalogue id. Claude Code and Codex
+ * reject it, so those providers take `CANON_CODING_AGENT_MODEL` when the
+ * repository sets one and otherwise run on their own default.
+ */
+export function modelForAgent(agent, stageModel, environment = process.env) {
+  if (agent === "copilot") return cliModel(stageModel);
+  const override = String(environment.CANON_CODING_AGENT_MODEL ?? "").trim();
+  return override;
 }
 
 function dropUnusedProviderSecrets(keep) {
@@ -133,6 +154,29 @@ function pathGuardNote(policy) {
 }
 
 /**
+ * The exact argv and stdin one vendor CLI receives for a stage.
+ *
+ * Kept separate from process spawning so the contract is testable: an agent that
+ * sends the prompt on stdin must never carry it (or a placeholder for it) in argv.
+ */
+export function buildAgentInvocation(agent, prompt, policy, stageModel, environment = process.env) {
+  const runner = RUNNERS[agent];
+  if (!runner) throw new Error(`Unknown coding agent "${agent}".`);
+  const model = modelForAgent(agent, stageModel, environment);
+  const args = runner.build(prompt, policy, model);
+  if (runner.stdin) return { args, input: prompt };
+  if (Buffer.byteLength(prompt, "utf8") > ARGV_PROMPT_LIMIT) {
+    throw new Error(
+      `The stage brief is ${Math.round(Buffer.byteLength(prompt, "utf8") / 1024)}KB, above the ` +
+        `${ARGV_PROMPT_LIMIT / 1024}KB limit the ${runner.bin} CLI can accept as a command-line ` +
+        `argument. Shorten the stage task, description, or upstream artifacts, or switch ` +
+        `CANON_CODING_AGENT to an agent that reads the prompt on stdin (copilot, claude).`,
+    );
+  }
+  return { args, input: "" };
+}
+
+/**
  * Execute one action stage with a coding agent that has real tools.
  * `promptFile` is a path on disk containing the full stage briefing.
  * `policy` is the stage's compiled tool policy; `model` its selected model.
@@ -171,13 +215,13 @@ export async function invokeCodingAgent({ promptFile, policy = {}, model = "" })
     );
   }
 
-  const args = runner.build(prompt, resolved, model);
+  const { args, input } = buildAgentInvocation(AGENT, prompt, resolved, model);
   console.log(
     `Coding agent: ${runner.bin} (write=${resolved.write}, shell=${resolved.shell}, ` +
       `denied paths=${resolved.denyPaths.length})`,
   );
   try {
-    return await run(runner.bin, args, { input: AGENT === "copilot" ? prompt : "" });
+    return await run(runner.bin, args, { input });
   } catch (error) {
     if (error && error.code === "ENOENT") {
       throw new Error(

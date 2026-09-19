@@ -27,9 +27,14 @@ body:
     attributes:
       label: Environment
       options:
+        - copilot
         - development
-        - staging
+        - development (Bug triage fix verify)
+        - momma
         - production
+        - production (Bug triage fix verify)
+        - staging
+        - staging (Bug triage fix verify)
     validations:
       required: true
   - type: dropdown

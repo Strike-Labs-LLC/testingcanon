@@ -71,7 +71,7 @@ Nothing in this directory holds a standing credential that can change the reposi
 
 Action stages never fall back to plain inference. If no coding agent is configured, the stage fails.
 
-Action stages in this blueprint: **Feature Coder**, **Test Author**, **QA Verifier**, **Deployment Runner**
+Action stages in this blueprint: **Feature Coder**, **Test Author**, **QA Verifier**
 
 ## Start a run
 

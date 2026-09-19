@@ -4,10 +4,10 @@
 
 ## Stack
 
-- Frontend framework: React
-- Backend: Node.js
-- Database: Supabase
-- Infrastructure: AWS
+- Frontend framework: None
+- Backend: None
+- Database: None
+- Infrastructure: None
 - Desktop runtime: Electron
 - AI integration: None
 - Styling: Tailwind CSS

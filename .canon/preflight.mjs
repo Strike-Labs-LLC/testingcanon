@@ -1,6 +1,6 @@
 // Runtime prerequisite verification. This runs before any stage is dispatched,
 // and writes every failure to the run issue through start-run.mjs.
-import { gh, runtimeLabel } from "./state.mjs";
+import { gh } from "./state.mjs";
 import { verifyBrokerAccess } from "./canon-token.mjs";
 
 const REPO = process.env.GITHUB_REPOSITORY || "";
@@ -12,15 +12,25 @@ const REQUIRED_RUNTIME_LABELS = [
   "sla-breached",
 ];
 
-async function canRead(route, label, failures, options = {}) {
-  try {
-    await gh(route);
-    return true;
-  } catch (error) {
-    if (options.optional) return false;
-    failures.push(`${label}: ${error instanceof Error ? error.message : String(error)}`);
-    return false;
-  }
+/** The org policy a Copilot-backed run depends on, named exactly as GitHub names it. */
+export const COPILOT_POLICY_NOTE =
+  'Copilot is selected. If stages fail with a Copilot authorization error, enable the ' +
+  'organization policy "Allow use of Copilot CLI billed to the organization" and make sure ' +
+  "the model each stage requests is enabled for the organization.";
+
+function message(error) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+/**
+ * True when GitHub refused a read because the plan does not include the feature,
+ * rather than because the run is misconfigured. A plan limitation is reported,
+ * never treated as a blocker: the run can still complete without rulesets.
+ */
+export function isPlanLimitation(error) {
+  const text = message(error);
+  if (!/\b403\b|forbidden/i.test(text)) return false;
+  return /upgrade|plan|not available for|advanced security|only available|billing/i.test(text);
 }
 
 export async function collectPreflight(
@@ -30,18 +40,29 @@ export async function collectPreflight(
   environment = process.env,
 ) {
   const failures = [];
+  const warnings = [];
   const repository = environment.GITHUB_REPOSITORY || REPO;
   if (!repository) failures.push("GitHub did not identify the repository for this run.");
 
   try {
     await dependencies.verifyBrokerAccess({ runId: issueNumber });
   } catch (error) {
-    failures.push(`Canon App or broker access: ${error instanceof Error ? error.message : String(error)}`);
+    failures.push(`Canon App or broker access: ${message(error)}`);
   }
 
   const codingAgent = (environment.CANON_CODING_AGENT || "copilot").trim();
-  if (codingAgent === "copilot" && !environment.COPILOT_GITHUB_TOKEN) {
-    failures.push("Copilot is selected, but this workflow did not receive a Copilot-capable GitHub token. Confirm the organization allows Copilot coding agent requests.");
+  if (codingAgent === "copilot") {
+    if (!environment.COPILOT_GITHUB_TOKEN) {
+      // The workflow passes GITHUB_TOKEN through as COPILOT_GITHUB_TOKEN. An empty
+      // value means the generated workflow is wrong, never that the user forgot a
+      // secret. Installation tokens cannot call /user, so no probe is made here:
+      // Copilot authorization is proven by the first agent stage.
+      failures.push(
+        "The workflow did not pass GITHUB_TOKEN to the Copilot CLI. Regenerate the package from Canon.",
+      );
+    } else {
+      warnings.push(COPILOT_POLICY_NOTE);
+    }
   }
   if (codingAgent === "claude" && !environment.ANTHROPIC_API_KEY) {
     failures.push("Claude is selected, but ANTHROPIC_API_KEY is not configured as a repository secret.");
@@ -52,10 +73,16 @@ export async function collectPreflight(
 
   if (repository) {
     const read = (route, label, options = {}) =>
-      canReadWith(dependencies.gh, route, label, failures, options);
-    await read(`/repos/${repository}/actions/permissions`, "GitHub Actions policy");
-    await read(`/repos/${repository}/rulesets`, "Branch ruleset support");
-    await read(`/repos/${repository}/environments`, "GitHub environment support");
+      canReadWith(dependencies.gh, route, label, failures, warnings, options);
+
+    // GET /actions/permissions requires the Administration permission, which the
+    // Actions GITHUB_TOKEN can never hold. It is not checked: a 403 there says
+    // nothing about whether the run can proceed.
+
+    // Rulesets and environment listing are advisory: GitHub refuses both on plans
+    // that do not include them, and a run completes without either.
+    await read(`/repos/${repository}/rulesets`, "Branch ruleset support", { advisory: true });
+    await read(`/repos/${repository}/environments`, "GitHub environment support", { advisory: true });
     if (graph.stages?.some((stage) => stage.execution === "coding-agent")) {
       await read(`/repos/${repository}/code-scanning/alerts?per_page=1`, "Code Security access", { optional: true });
     }
@@ -67,7 +94,9 @@ export async function collectPreflight(
       ...REQUIRED_RUNTIME_LABELS.map(scopedLabel),
     ].filter(Boolean);
     for (const name of [...new Set(labels)]) {
-      await read(`/repos/${repository}/labels/${encodeURIComponent(name)}`, `Required label ${name}`);
+      await read(`/repos/${repository}/labels/${encodeURIComponent(name)}`, `Required label ${name}`, {
+        remedy: "Run .sdlc/github/labels.sh, then start a new run.",
+      });
     }
     const environments = new Set((graph.stages ?? []).map((stage) => stage.environment).filter(Boolean));
     for (const name of environments) {
@@ -75,16 +104,20 @@ export async function collectPreflight(
     }
   }
 
-  return { ok: failures.length === 0, failures };
+  return { ok: failures.length === 0, failures, warnings };
 }
 
-async function canReadWith(request, route, label, failures, options = {}) {
+async function canReadWith(request, route, label, failures, warnings, options = {}) {
   try {
     await request(route);
     return true;
   } catch (error) {
     if (options.optional) return false;
-    failures.push(`${label}: ${error instanceof Error ? error.message : String(error)}`);
+    if (options.advisory && isPlanLimitation(error)) {
+      warnings.push(`${label}: ${message(error)} Canon will skip it for this run.`);
+      return false;
+    }
+    failures.push(`${label}: ${message(error)}${options.remedy ? ` ${options.remedy}` : ""}`);
     return false;
   }
 }

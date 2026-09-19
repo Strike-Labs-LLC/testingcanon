@@ -34,10 +34,11 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: '20'
+          node-version: '22'
       # The objective is attacker-controlled text (an issue title). It is bound to an
       # environment variable and never interpolated into the shell command, so a title
       # containing shell metacharacters is data, not code.

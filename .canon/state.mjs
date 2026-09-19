@@ -28,13 +28,14 @@ export const RESULT_MARKER = "canon:result";
 export const RUN_BLOCK_START = "<!-- canon:run -->";
 export const RUN_BLOCK_END = "<!-- /canon:run -->";
 
-export async function gh(route, init = {}) {
+export async function gh(route, init = {}, overrideToken = "") {
   const url = route.startsWith("http") ? route : `${API}${route}`;
+  const { token: _ignored, ...request } = init;
   const response = await fetch(url, {
-    ...init,
+    ...request,
     headers: {
       accept: "application/vnd.github+json",
-      authorization: `Bearer ${token()}`,
+      authorization: `Bearer ${overrideToken || token()}`,
       "content-type": "application/json",
       "x-github-api-version": "2022-11-28",
       ...(init.headers ?? {}),

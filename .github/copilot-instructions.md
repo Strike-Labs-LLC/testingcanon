@@ -21,24 +21,23 @@ John’s Flow #1 orchestration flow.
 
 ## Frameworks
 
-- Frontend framework: React
-- Backend: Node.js
-- Database: Supabase
-- Infrastructure: AWS
+- Frontend framework: None
+- Backend: None
+- Database: None
+- Infrastructure: None
 - Desktop runtime: Electron
 - AI integration: None
 - Styling: Tailwind CSS
 
 ## Build, run, test, lint
 
-Commands use npm, detected by repository discovery.
+Repository discovery found no package manifest in this repository, so there is no
+install, build, test, or lint command to run. Do not introduce one as part of an
+unrelated change. The repository's required check is:
 
 ```bash
-npm ci
-npm run dev
-npm run build
-npm run test
-npm run lint
+npx --yes html-validate "**/*.html"
+npx --yes linkinator . --recurse --silent --skip "^https?://"
 ```
 
 ## Conventions
@@ -53,7 +52,7 @@ npm run lint
 
 - Branching: trunk based.
 - All changes ship through a pull request with at least 1 approving review(s).
-- Tests: unit (required), integration (required), e2e (optional).
+- Tests: this repository has no test command; no test gate is enforced.
 - Security scanning: secret scanning (required), dependency scanning (required).
 - Documentation: architecture (required), api (required), runbook (optional).
 - Production deployments are automatic once gates pass.

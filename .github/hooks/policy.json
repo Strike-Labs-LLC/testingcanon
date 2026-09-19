@@ -16,17 +16,6 @@
         "powershell": "bash .github/hooks/scripts/check-command.sh",
         "timeoutSec": 30
       }
-    ],
-    "agentStop": [
-      {
-        "type": "command",
-        "bash": "bash .github/hooks/scripts/require-tests.sh",
-        "powershell": "bash .github/hooks/scripts/require-tests.sh",
-        "env": {
-          "CANON_TEST_COMMAND": "bash .canon/require-script.sh test"
-        },
-        "timeoutSec": 600
-      }
     ]
   }
 }

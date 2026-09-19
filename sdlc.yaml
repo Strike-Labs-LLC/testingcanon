@@ -6,20 +6,42 @@ project:
   name: Autonomous feature delivery
   type: web-application
   description: "John’s Flow #1 orchestration flow."
+  context:
+    repository_responsibility: "Owns a single-page static web app that shows a rocket lift-off animation. This repository is Strike Labs' internal test target for Canon: pipeline changes are exercised here end to end before they reach customer repositories. It contains only static HTML, CSS, and vanilla JavaScript, with no backend, database, or build step."
+    product_outcome: "A small, stable app that a Canon run can change, review, test, and release without human rework. A successful run delivers a working page change through a merged pull request with every required check green. The page loads instantly and works in current desktop and mobile browsers. It stays simple enough that any run failure points to Canon, not the app."
+    primary_users: "Internal only. Strike Labs engineering uses this repository to validate Canon runs; there is a single maintainer who approves all changes. No external customers, no authentication, no personal data. Favor small, readable, easy-to-debug changes over features or polish."
+    decision_priorities: "canon-priorities:v1:{\"order\":[\"simplicity\",\"correctness\",\"delivery-speed\",\"security\",\"data-integrity\",\"reliability\",\"observability\",\"maintainability\",\"backward-compatibility\",\"cost\"]}"
+    must_preserve: >-
+      The app runs by opening index.html or serving the folder statically, with no build step.
+      Zero runtime dependencies and no package manager files unless the objective explicitly requests them.
+      The page loads with no console errors and honors prefers-reduced-motion.
+      Every change ships through a pull request with required checks green.
+    must_not_do: >-
+      Do not add package.json, frameworks, bundlers, or test runners unless the objective explicitly requests them.
+      Do not add a backend, database, authentication, analytics, tracking, or external network calls.
+      Do not load scripts, fonts, or assets from third-party CDNs.
+      Do not modify .github/, .canon/, .sdlc/, or AGENTS.md.
+      Do not commit secrets or credentials.
+    non_goals: "Production hosting and uptime, customer-facing features, user accounts, payments, CRM, analytics, legacy browser support, and serving as an architecture template for other repositories."
 
 architecture:
-  frontend: React
-  backend: Node.js
-  database: Supabase
-  infrastructure: AWS
+  frontend: None
+  backend: None
+  database: None
+  infrastructure: None
   desktopRuntime: Electron
   aiIntegration: None
   styling: Tailwind CSS
 
 environments:
+  - copilot
   - development
-  - staging
+  - "development (Bug triage fix verify)"
+  - momma
   - production
+  - "production (Bug triage fix verify)"
+  - staging
+  - "staging (Bug triage fix verify)"
 
 workflow:
   branch_strategy: trunk-based
@@ -28,9 +50,9 @@ workflow:
   reviews:
     minimum_reviewers: 1
   testing:
-    unit: required
-    integration: required
-    e2e: optional
+    unit: none
+    integration: none
+    e2e: none
   deployment:
     mechanism: lovable
     staging:
@@ -52,18 +74,9 @@ documentation:
 
 pipeline:
   name: "John’s Flow #1"
-  entry: delivery-orchestrator
+  entry: requirements-analyst
 
 agents:
-  delivery-orchestrator:
-    name: Delivery Orchestrator
-    role: orchestrator
-    role_label: Engineering Orchestrator
-    output_artifact: status_update
-    description: Owns the work item from intake to release and drives every stage in order.
-    task: "Open the work item for the requested feature, dispatch the requirements stage, and record each stage result as it returns."
-    acceptance_criteria: "The work item states the requested feature and the current stage, and every stage transition is recorded."
-    instructions: "You are the Delivery Orchestrator. Open the work item for the requested feature, dispatch each stage in order, and record every outcome on the work item. Route failed work back to the coder with the failing stage's findings. Never implement the change yourself and never merge. Post a machine-readable status update after every transition."
   requirements-analyst:
     name: Requirements Analyst
     role: product_manager
@@ -115,9 +128,14 @@ agents:
     role_label: QA
     output_artifact: test_report
     description: Confirms the change meets every acceptance criterion before release.
-    task: Verify every acceptance criterion against the candidate commit and record an explicit pass or fail for each.
-    acceptance_criteria: "Every acceptance criterion has an explicit pass or fail result, and each failure carries reproduction steps."
-    instructions: "You are the QA Verifier. Using the review notes and the test report, verify each acceptance criterion explicitly on the candidate commit and record a pass or fail for it. Confirm the failures found earlier are actually fixed. Never modify product code to make a check pass. Report readiness, or a failure with reproduction steps."
+    task: "Run the repository's required check commands against the candidate commit, attach the output of each, and record an explicit pass or fail for every acceptance criterion with that output as evidence."
+    acceptance_criteria: >-
+      Every required check command resolved for the repository has been run against the candidate commit.
+      The output of each command is attached to the report.
+      Every acceptance criterion in the specification has an explicit pass or fail verdict.
+      Every failing verdict names the failing command, its error output, and reproduction steps.
+      Nothing in the repository was modified by this stage.
+    instructions: "You are the QA Verifier. Your job is to run the repository's required check commands against the candidate commit and report the result. Run exactly the commands the repository resolves for this flow, in the order given, and attach the output of each. Then record an explicit pass or fail for every acceptance criterion in the specification, citing the command output as evidence. This stage is read-only: never edit application code, tests, configuration, or documentation, and never open or approve a pull request. When a check fails, report the failing command, the exact error output, and the steps to reproduce it. When the repository has no required check commands configured, say so plainly and report that no automated verification was possible."
   release-gatekeeper:
     name: Release Gatekeeper
     role: release_reviewer
@@ -127,21 +145,8 @@ agents:
     task: "Assess scope, migrations, rollback, monitoring, and blast radius, then record an approve or block decision."
     acceptance_criteria: "Each readiness area is assessed in writing, and the decision is either approved or blocked with a named mitigation."
     instructions: "You are the Release Gatekeeper. Assess release readiness for the candidate commit: scope, migrations, rollback plan, monitoring, and blast radius. Record an approval only when the review notes and the QA report are both clean. Block the release with the specific risk and the mitigation required when they are not. Never merge or deploy yourself."
-  deployment-runner:
-    name: Deployment Runner
-    role: devops_deploy
-    role_label: DevOps Deploy
-    output_artifact: deployment
-    description: Deploys the approved release and confirms health.
-    task: "Deploy the approved commit, run smoke tests, and report health status or roll back."
-    acceptance_criteria: "The deployment is healthy, smoke tests pass, and the rollback path is confirmed."
-    instructions: "You are the Deployment Runner agent. Deploy the approved commit to the target environment, run smoke tests, and monitor health for the agreed window. Deploy only after the Release Gatekeeper's recorded approval. Roll back on failure and report exactly what happened."
 
 transitions:
-  - from: delivery-orchestrator
-    to: requirements-analyst
-    when: Always
-    label: Work dispatched
   - from: requirements-analyst
     to: acceptance-criteria-author
     when: Always
@@ -151,25 +156,13 @@ transitions:
     when: Always
     label: Criteria ready
   - from: feature-coder
-    to: code-reviewer
-    when: Always
-    label: Pull request opened
-  - from: feature-coder
     to: test-author
     when: Always
     label: Branch ready for tests
-  - from: code-reviewer
-    to: feature-coder
-    when: If changes required
-    label: Changes required
   - from: test-author
     to: feature-coder
     when: If failed
     label: Tests failed
-  - from: code-reviewer
-    to: qa-verifier
-    when: If approved
-    label: Review approved
   - from: test-author
     to: qa-verifier
     when: If passed
@@ -177,15 +170,19 @@ transitions:
   - from: qa-verifier
     to: feature-coder
     when: If failed
-    label: QA failed
+    label: Checks failed
   - from: qa-verifier
-    to: release-gatekeeper
+    to: code-reviewer
     when: If passed
-    label: QA passed
-  - from: release-gatekeeper
-    to: deployment-runner
+    label: Checks passed
+  - from: code-reviewer
+    to: feature-coder
+    when: If changes required
+    label: Changes required
+  - from: code-reviewer
+    to: release-gatekeeper
     when: If approved
-    label: Release approved
+    label: Review approved
   - from: release-gatekeeper
     to: feature-coder
     when: If blocked
