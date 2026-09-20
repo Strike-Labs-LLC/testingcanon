@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -48,15 +48,96 @@
 
       .rocket.launch {
         animation: blastoff 1.5s ease-in forwards;
-        opacity: 1;
+      }
+
+      .asteroid {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 2.5rem;
+        opacity: 0;
+      }
+
+      .asteroid.launch {
+        animation: asteroid-entry 1.5s ease-in forwards;
+      }
+
+      .explosion {
+        position: absolute;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%) scale(0.2);
+        font-size: 3.5rem;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .explosion.launch {
+        animation: explode 1.5s ease-out forwards;
       }
 
       @keyframes blastoff {
-        from {
+        0% {
           transform: translate(-50%, 0);
+          opacity: 1;
         }
-        to {
-          transform: translate(-50%, -200px);
+        66% {
+          transform: translate(-50%, -70px);
+          opacity: 1;
+        }
+        67%,
+        100% {
+          transform: translate(-50%, -70px);
+          opacity: 0;
+        }
+      }
+
+      @keyframes asteroid-entry {
+        0% {
+          transform: translate(50px, -40px);
+          opacity: 1;
+        }
+        66% {
+          transform: translate(-55px, 65px);
+          opacity: 1;
+        }
+        67%,
+        100% {
+          transform: translate(-55px, 65px);
+          opacity: 0;
+        }
+      }
+
+      @keyframes explode {
+        0%,
+        66% {
+          transform: translateX(-50%) scale(0.2);
+          opacity: 0;
+        }
+        67% {
+          transform: translateX(-50%) scale(1.2);
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(-50%) scale(2);
+          opacity: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .rocket.launch,
+        .asteroid.launch,
+        .explosion.launch {
+          animation: none;
+        }
+        .rocket.launch {
+          opacity: 0;
+        }
+        .asteroid.launch {
+          opacity: 0;
+        }
+        .explosion.launch {
+          opacity: 1;
         }
       }
     </style>
@@ -67,16 +148,22 @@
       <button id="launchButton" type="button">Launch Rocket</button>
       <div class="launchpad" aria-live="polite">
         <span id="rocket" class="rocket" role="img" aria-label="rocket ship">🚀</span>
+        <span id="asteroid" class="asteroid" role="img" aria-label="asteroid">☄️</span>
+        <span id="explosion" class="explosion" role="img" aria-label="explosion">💥</span>
       </div>
     </main>
     <script>
       const launchButton = document.getElementById("launchButton");
       const rocket = document.getElementById("rocket");
+      const asteroid = document.getElementById("asteroid");
+      const explosion = document.getElementById("explosion");
+
+      const animatedElements = [rocket, asteroid, explosion];
 
       launchButton.addEventListener("click", () => {
-        rocket.classList.remove("launch");
+        animatedElements.forEach((el) => el.classList.remove("launch"));
         void rocket.offsetWidth;
-        rocket.classList.add("launch");
+        animatedElements.forEach((el) => el.classList.add("launch"));
       });
     </script>
   </body>
