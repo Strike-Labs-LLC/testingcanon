@@ -15,7 +15,7 @@ job, no required check, and no hook.
 
 ```bash
 npx --yes html-validate "**/*.html"
-npx --yes linkinator . --recurse --silent --skip "^https?://"
+npx --yes linkinator . --recurse --silent --skip "^https?://" --skip "node_modules|[.]canon|[.]sdlc"
 ```
 
 ## Standards

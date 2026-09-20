@@ -1,0 +1,6 @@
+# Canon wrote this once. Edit it freely.
+# Canon's own output is generated, and dependencies are not yours to validate.
+node_modules/
+.canon/
+.sdlc/
+docs/

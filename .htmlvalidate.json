@@ -1,0 +1,22 @@
+{
+  "root": true,
+  "extends": [
+    "html-validate:recommended"
+  ],
+  "rules": {
+    "attribute-boolean-style": "warn",
+    "doctype-style": "warn",
+    "element-required-attributes": "warn",
+    "long-title": "warn",
+    "no-inline-style": "warn",
+    "no-trailing-whitespace": "warn",
+    "require-sri": "warn",
+    "void-style": "warn",
+    "wcag/h30": "warn",
+    "wcag/h32": "warn",
+    "wcag/h37": "warn",
+    "wcag/h63": "warn",
+    "wcag/h67": "warn",
+    "wcag/h71": "warn"
+  }
+}

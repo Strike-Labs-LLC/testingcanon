@@ -41,9 +41,15 @@ Applied from `.sdlc/github/ruleset-branch.json`.
     - Require conversation resolution: on
   - Require status checks to pass:
     - Static checks
+  - Bypass list: **Repository admin**, limited to pull requests. This repository has no second
+    reviewer configured, so an admin may approve their own pull request. The pull request, the
+    checks and the audit trail still apply. Remove this bypass as soon as a second reviewer exists.
 
-Release tags matching `v*` are protected by `.sdlc/github/ruleset-tags.json`, so an
-unauthorized release tag cannot be created in the first place.
+Release tags matching `v*` are protected by `.sdlc/github/ruleset-tags.json`. Tag **creation** is not
+blocked, because Canon does not know the numeric id of the GitHub App that cuts your releases —
+blocking creation without allowing that App through would lock the release workflow out of the
+repository. To close this gap, add the App as a bypass actor on the tag ruleset (Settings → Rules
+→ Canon release tag protection → Bypass list), then add the `creation` rule.
 
 Without this ruleset the pipeline is advisory only: anything can push directly to
 `main` and skip every gate.
