@@ -136,9 +136,14 @@ function run(command, args, { cwd = process.cwd(), input = "" } = {}) {
       process.stderr.write(text);
     });
     child.on("error", reject);
-    child.on("close", (code) =>
-      code === 0 ? resolve(out) : reject(new Error(`${command} exited with code ${code}.`)),
-    );
+    child.on("close", (code) => {
+      if (code === 0) { resolve(out); return; }
+      // The CLI's last lines are often the only diagnosis — a policy refusal
+      // or an auth error exists nowhere else. Keep a short tail in the error
+      // so a stage failure is readable from the run record, not just the log.
+      const tail = out.trim().split("\n").slice(-6).join("\n").slice(-800).trim();
+      reject(new Error(`${command} exited with code ${code}.${tail ? `\n${tail}` : ""}`));
+    });
     child.stdin.end(input);
   });
 }

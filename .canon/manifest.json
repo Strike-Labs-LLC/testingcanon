@@ -17,7 +17,7 @@
       "path": ".canon/attestation.json",
       "purpose": "Orchestration runtime",
       "ownership": "canon",
-      "hash": "canon1:620c07e48ddf02bd",
+      "hash": "canon1:09589a5da184769d",
       "source": "runtime"
     },
     {
@@ -38,7 +38,7 @@
       "path": ".canon/coding-agent.mjs",
       "purpose": "Orchestration runtime",
       "ownership": "canon",
-      "hash": "canon1:08b0735c94c40bde",
+      "hash": "canon1:335fb7c659017926",
       "source": "runtime"
     },
     {
@@ -164,7 +164,7 @@
       "path": ".canon/run-stage.mjs",
       "purpose": "Orchestration runtime",
       "ownership": "canon",
-      "hash": "canon1:f62ae321863cb74c",
+      "hash": "canon1:8c61242b65929c1c",
       "source": "runtime"
     },
     {
@@ -703,14 +703,14 @@
       "path": "docs/adr/0001-architecture.md",
       "purpose": "Project documentation",
       "ownership": "user",
-      "hash": "canon1:c9ce4a0757c64abc",
+      "hash": "canon1:e20156766810259c",
       "source": "blueprint"
     },
     {
       "path": "docs/adr/0002-authentication.md",
       "purpose": "Project documentation",
       "ownership": "user",
-      "hash": "canon1:dd25d9c5947cc54d",
+      "hash": "canon1:fb76dedf7582f73d",
       "source": "blueprint"
     },
     {
@@ -752,7 +752,7 @@
       "path": "docs/ORCHESTRATION.md",
       "purpose": "Project documentation",
       "ownership": "user",
-      "hash": "canon1:75675c3c51773b66",
+      "hash": "canon1:24878b42fd771cd2",
       "source": "blueprint"
     },
     {

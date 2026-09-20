@@ -6,7 +6,7 @@
     "name": "Autonomous Production Engineering",
     "hash": "canon1:ec0fa8498e49e748"
   },
-  "packageSha256": "c84d7154758a09d9b7fc3624d3f75b0d0b7950caaaf616586431c7293d9e6e5e",
+  "packageSha256": "c74a1f9567869514f299d61986c0bf714df8c41b735c7edef78741c10ec5ebc3",
   "signed": false,
   "note": "Unsigned local digest. A Canon-held signature is required before this package is sellable.",
   "files": [
@@ -20,7 +20,7 @@
     },
     {
       "path": ".canon/coding-agent.mjs",
-      "sha256": "53d38c6cb31563b8993921818ef117ab7fa9cba421f899d6dc03c73eb846c8c2"
+      "sha256": "554a5b499af3def350704ccea587f4ae40f652fb8dfffa4a906a37463de85f70"
     },
     {
       "path": ".canon/context.json",
@@ -92,7 +92,7 @@
     },
     {
       "path": ".canon/run-stage.mjs",
-      "sha256": "94aa283cdefa85c44f0d5c5fa598cee8e68f2cc1ab189302f00eba7ab3815edd"
+      "sha256": "8729c6c8b8a8b15383747a27747355d79be0747fd63c630ccc73463ba4c4fa8f"
     },
     {
       "path": ".canon/start-run.mjs",
@@ -400,11 +400,11 @@
     },
     {
       "path": "docs/adr/0001-architecture.md",
-      "sha256": "9ae14313428d6b8caaf3d4b977657528cf85260c5f3f602698a0588b45e1459e"
+      "sha256": "3475ba666b84f2fd814223e1ec633acca0ff71108e1e2038d208728f7136f746"
     },
     {
       "path": "docs/adr/0002-authentication.md",
-      "sha256": "116dfa60ad9985d275a3a654e8b98fadb82b1d181b8d4eea6e3f6954e4810184"
+      "sha256": "9dce970f919c3cdec815dcf2fe26d288a6442a311a3fd6079bea5f65f527f0d2"
     },
     {
       "path": "docs/API.md",
@@ -428,7 +428,7 @@
     },
     {
       "path": "docs/ORCHESTRATION.md",
-      "sha256": "9e1836f0a77fd5df8e3c8a661a337c9b8821366496c6c5822609876370a40f3a"
+      "sha256": "89da74340621a11bb55d1de1ac150a34c785d6bacd88211af339d60602fe329e"
     },
     {
       "path": "docs/PRODUCT.md",

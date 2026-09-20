@@ -435,6 +435,14 @@ async function main() {
   // cancelled job). Records an infrastructure failure so the run cannot advance as if
   // the stage had completed.
   if (process.argv.includes("--report-failure")) {
+    // The failed "Run stage" step usually queued its own result first — with
+    // the real reason, such as the agent CLI's error. Never overwrite it with
+    // this generic job-level record.
+    const queued = OUTBOX ? path.join(OUTBOX, `${stage.id}.md`) : "";
+    if (queued && fs.existsSync(queued)) {
+      console.log(`A result for ${stage.id} is already queued; keeping it.`);
+      return;
+    }
     const reason = arg("reason") || "The stage job failed before it could publish a result.";
     await publish(
       issueNumber,
