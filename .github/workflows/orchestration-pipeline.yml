@@ -56,8 +56,8 @@ jobs:
           CANON_SOURCE_ISSUE: ${{ github.event.issue.number }}
           CANON_SOURCE_ISSUE_URL: ${{ github.event.issue.html_url }}
           CANON_BASE_SHA: ${{ github.sha }}
-          CANON_AUTHORIZE_URL: ${{ vars.CANON_AUTHORIZE_URL || 'https://usecanon.app/api/public/runtime/authorize' }}
-          CANON_BROKER_URL: ${{ vars.CANON_BROKER_URL || 'https://usecanon.app/api/public/runtime/token' }}
+          CANON_AUTHORIZE_URL: ${{ vars.CANON_AUTHORIZE_URL || 'https://project--41f4c596-cee0-4075-99a8-f219af0894e0-dev.lovable.app/api/public/runtime/authorize' }}
+          CANON_BROKER_URL: ${{ vars.CANON_BROKER_URL || 'https://project--41f4c596-cee0-4075-99a8-f219af0894e0-dev.lovable.app/api/public/runtime/token' }}
           CANON_AGENT_PROVIDER: ${{ vars.CANON_AGENT_PROVIDER }}
           CANON_CODING_AGENT: ${{ vars.CANON_CODING_AGENT }}
           COPILOT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

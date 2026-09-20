@@ -252,7 +252,7 @@ jobs:
           merge-multiple: true
       - run: node ${{ env.CANON_ROOT }}/publish.mjs --issue "$CANON_RUN_ISSUE" --inbox ${{ env.CANON_ROOT }}/inbox --outbox ${{ env.CANON_ROOT }}/outbox
         env:
-          CANON_BROKER_URL: ${{ vars.CANON_BROKER_URL || 'https://usecanon.app/api/public/runtime/token' }}
+          CANON_BROKER_URL: ${{ vars.CANON_BROKER_URL || 'https://project--41f4c596-cee0-4075-99a8-f219af0894e0-dev.lovable.app/api/public/runtime/token' }}
           CANON_RUN_ISSUE: ${{ inputs.run_issue }}
 
       - name: Hand the published results to the reporter
