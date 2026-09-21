@@ -1,7 +1,7 @@
 # ADR 0002 — Authentication approach
 
 - Status: proposed
-- Date: 2026-09-20
+- Date: 2026-09-21
 
 ## Context
 

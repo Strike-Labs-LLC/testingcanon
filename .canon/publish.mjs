@@ -191,10 +191,22 @@ function head() {
   }
 }
 
-/** Land the stage's source changes on its own branch and open a pull request. */
+/**
+ * Land the stage's source changes on the run's branch and open its pull request.
+ *
+ * One run, one branch, one pull request. Each stage used to get a branch of its
+ * own, named for the stage and its attempt, so a run where the coder and the
+ * test author both produced code opened two pull requests for one ticket — and
+ * because every stage builds on the run's current candidate, the second
+ * contained the first. A reviewer got two overlapping requests and no single
+ * place to say yes.
+ *
+ * The run already tracks exactly one candidate commit. This is that commit's
+ * branch, so the pull request grows with the run and a review of it is a review
+ * of the whole piece of work.
+ */
 function publishSource(run, stage, patchFile) {
-  const attempt = run.stages?.[stage.id]?.attempt ?? 0;
-  const branch = `canon/${run.runId}/${stage.id}/${run.generation ?? 1}-${attempt}`;
+  const branch = `canon/${run.runId}/candidate`;
   identify();
   git("checkout", "-B", branch);
   apply(patchFile);
@@ -218,16 +230,23 @@ function publishSource(run, stage, patchFile) {
         "--head",
         branch,
         "--title",
-        `${stage.name}: ${run.objective || run.runId}`,
+        `${run.objective || run.runId}`,
         "--body",
-        `Published by Canon for run #${run.issue ?? run.runId}, stage \`${stage.id}\`, from validated patch \`${sha256(
-          readIfExists(patchFile),
-        ).slice(0, 12)}\`.`,
+        [
+          `Opened by Canon for run \`${run.runId}\` (#${run.issue ?? run.runId}).`,
+          "",
+          "Every stage of this run that produces code commits to this branch, so",
+          "this is the whole change the run made and reviewing it reviews all of it.",
+          "",
+          `First published by \`${stage.id}\` from validated patch \`${sha256(
+            readIfExists(patchFile),
+          ).slice(0, 12)}\`.`,
+        ].join("\n"),
       ],
       { encoding: "utf8" },
     ).trim();
   } catch {
-    // A pull request already exists for this branch; the branch is the record.
+    // The run's pull request is already open; later stages just add to it.
   }
   return { branch, sha, url };
 }

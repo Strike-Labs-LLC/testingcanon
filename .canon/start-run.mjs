@@ -93,6 +93,21 @@ async function main() {
     ].join("\n"),
   );
 
+  // The ticket a person filed is where they look for progress, and it said
+  // nothing while the run happened somewhere else. One line, once, pointing at
+  // the run — the stage-by-stage detail stays on the run issue rather than
+  // filling a product ticket with machine chatter.
+  if (source?.number) {
+    await comment(
+      source.number,
+      [
+        `**${graph.name || "Canon"}** started on this ticket — run \`${run.runId}\`.`,
+        "",
+        `Follow it on #${issue.number}, where each stage posts what it did.`,
+      ].join("\n"),
+    ).catch(() => undefined);
+  }
+
   setOutput("issue", String(issue.number));
   await dispatchWorkflow(process.env.CANON_STEP_WORKFLOW || "orchestration-step.yml", {
     run_issue: String(issue.number),
