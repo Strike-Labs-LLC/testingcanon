@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "matcher": "(?:str_replace_editor|apply_patch|[A-Za-z_]*(?:[Ee]dit|[Ww]rite|[Cc]reate|[Pp]atch)[A-Za-z_]*)",
+        "bash": "bash .github/hooks/scripts/check-protected-paths.sh",
+        "powershell": "bash .github/hooks/scripts/check-protected-paths.sh",
+        "timeoutSec": 30
+      },
+      {
+        "type": "command",
+        "matcher": "(?:[Bb]ash|[Pp]ower[Ss]hell|[A-Za-z_]*(?:[Ss]hell|[Tt]erminal|[Cc]ommand|[Ee]xecute)[A-Za-z_]*)",
+        "bash": "bash .github/hooks/scripts/check-command.sh",
+        "powershell": "bash .github/hooks/scripts/check-command.sh",
+        "timeoutSec": 30
+      }
+    ]
+  }
+}

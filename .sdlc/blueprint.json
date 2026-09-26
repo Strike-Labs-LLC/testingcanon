@@ -862,5 +862,45 @@
     "agent_2yff866x"
   ],
   "createdAt": "2026-09-19T20:02:16.897Z",
-  "updatedAt": "2026-09-22T14:43:37.757Z"
+  "updatedAt": "2026-09-22T14:43:37.757Z",
+  "testPlan": {
+    "tiers": {
+      "unit": {
+        "status": "none",
+        "command": null,
+        "source": "none",
+        "reason": "Unit: none — this repository has no package manifest."
+      },
+      "integration": {
+        "status": "none",
+        "command": null,
+        "source": "none",
+        "reason": "Integration: none — this repository has no package manifest."
+      },
+      "e2e": {
+        "status": "none",
+        "command": null,
+        "source": "none",
+        "reason": "E2E: none — this repository has no package manifest."
+      }
+    },
+    "staticChecks": [
+      {
+        "name": "html-validate",
+        "command": "npx --yes html-validate \"**/*.html\""
+      },
+      {
+        "name": "links",
+        "command": "npx --yes linkinator . --recurse --silent --skip \"^https?://\" --skip \"node_modules|[.]canon|[.]sdlc\""
+      }
+    ],
+    "requiredChecks": [
+      "Static checks"
+    ],
+    "stopHookCommand": null,
+    "warnings": [
+      "Unit tests are set to required, but this repository has no unit test command. Canon set them to none. Add a test:unit script or set Stack → Unit test command to require them.",
+      "Integration tests are set to required, but this repository has no integration test command. Canon set them to none. Add a test:integration script or set Stack → Integration test command to require them."
+    ]
+  }
 }

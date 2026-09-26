@@ -1,0 +1,94 @@
+# Releases are created from an approved orchestration run — not from a tag.
+# Tagging alone is not authorization: the run must have completed the governance path
+# and the tag is cut at that run's approved commit.
+#
+# Two jobs, two trust domains. `verify` runs the repository's own build and tests
+# with a read-only checkout that persists no credential, so project code never
+# executes next to a publishing token. `release` runs no repository code at all: it
+# obtains a short-lived Canon-brokered installation token and performs only the
+# deterministic merge, tag, and release.
+#
+# The tag is optional. Leave it blank to land the approved candidate on the
+# default branch without publishing a release; supply `vX.Y.Z` to land it and
+# publish that release from the same approved commit.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_issue:
+        description: Approved Canon run issue number
+        required: true
+      tag:
+        description: Release tag (for example v1.4.0). Leave blank to merge the approved candidate without publishing a release.
+        required: false
+        default: ''
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify the candidate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: approved
+        name: Resolve the approved candidate commit
+        run: node .canon/release.mjs candidate --issue "$CANON_RUN_ISSUE"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CANON_RUN_ISSUE: ${{ inputs.run_issue }}
+      - name: Check out the approved commit
+        run: git checkout "$CANON_APPROVED_SHA"
+        env:
+          CANON_APPROVED_SHA: ${{ steps.approved.outputs.approved_sha }}
+      - run: npx --yes html-validate "**/*.html"
+      - run: npx --yes linkinator . --recurse --silent --skip "^https?://" --skip "node_modules|[.]canon|[.]sdlc"
+
+  release:
+    name: Release
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: production
+    # No repository code runs in this job — no install, no build, no tests, no AI.
+    # Requesting an OIDC token is not repository write: it only lets the job prove
+    # identity to Canon, which returns the scoped token this job publishes with.
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          sparse-checkout: .canon
+      # Lands the approved commit on the default branch, refusing the merge if the
+      # branch moved since approval. A refused or failed merge fails the release:
+      # nothing ships that GitHub did not accept onto the default branch.
+      - id: merge
+        name: Land the approved commit
+        run: node .canon/merge.mjs --issue "$CANON_RUN_ISSUE"
+        env:
+          CANON_BROKER_URL: ${{ vars.CANON_BROKER_URL || 'https://usecanon.app/api/public/runtime/token' }}
+          CANON_RUN_ISSUE: ${{ inputs.run_issue }}
+      # The commit that actually landed comes straight out of the merge step. This job
+      # holds no standing credential, so it cannot re-read the run record here; the
+      # publish step re-validates authorization with its own brokered token.
+      - name: Tag and publish the release
+        if: inputs.tag != ''
+        run: node .canon/release.mjs publish --issue "$CANON_RUN_ISSUE" --tag "$CANON_RELEASE_TAG" --sha "$CANON_RELEASE_SHA"
+        env:
+          CANON_BROKER_URL: ${{ vars.CANON_BROKER_URL || 'https://usecanon.app/api/public/runtime/token' }}
+          CANON_RUN_ISSUE: ${{ inputs.run_issue }}
+          CANON_RELEASE_TAG: ${{ inputs.tag }}
+          CANON_RELEASE_SHA: ${{ steps.merge.outputs.release_sha }}

@@ -1,0 +1,266 @@
+{
+  "platform": "github",
+  "repository": "YOUR-ORG/YOUR-REPO",
+  "defaultBranch": "main",
+  "apiPayloads": {
+    "rulesets": [
+      ".sdlc/github/ruleset-branch.json",
+      ".sdlc/github/ruleset-tags.json"
+    ],
+    "environments": [],
+    "apply": ".sdlc/github/apply.sh"
+  },
+  "mergeStrategy": {
+    "allowSquash": true,
+    "allowMerge": false,
+    "allowRebase": false,
+    "deleteBranchOnMerge": true
+  },
+  "enforcement": {
+    "mode": "enforced",
+    "pullRequestRequired": true,
+    "minimumReviewers": 1,
+    "note": "Rulesets prevent code from reaching the default branch without passing the modelled gates."
+  },
+  "labels": [
+    {
+      "name": "feature",
+      "color": "1f6feb",
+      "description": "New capability",
+      "source": "triage"
+    },
+    {
+      "name": "bug",
+      "color": "d1242f",
+      "description": "Defect",
+      "source": "triage"
+    },
+    {
+      "name": "chore",
+      "color": "6e7781",
+      "description": "Routine maintenance",
+      "source": "triage"
+    },
+    {
+      "name": "tech-debt",
+      "color": "8250df",
+      "description": "Maintainability work",
+      "source": "triage"
+    },
+    {
+      "name": "security",
+      "color": "bf3989",
+      "description": "Security work",
+      "source": "triage"
+    },
+    {
+      "name": "needs-triage",
+      "color": "9a6700",
+      "description": "Awaiting triage",
+      "source": "triage"
+    },
+    {
+      "name": "needs-info",
+      "color": "bf8700",
+      "description": "Blocked on missing information",
+      "source": "triage"
+    },
+    {
+      "name": "ready-for-design",
+      "color": "0969da",
+      "description": "Requirements approved",
+      "source": "triage"
+    },
+    {
+      "name": "ready-for-development",
+      "color": "1a7f37",
+      "description": "Design approved",
+      "source": "triage"
+    },
+    {
+      "name": "dependencies",
+      "color": "6e7781",
+      "description": "Dependency updates",
+      "source": "triage"
+    },
+    {
+      "name": "ci",
+      "color": "6e7781",
+      "description": "Pipeline changes",
+      "source": "triage"
+    },
+    {
+      "name": "canon:start",
+      "color": "0969da",
+      "description": "Starts a Canon orchestration run",
+      "source": "runtime"
+    },
+    {
+      "name": "canon-run",
+      "color": "0e8a16",
+      "description": "Canon orchestration run",
+      "source": "runtime"
+    },
+    {
+      "name": "awaiting-human",
+      "color": "bf8700",
+      "description": "A human gate is open on this run",
+      "source": "runtime"
+    },
+    {
+      "name": "run-completed",
+      "color": "1a7f37",
+      "description": "Canon run finished successfully",
+      "source": "runtime"
+    },
+    {
+      "name": "run-failed",
+      "color": "d1242f",
+      "description": "Canon run failed",
+      "source": "runtime"
+    },
+    {
+      "name": "resource-conflict",
+      "color": "d1242f",
+      "description": "Two stages own the same resource in a run",
+      "source": "runtime"
+    },
+    {
+      "name": "sla-breached",
+      "color": "d1242f",
+      "description": "A human gate passed its response time",
+      "source": "runtime"
+    },
+    {
+      "name": "design-approved",
+      "color": "1a7f37",
+      "description": "Technical approach accepted",
+      "source": "workflow"
+    },
+    {
+      "name": "design-changes-required",
+      "color": "bf8700",
+      "description": "Technical approach needs rework",
+      "source": "workflow"
+    },
+    {
+      "name": "changes-requested",
+      "color": "bf8700",
+      "description": "Review requested changes",
+      "source": "workflow"
+    },
+    {
+      "name": "review-approved",
+      "color": "1a7f37",
+      "description": "Review approved the change",
+      "source": "workflow"
+    },
+    {
+      "name": "security-review",
+      "color": "bf3989",
+      "description": "Needs a security review",
+      "source": "workflow"
+    },
+    {
+      "name": "docs-drift",
+      "color": "8250df",
+      "description": "Documentation no longer matches the code",
+      "source": "workflow"
+    },
+    {
+      "name": "release-readiness",
+      "color": "0969da",
+      "description": "Release readiness report",
+      "source": "workflow"
+    },
+    {
+      "name": "technical-audit",
+      "color": "8250df",
+      "description": "Repository audit findings",
+      "source": "workflow"
+    }
+  ],
+  "issueTypes": [
+    "Feature",
+    "Bug",
+    "Technical debt",
+    "Security"
+  ],
+  "securityFeatures": {
+    "secretScanning": true,
+    "pushProtection": true,
+    "dependabotAlerts": true,
+    "dependabotSecurityUpdates": true,
+    "codeScanning": false,
+    "privateVulnerabilityReporting": true
+  },
+  "copilotAgents": [
+    {
+      "slug": "specification-writer",
+      "role": "product_manager",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/01-specification-writer.agent.md"
+    },
+    {
+      "slug": "solution-architect",
+      "role": "architect",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/02-solution-architect.agent.md"
+    },
+    {
+      "slug": "engineering-manager",
+      "role": "engineering_manager",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/03-engineering-manager.agent.md"
+    },
+    {
+      "slug": "feature-coder",
+      "role": "coder",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/04-feature-coder.agent.md"
+    },
+    {
+      "slug": "test-author",
+      "role": "tester",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/05-test-author.agent.md"
+    },
+    {
+      "slug": "qa-verifier",
+      "role": "qa",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/06-qa-verifier.agent.md"
+    },
+    {
+      "slug": "code-reviewer",
+      "role": "code_reviewer",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/07-code-reviewer.agent.md"
+    },
+    {
+      "slug": "security-reviewer",
+      "role": "security_auditor",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/08-security-reviewer.agent.md"
+    },
+    {
+      "slug": "technical-auditor",
+      "role": "release_reviewer",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/09-technical-auditor.agent.md"
+    },
+    {
+      "slug": "release-notes-author",
+      "role": "release_engineer",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/10-release-notes-author.agent.md"
+    },
+    {
+      "slug": "release-gatekeeper",
+      "role": "release_reviewer",
+      "model": "google/gemini-3.6-flash",
+      "file": ".github/agents/11-release-gatekeeper.agent.md"
+    }
+  ],
+  "humanGates": []
+}

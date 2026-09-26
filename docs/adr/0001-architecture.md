@@ -1,7 +1,7 @@
 # ADR 0001 — Baseline architecture
 
 - Status: accepted
-- Date: 2026-09-21
+- Date: 2026-09-26
 
 ## Context
 
